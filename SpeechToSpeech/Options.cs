@@ -15,5 +15,6 @@ namespace SpeechToSpeech
     public string SpeechInputLanguage = CultureInfo.CurrentCulture.Name;
     public string TextInputLanguage = CultureInfo.CurrentCulture.Name;
     public string SpeechOutputGender = "male";
+    public string GoogleServiceAccountKey = "";
   }
 }

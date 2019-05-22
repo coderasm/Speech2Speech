@@ -30,12 +30,12 @@ namespace SpeechToSpeech
 
     private void ListVoices(string language)
     {
-      TextToSpeechClient client = TextToSpeechClient.Create();
+      TextToSpeechClient client;
+      client = TextToSpeechClient.Create();
       var response = client.ListVoices(new ListVoicesRequest
       {
         LanguageCode = language
       });
-      voiceList.val
     }
 
     #region IDisposable Support
