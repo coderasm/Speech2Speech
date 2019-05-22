@@ -5,8 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpeechToSpeech"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="Speech2Speech" Height="398.361" Width="384.119">
+  <Grid>
+    <DockPanel HorizontalAlignment="Left" Height="19" LastChildFill="False" VerticalAlignment="Top" Width="376">
+      <Menu Width="33">
+        <MenuItem Header="_File">
+          <MenuItem Header="_Options" Click="OnOptionsClicked" />
+          <Separator />
+          <MenuItem Header="_Exit" />
+        </MenuItem>
+      </Menu>
+    </DockPanel>
+  </Grid>
 </Window>

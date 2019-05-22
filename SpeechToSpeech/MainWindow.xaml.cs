@@ -20,9 +20,20 @@ namespace SpeechToSpeech
   /// </summary>
   public partial class MainWindow : Window
   {
+    public Options Options { get; set; } = new Options();
+    public OptionsDialog OptionsDialog { get; set; }
     public MainWindow()
     {
       InitializeComponent();
+      OptionsDialog  = new OptionsDialog(Options);
+    }
+
+    private void OnOptionsClicked(object sender, RoutedEventArgs e)
+    {
+      if (OptionsDialog.ShowDialog() == true)
+      {
+
+      }
     }
   }
 }
