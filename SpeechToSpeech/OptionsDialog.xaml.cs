@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Google.Cloud.TextToSpeech.V1;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,16 @@ namespace SpeechToSpeech
     {
       this.options = options;
       InitializeComponent();
+      ListVoices(options.TextInputLanguage);
+    }
+
+    private void ListVoices(string language)
+    {
+      TextToSpeechClient client = TextToSpeechClient.Create();
+      var response = client.ListVoices(new ListVoicesRequest
+      {
+        LanguageCode = language
+      });
     }
 
     #region IDisposable Support
