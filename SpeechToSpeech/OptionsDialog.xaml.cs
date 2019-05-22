@@ -35,6 +35,7 @@ namespace SpeechToSpeech
       {
         LanguageCode = language
       });
+      voiceList.val
     }
 
     #region IDisposable Support
