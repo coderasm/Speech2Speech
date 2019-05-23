@@ -20,19 +20,19 @@ namespace SpeechToSpeech
   /// </summary>
   public partial class MainWindow : Window
   {
-    public Options Options { get; set; } = new Options();
-    public OptionsDialog OptionsDialog { get; set; }
+    public SettingsDialog OptionsDialog { get; set; }
+    public SettingsService settingsService { get; set; } = new SettingsService();
     public MainWindow()
     {
       InitializeComponent();
-      OptionsDialog  = new OptionsDialog(Options);
     }
 
     private void OnOptionsClicked(object sender, RoutedEventArgs e)
     {
+      OptionsDialog = new SettingsDialog(settingsService);
       if (OptionsDialog.ShowDialog() == true)
       {
-
+        settingsService.saveSettings();
       }
     }
   }

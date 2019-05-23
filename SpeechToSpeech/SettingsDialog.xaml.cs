@@ -20,16 +20,17 @@ namespace SpeechToSpeech
   /// <summary>
   /// Interaction logic for Options.xaml
   /// </summary>
-  public partial class OptionsDialog : Window, IDisposable
+  public partial class SettingsDialog : Window, IDisposable
   {
-    private Options options { get; set; }
+    private SettingsService settingsService { get; set; }
     private CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
     private OpenFileDialog openFileDialog = new OpenFileDialog();
 
-    public OptionsDialog(Options options )
+    public SettingsDialog(SettingsService settingsService )
     {
-      this.options = options;
+      this.settingsService = settingsService;
       InitializeComponent();
+      Owner = Application.Current.Windows[0];
       var languages = cultures.Select(culture => culture.Name);
       textLanguageBox.ItemsSource = languages;
       speechLanguageBox.ItemsSource = languages;
@@ -83,26 +84,26 @@ namespace SpeechToSpeech
 
     private void push2TalkCheckBox_Checked(object sender, RoutedEventArgs e)
     {
-      options.IsPush2Talk = ((CheckBox)sender).IsChecked;
+      settingsService.settings.generalSettings.IsPush2Talk = ((CheckBox)sender).IsChecked;
     }
 
     private void textLanguageBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       var combobox = (ComboBox)sender;
-      options.TextInputLanguage = (string)combobox.SelectedValue;
+      settingsService.settings.generalSettings.TextInputLanguage = (string)combobox.SelectedValue;
     }
 
     private void speechLanguageBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       var combobox = (ComboBox)sender;
-      options.SpeechInputLanguage = (string)combobox.SelectedValue;
+      settingsService.settings.generalSettings.SpeechInputLanguage = (string)combobox.SelectedValue;
     }
 
     private void promptForAmazonKey_Click(object sender, RoutedEventArgs e)
     {
       if(openFileDialog.ShowDialog() == true)
       {
-        options.AmazonServiceAccountKey = openFileDialog.FileName;
+        settingsService.settings.amazonSettings.ServiceAccountKey = openFileDialog.FileName;
       }
     }
 
@@ -110,8 +111,21 @@ namespace SpeechToSpeech
     {
       if (openFileDialog.ShowDialog() == true)
       {
-        options.GoogleServiceAccountKey = openFileDialog.FileName;
+        settingsService.settings.googleSettings.ServiceAccountKey = openFileDialog.FileName;
       }
+    }
+
+    private void promptForIBMKey_Click(object sender, RoutedEventArgs e)
+    {
+      if (openFileDialog.ShowDialog() == true)
+      {
+        settingsService.settings.ibmSettings.ServiceAccountKey = openFileDialog.FileName;
+      }
+    }
+
+    private void SaveSettings_Click(object sender, RoutedEventArgs e)
+    {
+      settingsService.saveSettings();
     }
   }
 }
