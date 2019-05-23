@@ -10,11 +10,13 @@ namespace SpeechToSpeech
 {
   public class Options
   {
-    public bool IsPush2Talk { get; set; } = false;
+    public bool? IsPush2Talk { get; set; } = false;
     public Key Push2TalkKey { get; set; } = Key.None;
     public string SpeechInputLanguage = CultureInfo.CurrentCulture.Name;
     public string TextInputLanguage = CultureInfo.CurrentCulture.Name;
     public string SpeechOutputGender = "male";
     public string GoogleServiceAccountKey = "";
+    public string AmazonServiceAccountKey = "";
+    public string IBMServiceAccountKey = "";
   }
 }

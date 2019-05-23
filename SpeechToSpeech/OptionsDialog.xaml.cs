@@ -1,6 +1,8 @@
 ﻿using Google.Cloud.TextToSpeech.V1;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,12 +22,18 @@ namespace SpeechToSpeech
   /// </summary>
   public partial class OptionsDialog : Window, IDisposable
   {
-    public Options options { get; set; }
+    private Options options { get; set; }
+    private CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
+    private OpenFileDialog openFileDialog = new OpenFileDialog();
+
     public OptionsDialog(Options options )
     {
       this.options = options;
       InitializeComponent();
-      ListVoices(options.TextInputLanguage);
+      var languages = cultures.Select(culture => culture.Name);
+      textLanguageBox.ItemsSource = languages;
+      speechLanguageBox.ItemsSource = languages;
+      //ListVoices(options.TextInputLanguage);
     }
 
     private void ListVoices(string language)
@@ -72,5 +80,38 @@ namespace SpeechToSpeech
       // GC.SuppressFinalize(this);
     }
     #endregion
+
+    private void push2TalkCheckBox_Checked(object sender, RoutedEventArgs e)
+    {
+      options.IsPush2Talk = ((CheckBox)sender).IsChecked;
+    }
+
+    private void textLanguageBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      var combobox = (ComboBox)sender;
+      options.TextInputLanguage = (string)combobox.SelectedValue;
+    }
+
+    private void speechLanguageBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      var combobox = (ComboBox)sender;
+      options.SpeechInputLanguage = (string)combobox.SelectedValue;
+    }
+
+    private void promptForAmazonKey_Click(object sender, RoutedEventArgs e)
+    {
+      if(openFileDialog.ShowDialog() == true)
+      {
+        options.AmazonServiceAccountKey = openFileDialog.FileName;
+      }
+    }
+
+    private void promptForGoogleKey_Click(object sender, RoutedEventArgs e)
+    {
+      if (openFileDialog.ShowDialog() == true)
+      {
+        options.GoogleServiceAccountKey = openFileDialog.FileName;
+      }
+    }
   }
 }
