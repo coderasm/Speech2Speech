@@ -10,9 +10,8 @@ namespace SpeechToSpeech
 {
   public class AmazonSettings
   {
-    public string ServiceAccountKey { get; set; }
+    public string AccessKeyId { get; set; }
+    public string SecretAccessKey { get; set; }
     public string Voice { get; set; }
-    public string textToSpeechURL { get; set; }
-    public string speechToTextURL { get; set; }
   }
 }

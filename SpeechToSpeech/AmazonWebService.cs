@@ -12,26 +12,45 @@ namespace SpeechToSpeech
 {
   public class AmazonWebService : ITranscribeAndVocalize<Voice>
   {
-    private AmazonPollyClient client = new AmazonPollyClient();
+    private AmazonPollyClient client;
+    private AmazonSettings settings = new AmazonSettings();
 
-    public List<Voice> GetVoices(string language)
+    private AmazonWebService(AmazonSettings settings)
     {
-      throw new NotImplementedException();
+      this.settings = settings;
+      client = new AmazonPollyClient(settings.AccessKeyId, settings.SecretAccessKey);
     }
 
-    public async Task<List<List<Voice>>> GetVoices()
+    public AmazonWebService Create(AmazonSettings settings)
     {
-      var allVoicesRequest = new DescribeVoicesRequest();
-      var voices = new List<List<Voice>>();
+      return new AmazonWebService(settings);
+    }
+
+    public async Task<List<Voice>> GetVoices(string language)
+    {
+      var voiceRequest = new DescribeVoicesRequest();
+      voiceRequest.LanguageCode = language;
+      return await FetchVoices(voiceRequest);
+    }
+
+    public async Task<List<Voice>> GetVoices()
+    {
+      var voiceRequest = new DescribeVoicesRequest();
+      return await FetchVoices(voiceRequest);
+    }
+
+    public async Task<List<Voice>> FetchVoices(DescribeVoicesRequest voiceRequest)
+    {
+      var voices = new List<Voice>();
       try
       {
         string nextToken;
         do
         {
-          var allVoicesResult = await client.DescribeVoicesAsync(allVoicesRequest);
+          var allVoicesResult = await client.DescribeVoicesAsync(voiceRequest);
           nextToken = allVoicesResult.NextToken;
-          allVoicesRequest.NextToken = nextToken;
-          voices.Add(allVoicesResult.Voices);
+          voiceRequest.NextToken = nextToken;
+          voices = allVoicesResult.Voices;
         } while (nextToken != null);
         return voices;
       }
@@ -43,7 +62,7 @@ namespace SpeechToSpeech
       return voices;
     }
 
-    public async Task<FileStream> ToAudio(string transcript)
+    public async Task<string> ToAudio(string transcript)
     {
       var BUFFER_SIZE = 2048;
       var timeStamp = DateTime.Now.ToString("MM-dd-yyyy_HH_mm_ss");
@@ -69,17 +88,17 @@ namespace SpeechToSpeech
             }
           }
         }
-        return File.OpenRead(outputFileName);
+        return outputFileName;
       }
       catch (Exception e)
       {
         Console.WriteLine("Exception caught: " + e);
         MessageBox.Show("Exception caught: " + e);
       }
-      return File.OpenRead(outputFileName);
+      return outputFileName;
     }
 
-    public string ToTranscript(File audioFile)
+    public string ToTranscript(string audioFile)
     {
       throw new NotImplementedException();
     }

@@ -1,5 +1,6 @@
 ﻿using Google.Cloud.TextToSpeech.V1;
 using Microsoft.Win32;
+using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -33,19 +34,23 @@ namespace SpeechToSpeech
       InitializeComponent();
       Owner = Application.Current.Windows[0];
       var languages = cultures.Select(culture => culture.Name);
+      var audioDevices = GetAudioDevices();
+      audioOutDeviceBox.DisplayMemberPath = "Value";
+      audioOutDeviceBox.SelectedValuePath = "Key";
+      audioOutDeviceBox.ItemsSource = audioDevices;
       textLanguageBox.ItemsSource = languages;
       speechLanguageBox.ItemsSource = languages;
-      //ListVoices(options.TextInputLanguage);
     }
 
-    private void ListVoices(string language)
+    private List<KeyValuePair<int, string>> GetAudioDevices()
     {
-      TextToSpeechClient client;
-      client = TextToSpeechClient.Create();
-      var response = client.ListVoices(new ListVoicesRequest
+      var audioDevices = new List<KeyValuePair<int, string>>();
+      for (int n = -1; n < WaveOut.DeviceCount; n++)
       {
-        LanguageCode = language
-      });
+        var caps = WaveOut.GetCapabilities(n);
+        audioDevices.Add(new KeyValuePair<int, string>(n, caps.ProductName));
+      }
+      return audioDevices;
     }
 
     #region IDisposable Support
@@ -102,10 +107,7 @@ namespace SpeechToSpeech
 
     private void promptForAmazonKey_Click(object sender, RoutedEventArgs e)
     {
-      if(openFileDialog.ShowDialog() == true)
-      {
-        settingsService.settings.amazonSettings.ServiceAccountKey = File.ReadAllText(openFileDialog.FileName);
-      }
+      
     }
 
     private void promptForGoogleKey_Click(object sender, RoutedEventArgs e)
@@ -129,5 +131,12 @@ namespace SpeechToSpeech
     {
       settingsService.saveSettings();
     }
+
+    private void audioOutDeviceBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      var combobox = (ComboBox)sender;
+      settingsService.settings.generalSettings.AudioOutDevice = (int)combobox.SelectedValue;
+    }
   }
+
 }

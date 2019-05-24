@@ -16,5 +16,6 @@ namespace SpeechToSpeech
     public Key AppPush2TalkKey { get; set; } = Key.None;
     public string SpeechInputLanguage { get; set; } = CultureInfo.CurrentCulture.Name;
     public string TextInputLanguage { get; set; } = CultureInfo.CurrentCulture.Name;
+    public int AudioOutDevice { get; set; } = -1;
   }
 }

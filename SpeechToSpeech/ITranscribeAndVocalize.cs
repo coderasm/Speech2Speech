@@ -9,8 +9,9 @@ namespace SpeechToSpeech
 {
   public interface ITranscribeAndVocalize<T>
   {
-    Task<FileStream> ToAudio(string transcript);
-    string ToTranscript(File audioFile);
-    Task<List<List<T>>> GetVoices();
+    Task<string> ToAudio(string transcript);
+    string ToTranscript(string audioFile);
+    Task<List<T>> GetVoices();
+    Task<List<T>> GetVoices(string language);
   }
 }
