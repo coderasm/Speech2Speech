@@ -12,5 +12,7 @@ namespace SpeechToSpeech
   {
     public string ServiceAccountKey { get; set; }
     public string Voice { get; set; }
+    public string textToSpeechURL { get; set; }
+    public string speechToTextURL { get; set; }
   }
 }

@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -103,7 +104,7 @@ namespace SpeechToSpeech
     {
       if(openFileDialog.ShowDialog() == true)
       {
-        settingsService.settings.amazonSettings.ServiceAccountKey = openFileDialog.FileName;
+        settingsService.settings.amazonSettings.ServiceAccountKey = File.ReadAllText(openFileDialog.FileName);
       }
     }
 
@@ -112,6 +113,7 @@ namespace SpeechToSpeech
       if (openFileDialog.ShowDialog() == true)
       {
         settingsService.settings.googleSettings.ServiceAccountKey = openFileDialog.FileName;
+        Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", openFileDialog.FileName);
       }
     }
 

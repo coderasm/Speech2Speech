@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpeechToSpeech"
         mc:Ignorable="d"
-        Title="Speech2Speech" Height="398.361" Width="384.119">
+        Title="Speech2Speech" Height="425.902" Width="392">
   <Grid>
     <DockPanel HorizontalAlignment="Left" Height="19" LastChildFill="False" VerticalAlignment="Top" Width="376">
       <Menu Width="33">
@@ -16,5 +16,9 @@
         </MenuItem>
       </Menu>
     </DockPanel>
+    <TextBox HorizontalAlignment="Left" Height="103" Margin="10,29,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="356"/>
+    <Button Content="Send" HorizontalAlignment="Left" Margin="148,137,0,0" VerticalAlignment="Top" Height="36" Width="58"/>
+    <ScrollViewer x:Name="textHistoryList" HorizontalAlignment="Left" Height="184" Margin="10,201,0,0" VerticalAlignment="Top" Width="356"/>
+    <Label Content="Text/Speech history" HorizontalAlignment="Left" Margin="115,175,0,0" VerticalAlignment="Top"/>
   </Grid>
 </Window>
