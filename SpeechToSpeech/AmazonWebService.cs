@@ -13,15 +13,15 @@ namespace SpeechToSpeech
   public class AmazonWebService : ITranscribeAndVocalize<Voice>
   {
     private AmazonPollyClient client;
-    private AmazonSettings settings = new AmazonSettings();
+    private Settings settings = new Settings();
 
-    private AmazonWebService(AmazonSettings settings)
+    private AmazonWebService(Settings settings)
     {
       this.settings = settings;
-      client = new AmazonPollyClient(settings.AccessKeyId, settings.SecretAccessKey);
+      client = new AmazonPollyClient(settings.amazonSettings.AccessKeyId, settings.amazonSettings.SecretAccessKey);
     }
 
-    public AmazonWebService Create(AmazonSettings settings)
+    public static AmazonWebService Create(Settings settings)
     {
       return new AmazonWebService(settings);
     }
@@ -66,11 +66,11 @@ namespace SpeechToSpeech
     {
       var BUFFER_SIZE = 2048;
       var timeStamp = DateTime.Now.ToString("MM-dd-yyyy_HH_mm_ss");
-      var outputFileName = $"./vocalized/{timeStamp}.mp3";
+      var outputFileName = $@".\vocalized/{timeStamp}.mp3";
 
       SynthesizeSpeechRequest synthesizeSpeechRequest = new SynthesizeSpeechRequest();
       synthesizeSpeechRequest.OutputFormat = OutputFormat.Mp3;
-      synthesizeSpeechRequest.VoiceId = VoiceId.Joanna;
+      synthesizeSpeechRequest.VoiceId = settings.amazonSettings.Voice.Id;
       synthesizeSpeechRequest.Text = transcript;
       try
       {

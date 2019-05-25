@@ -5,70 +5,72 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpeechToSpeech"
         mc:Ignorable="d"
-        Title="Settings" Height="426.581" Width="344">
+        Title="Settings" Height="392.063" Width="344">
   <Grid Margin="0,0,2,1">
-    <TabControl HorizontalAlignment="Left" Height="360" VerticalAlignment="Top" Width="322" Margin="3,0,0,0">
+    <TabControl HorizontalAlignment="Left" Height="324" VerticalAlignment="Top" Width="322" Margin="3,0,0,0">
       <TabItem Header="General">
         <Grid Background="White">
           <CheckBox x:Name="push2TalkCheckbox" Content="" HorizontalAlignment="Left" Margin="121,9,0,0" VerticalAlignment="Top" FontSize="8" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" RenderTransformOrigin="0.5,0.5" Padding="0" Checked="push2TalkCheckBox_Checked"/>
-          <TextBox x:Name="push2TalkBox" HorizontalAlignment="Left" Margin="121,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" Height="20"/>
+          <TextBox x:Name="push2TalkBox" HorizontalAlignment="Left" Margin="121,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" Height="20" IsEnabled="False"/>
           <Label Content="Push 2 talk key" HorizontalAlignment="Left" Margin="19,35,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" Width="100" HorizontalContentAlignment="Right"/>
           <Label Content="Push 2 talk" HorizontalAlignment="Left" Margin="57,8,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" HorizontalContentAlignment="Right"/>
-          <Label Content="Text Language" HorizontalAlignment="Left" Margin="13,122,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
-          <Label Content="Speech Language" HorizontalAlignment="Left" Margin="104,122,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
-          <ComboBox x:Name="textLanguageBox" HorizontalAlignment="Left" Margin="22,141,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="textLanguageBox_SelectionChanged"/>
-          <ComboBox x:Name="speechLanguageBox" HorizontalAlignment="Left" Margin="122,141,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="speechLanguageBox_SelectionChanged"/>
+          <Label Content="Text Language" HorizontalAlignment="Left" Margin="56,119,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
+          <Label Content="Speech Language" HorizontalAlignment="Left" Margin="169,119,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
+          <ComboBox x:Name="textLanguageBox" HorizontalAlignment="Left" Margin="65,138,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="textLanguageBox_SelectionChanged"/>
+          <ComboBox x:Name="speechLanguageBox" HorizontalAlignment="Left" Margin="187,138,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="speechLanguageBox_SelectionChanged"/>
           <Button x:Name="push2talkRecordButton" Content="Record" HorizontalAlignment="Left" Margin="226,33,0,0" VerticalAlignment="Top"/>
-          <Label Content="Web Service Order" HorizontalAlignment="Left" Margin="113,178,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
-          <ComboBox x:Name="webService" HorizontalAlignment="Left" Margin="70,209,0,0" VerticalAlignment="Top" Width="26" SelectionChanged="speechLanguageBox_SelectionChanged"/>
-          <Label Content="Google" HorizontalAlignment="Left" Margin="58,190,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" Width="50" HorizontalContentAlignment="Center"/>
-          <ComboBox x:Name="webService_Copy" HorizontalAlignment="Left" Margin="148,209,0,0" VerticalAlignment="Top" Width="26" SelectionChanged="speechLanguageBox_SelectionChanged"/>
-          <Label Content="Amazon" HorizontalAlignment="Left" Margin="131,190,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" Width="60" HorizontalContentAlignment="Center"/>
-          <ComboBox x:Name="webService_Copy1" HorizontalAlignment="Left" Margin="230,209,0,0" VerticalAlignment="Top" Width="26" SelectionChanged="speechLanguageBox_SelectionChanged" HorizontalContentAlignment="Center"/>
-          <Label Content="IBM" HorizontalAlignment="Left" Margin="230,190,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0" Width="26" HorizontalContentAlignment="Center"/>
+          <Label Content="Web Service Order" HorizontalAlignment="Left" Margin="113,214,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
+          <ComboBox x:Name="webService" HorizontalAlignment="Left" Margin="70,245,0,0" VerticalAlignment="Top" Width="26" SelectionChanged="speechLanguageBox_SelectionChanged"/>
+          <Label Content="Google" HorizontalAlignment="Left" Margin="58,226,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" Width="50" HorizontalContentAlignment="Center"/>
+          <ComboBox x:Name="webService_Copy" HorizontalAlignment="Left" Margin="148,245,0,0" VerticalAlignment="Top" Width="26" SelectionChanged="speechLanguageBox_SelectionChanged"/>
+          <Label Content="Amazon" HorizontalAlignment="Left" Margin="131,226,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" Width="60" HorizontalContentAlignment="Center"/>
+          <ComboBox x:Name="webService_Copy1" HorizontalAlignment="Left" Margin="230,245,0,0" VerticalAlignment="Top" Width="26" SelectionChanged="speechLanguageBox_SelectionChanged" HorizontalContentAlignment="Center"/>
+          <Label Content="IBM" HorizontalAlignment="Left" Margin="230,226,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0" Width="26" HorizontalContentAlignment="Center"/>
           <CheckBox x:Name="appPush2TalkCheckbox" Content="" HorizontalAlignment="Left" Margin="121,61,0,0" VerticalAlignment="Top" FontSize="8" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" RenderTransformOrigin="0.5,0.5" Padding="0" Checked="push2TalkCheckBox_Checked"/>
-          <TextBox x:Name="appPush2TalkBox" HorizontalAlignment="Left" Margin="121,85,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" Height="20"/>
+          <TextBox x:Name="appPush2TalkBox" HorizontalAlignment="Left" Margin="121,85,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" Height="20" IsEnabled="False"/>
           <Label Content="App Push 2 talk key" HorizontalAlignment="Left" Margin="10,87,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" HorizontalContentAlignment="Right"/>
           <Label Content="App Push 2 talk" HorizontalAlignment="Left" Margin="31,60,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" HorizontalContentAlignment="Right"/>
           <Button x:Name="appPush2talkRecordButton" Content="Record" HorizontalAlignment="Left" Margin="226,85,0,0" VerticalAlignment="Top"/>
-          <Label Content="Audio Out" HorizontalAlignment="Left" Margin="221,120,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0" Width="62" HorizontalContentAlignment="Center"/>
-          <ComboBox x:Name="audioOutDeviceBox" HorizontalAlignment="Left" Margin="221,141,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="audioOutDeviceBox_SelectionChanged"/>
+          <Label Content="Audio Out" HorizontalAlignment="Left" Margin="70,169,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0" Width="62" HorizontalContentAlignment="Center"/>
+          <ComboBox x:Name="audioOutDeviceBox" HorizontalAlignment="Left" Margin="70,190,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="audioOutDeviceBox_SelectionChanged"/>
+          <Label Content="Audio In" HorizontalAlignment="Left" Margin="188,169,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0" Width="62" HorizontalContentAlignment="Center"/>
+          <ComboBox x:Name="audioInDeviceBox" HorizontalAlignment="Left" Margin="188,190,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="audioInDeviceBox_SelectionChanged"/>
         </Grid>
       </TabItem>
       <TabItem Header="Google">
         <Grid Background="White">
-          <Label x:Name="googleKeyLabel" Content="Google Account Key" HorizontalAlignment="Left" Margin="10,2,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
+          <Label x:Name="googleKeyLabel" Content="Account Key" HorizontalAlignment="Left" Margin="10,2,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
           <Button x:Name="promptForGoogleKey" Content="Load" HorizontalAlignment="Left" Margin="215,23,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="promptForGoogleKey_Click"/>
-          <TextBox x:Name="googleAccountKeyBox" HorizontalAlignment="Left" Margin="10,23,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20"/>
-          <TreeView x:Name="googleVoicesList" HorizontalAlignment="Left" Height="118" Margin="10,73,0,0" VerticalAlignment="Top" Width="299"/>
+          <TextBox x:Name="googleAccountKeyBox" HorizontalAlignment="Left" Margin="10,23,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" IsEnabled="False"/>
           <Label Content="Voices" HorizontalAlignment="Left" Margin="10,52,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
+          <ListBox x:Name="googleVoiceListBox" HorizontalAlignment="Left" Height="213" Margin="10,73,0,0" VerticalAlignment="Top" Width="296"/>
         </Grid>
       </TabItem>
       <TabItem Header="Amazon" HorizontalAlignment="Left" VerticalAlignment="Top">
         <Grid Background="White">
           <Label x:Name="googleKeyLabel_Copy" Content="Access Key ID" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" Margin="10,3,0,0"/>
-          <TextBox x:Name="amazonAccountKeyBox" HorizontalAlignment="Left" Margin="10,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20"/>
-          <TreeView x:Name="amazonVoicesList" HorizontalAlignment="Left" Height="118" Margin="10,119,0,0" VerticalAlignment="Top" Width="299"/>
+          <TextBox x:Name="amazonAccountKeyIdBox" HorizontalAlignment="Left" Margin="10,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="amazonAccessKeyId_Changed"/>
           <Label Content="Voices" HorizontalAlignment="Left" Margin="10,98,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
           <Label x:Name="googleKeyLabel_Copy8" Content="Secret Access Key" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" Margin="10,48,0,0"/>
-          <TextBox x:Name="amazonAccountKeyBox_Copy" HorizontalAlignment="Left" Margin="10,69,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20"/>
+          <TextBox x:Name="amazonSecretAccessKeyBox" HorizontalAlignment="Left" Margin="10,69,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="amazonSecretAccessKey_Changed"/>
+          <ListBox x:Name="amazonVoiceListBox" HorizontalAlignment="Left" Height="167" Margin="10,119,0,0" VerticalAlignment="Top" Width="296"/>
         </Grid>
       </TabItem>
       <TabItem Header="IBM" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top">
         <Grid Background="White">
-          <Label x:Name="googleKeyLabel_Copy1" Content="IBM Account Key" HorizontalAlignment="Left" Margin="10,2,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
+          <Label x:Name="googleKeyLabel_Copy1" Content="API Key" HorizontalAlignment="Left" Margin="10,2,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
           <Button x:Name="promptForIBMKey_Copy" Content="Load" HorizontalAlignment="Left" Margin="215,23,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="promptForGoogleKey_Click"/>
           <TextBox x:Name="IBMAccountKeyBox_Copy" HorizontalAlignment="Left" Margin="10,23,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20"/>
-          <TreeView x:Name="ibmVoicesList" HorizontalAlignment="Left" Height="118" Margin="10,172,0,0" VerticalAlignment="Top" Width="299"/>
-          <Label Content="Voices" HorizontalAlignment="Left" Margin="10,151,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
-          <Label x:Name="googleKeyLabel_Copy2" Content="Text to speech URL" HorizontalAlignment="Left" Margin="10,53,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
-          <TextBox x:Name="ibmText2SpeechURL" HorizontalAlignment="Left" Margin="10,74,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20"/>
-          <Label x:Name="googleKeyLabel_Copy3" Content="Speech to text URL" HorizontalAlignment="Left" Margin="10,99,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
-          <TextBox x:Name="ibmSpeech2TextURL" HorizontalAlignment="Left" Margin="10,120,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20"/>
+          <Label Content="Voices" HorizontalAlignment="Left" Margin="10,149,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
+          <Label x:Name="googleKeyLabel_Copy2" Content="Text to speech URL" HorizontalAlignment="Left" Margin="10,49,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
+          <TextBox x:Name="IBMTexttoSpeechURLBox" HorizontalAlignment="Left" Margin="10,70,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20"/>
+          <Label x:Name="googleKeyLabel_Copy3" Content="Speech to text URL" HorizontalAlignment="Left" Margin="10,97,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
+          <TextBox x:Name="IBMSpeechtoTextURL" HorizontalAlignment="Left" Margin="10,118,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20"/>
+          <ListBox x:Name="ibmVoiceListBox" HorizontalAlignment="Left" Height="116" Margin="10,170,0,0" VerticalAlignment="Top" Width="296"/>
         </Grid>
       </TabItem>
     </TabControl>
-    <Button x:Name="saveSettings" Content="Save" HorizontalAlignment="Left" Margin="127,365,0,0" VerticalAlignment="Top" Width="75" Click="SaveSettings_Click"/>
+    <Button x:Name="saveSettings" Content="Save" HorizontalAlignment="Left" Margin="126,329,0,0" VerticalAlignment="Top" Width="75" Click="SaveSettings_Click"/>
 
   </Grid>
 </Window>

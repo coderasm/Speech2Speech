@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Google.Cloud.TextToSpeech.V1;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -11,6 +12,6 @@ namespace SpeechToSpeech
   public class GoogleSettings
   {
     public string ServiceAccountKey { get; set; }
-    public string Voice { get; set; }
+    public Voice Voice { get; set; }
   }
 }

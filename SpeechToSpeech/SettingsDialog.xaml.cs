@@ -24,13 +24,24 @@ namespace SpeechToSpeech
   /// </summary>
   public partial class SettingsDialog : Window, IDisposable
   {
-    private SettingsService settingsService { get; set; }
+    private SettingsService settingsService;
+    private GoogleWebService googleWebService;
+    private AmazonWebService amazonWebService;
+    private IBMWebService ibmWebService;
     private CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
     private OpenFileDialog openFileDialog = new OpenFileDialog();
 
-    public SettingsDialog(SettingsService settingsService )
+    public SettingsDialog(
+      SettingsService settingsService,
+      GoogleWebService googleWebService,
+      AmazonWebService amazonWebService,
+      IBMWebService ibmWebService
+      )
     {
       this.settingsService = settingsService;
+      this.googleWebService = googleWebService;
+      this.amazonWebService = amazonWebService;
+      this.ibmWebService = ibmWebService;
       InitializeComponent();
       Owner = Application.Current.Windows[0];
       var languages = cultures.Select(culture => culture.Name);
@@ -38,6 +49,9 @@ namespace SpeechToSpeech
       audioOutDeviceBox.DisplayMemberPath = "Value";
       audioOutDeviceBox.SelectedValuePath = "Key";
       audioOutDeviceBox.ItemsSource = audioDevices;
+      audioInDeviceBox.DisplayMemberPath = "Value";
+      audioInDeviceBox.SelectedValuePath = "Key";
+      audioInDeviceBox.ItemsSource = audioDevices;
       textLanguageBox.ItemsSource = languages;
       speechLanguageBox.ItemsSource = languages;
     }
@@ -51,6 +65,16 @@ namespace SpeechToSpeech
         audioDevices.Add(new KeyValuePair<int, string>(n, caps.ProductName));
       }
       return audioDevices;
+    }
+
+    private void Applysettings()
+    {
+      push2TalkCheckbox.IsChecked = settingsService.settings.generalSettings.IsPush2Talk;
+      audioInDeviceBox.SelectedValue = settingsService.settings.generalSettings.AudioInDevice;
+      audioOutDeviceBox.SelectedValue = settingsService.settings.generalSettings.AudioOutDevice;
+      textLanguageBox.SelectedValue = settingsService.settings.generalSettings.TextInputLanguage;
+      textLanguageBox.SelectedValue = settingsService.settings.generalSettings.SpeechInputLanguage;
+      populateVoiceLists(settingsService.settings.generalSettings.SpeechInputLanguage);
     }
 
     #region IDisposable Support
@@ -97,6 +121,22 @@ namespace SpeechToSpeech
     {
       var combobox = (ComboBox)sender;
       settingsService.settings.generalSettings.TextInputLanguage = (string)combobox.SelectedValue;
+      populateVoiceLists((string)combobox.SelectedValue);
+    }
+
+    private async void populateVoiceLists(string language)
+    {
+      var googleVoices = await googleWebService.GetVoices(language);
+      var googleVoicesMapped = googleVoices.Select(voice => new
+      {
+        Key = voice.Name,
+        Value = voice
+      });
+      googleVoiceListBox.ItemsSource = googleVoicesMapped;
+      googleVoiceListBox.DisplayMemberPath = "Key";
+      googleVoiceListBox.SelectedValuePath = "Value";
+      var amazonVoices = amazonWebService.GetVoices(language);
+      var ibmVoices = ibmWebService.GetVoices(language);
     }
 
     private void speechLanguageBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -105,16 +145,12 @@ namespace SpeechToSpeech
       settingsService.settings.generalSettings.SpeechInputLanguage = (string)combobox.SelectedValue;
     }
 
-    private void promptForAmazonKey_Click(object sender, RoutedEventArgs e)
-    {
-      
-    }
-
     private void promptForGoogleKey_Click(object sender, RoutedEventArgs e)
     {
       if (openFileDialog.ShowDialog() == true)
       {
         settingsService.settings.googleSettings.ServiceAccountKey = openFileDialog.FileName;
+        googleAccountKeyBox.Text = openFileDialog.FileName;
         Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", openFileDialog.FileName);
       }
     }
@@ -123,7 +159,7 @@ namespace SpeechToSpeech
     {
       if (openFileDialog.ShowDialog() == true)
       {
-        settingsService.settings.ibmSettings.ServiceAccountKey = openFileDialog.FileName;
+        settingsService.settings.ibmSettings.IamAPIKey = openFileDialog.FileName;
       }
     }
 
@@ -136,6 +172,32 @@ namespace SpeechToSpeech
     {
       var combobox = (ComboBox)sender;
       settingsService.settings.generalSettings.AudioOutDevice = (int)combobox.SelectedValue;
+    }
+
+    private void amazonAccessKeyId_Changed(object sender, TextChangedEventArgs e)
+    {
+      settingsService.settings.amazonSettings.AccessKeyId = ((TextBox)sender).Text;
+    }
+
+    private void amazonSecretAccessKey_Changed(object sender, TextChangedEventArgs e)
+    {
+      settingsService.settings.amazonSettings.SecretAccessKey = ((TextBox)sender).Text;
+    }
+
+    private void ibmTextToSpeechURL_Changed(object sender, TextChangedEventArgs e)
+    {
+      settingsService.settings.ibmSettings.textToSpeechURL = ((TextBox)sender).Text;
+    }
+
+    private void ibmSpeechToTextURL_Changed(object sender, TextChangedEventArgs e)
+    {
+      settingsService.settings.ibmSettings.speechToTextURL = ((TextBox)sender).Text;
+    }
+
+    private void audioInDeviceBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      var combobox = (ComboBox)sender;
+      settingsService.settings.generalSettings.AudioInDevice = (int)combobox.SelectedValue;
     }
   }
 

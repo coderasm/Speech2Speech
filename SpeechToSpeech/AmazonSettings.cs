@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Amazon.Polly.Model;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -12,6 +13,6 @@ namespace SpeechToSpeech
   {
     public string AccessKeyId { get; set; }
     public string SecretAccessKey { get; set; }
-    public string Voice { get; set; }
+    public Voice Voice { get; set; }
   }
 }

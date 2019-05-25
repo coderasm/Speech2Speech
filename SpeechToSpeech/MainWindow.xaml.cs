@@ -20,16 +20,24 @@ namespace SpeechToSpeech
   /// </summary>
   public partial class MainWindow : Window
   {
-    public SettingsDialog OptionsDialog { get; set; }
-    public SettingsService settingsService { get; set; } = new SettingsService();
+    private SettingsDialog OptionsDialog;
+    private SettingsService settingsService;
+    private GoogleWebService googleWebService;
+    private AmazonWebService amazonWebService;
+    private IBMWebService ibmWebService;
+
     public MainWindow()
     {
       InitializeComponent();
+      settingsService = SettingsService.Create();
+      googleWebService = GoogleWebService.Create(settingsService.settings);
+      amazonWebService = AmazonWebService.Create(settingsService.settings);
+      ibmWebService = IBMWebService.Create(settingsService.settings);
     }
 
     private void OnOptionsClicked(object sender, RoutedEventArgs e)
     {
-      OptionsDialog = new SettingsDialog(settingsService);
+      OptionsDialog = new SettingsDialog(settingsService, googleWebService, amazonWebService, ibmWebService);
       if (OptionsDialog.ShowDialog() == true)
       {
         settingsService.saveSettings();
