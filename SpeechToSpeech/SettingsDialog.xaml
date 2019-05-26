@@ -18,7 +18,7 @@
           <Label Content="Speech Language" HorizontalAlignment="Left" Margin="169,119,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
           <ComboBox x:Name="textLanguageBox" HorizontalAlignment="Left" Margin="65,138,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="textLanguageBox_SelectionChanged"/>
           <ComboBox x:Name="speechLanguageBox" HorizontalAlignment="Left" Margin="187,138,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="speechLanguageBox_SelectionChanged"/>
-          <Button x:Name="push2talkRecordButton" Content="Record" HorizontalAlignment="Left" Margin="226,33,0,0" VerticalAlignment="Top"/>
+          <Button x:Name="push2talkRecordButton" Content="Record" HorizontalAlignment="Left" Margin="226,33,0,0" VerticalAlignment="Top" Click="push2talkRecordButton_Click"/>
           <Label Content="Web Service Order" HorizontalAlignment="Left" Margin="113,214,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
           <ComboBox x:Name="webService" HorizontalAlignment="Left" Margin="70,245,0,0" VerticalAlignment="Top" Width="26" SelectionChanged="speechLanguageBox_SelectionChanged"/>
           <Label Content="Google" HorizontalAlignment="Left" Margin="58,226,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" Width="50" HorizontalContentAlignment="Center"/>
@@ -26,11 +26,11 @@
           <Label Content="Amazon" HorizontalAlignment="Left" Margin="131,226,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" Width="60" HorizontalContentAlignment="Center"/>
           <ComboBox x:Name="webService_Copy1" HorizontalAlignment="Left" Margin="230,245,0,0" VerticalAlignment="Top" Width="26" SelectionChanged="speechLanguageBox_SelectionChanged" HorizontalContentAlignment="Center"/>
           <Label Content="IBM" HorizontalAlignment="Left" Margin="230,226,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0" Width="26" HorizontalContentAlignment="Center"/>
-          <CheckBox x:Name="appPush2TalkCheckbox" Content="" HorizontalAlignment="Left" Margin="121,61,0,0" VerticalAlignment="Top" FontSize="8" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" RenderTransformOrigin="0.5,0.5" Padding="0" Checked="push2TalkCheckBox_Checked"/>
+          <CheckBox x:Name="appPush2TalkCheckbox" Content="" HorizontalAlignment="Left" Margin="121,61,0,0" VerticalAlignment="Top" FontSize="8" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" RenderTransformOrigin="0.5,0.5" Padding="0" Checked="appPush2TalkCheckBox_Checked"/>
           <TextBox x:Name="appPush2TalkBox" HorizontalAlignment="Left" Margin="121,85,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" Height="20" IsEnabled="False"/>
           <Label Content="App Push 2 talk key" HorizontalAlignment="Left" Margin="10,87,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" HorizontalContentAlignment="Right"/>
           <Label Content="App Push 2 talk" HorizontalAlignment="Left" Margin="31,60,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" HorizontalContentAlignment="Right"/>
-          <Button x:Name="appPush2talkRecordButton" Content="Record" HorizontalAlignment="Left" Margin="226,85,0,0" VerticalAlignment="Top"/>
+          <Button x:Name="appPush2talkRecordButton" Content="Record" HorizontalAlignment="Left" Margin="226,85,0,0" VerticalAlignment="Top" Click="appPush2talkRecordButton_Click"/>
           <Label Content="Audio Out" HorizontalAlignment="Left" Margin="70,169,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0" Width="62" HorizontalContentAlignment="Center"/>
           <ComboBox x:Name="audioOutDeviceBox" HorizontalAlignment="Left" Margin="70,190,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="audioOutDeviceBox_SelectionChanged"/>
           <Label Content="Audio In" HorizontalAlignment="Left" Margin="188,169,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0" Width="62" HorizontalContentAlignment="Center"/>

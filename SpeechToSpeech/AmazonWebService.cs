@@ -18,7 +18,7 @@ namespace SpeechToSpeech
     private AmazonWebService(Settings settings)
     {
       this.settings = settings;
-      client = new AmazonPollyClient(settings.amazonSettings.AccessKeyId, settings.amazonSettings.SecretAccessKey);
+      //client = new AmazonPollyClient(settings.amazonSettings.AccessKeyId, settings.amazonSettings.SecretAccessKey);
     }
 
     public static AmazonWebService Create(Settings settings)

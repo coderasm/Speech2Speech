@@ -19,8 +19,8 @@ namespace SpeechToSpeech
     private GoogleWebService(Settings settings)
     {
       this.settings = settings;
-      toSpeechClient = TextToSpeechClient.Create();
-      toTextClient = SpeechClient.Create();
+      //toSpeechClient = TextToSpeechClient.Create();
+      //toTextClient = SpeechClient.Create();
     }
 
     public static GoogleWebService Create(Settings settings)

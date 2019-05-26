@@ -188,6 +188,7 @@
     </ApplicationDefinition>
     <Compile Include="AmazonWebService.cs" />
     <Compile Include="GoogleWebService.cs" />
+    <Compile Include="Hotkey.cs" />
     <Compile Include="IBMWebService.cs" />
     <Compile Include="ITranscribeAndVocalize.cs" />
     <Compile Include="SettingsService.cs" />

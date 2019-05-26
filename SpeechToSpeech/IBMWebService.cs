@@ -24,18 +24,18 @@ namespace SpeechToSpeech
     private IBMWebService(Settings settings)
     {
       this.settings = settings;
-      textToSpeechTokenOptions = new TokenOptions
-      {
-        IamApiKey = settings.ibmSettings.IamAPIKey,
-        ServiceUrl = settings.ibmSettings.textToSpeechURL
-      };
-      speechToTextTokenOptions = new TokenOptions
-      {
-        IamApiKey = settings.ibmSettings.IamAPIKey,
-        ServiceUrl = settings.ibmSettings.speechToTextURL
-      };
-      textToSpeechClient = new TextToSpeechService(textToSpeechTokenOptions);
-      speechToTextClient = new SpeechToTextService(speechToTextTokenOptions);
+      //textToSpeechTokenOptions = new TokenOptions
+      //{
+      //  IamApiKey = settings.ibmSettings.IamAPIKey,
+      //  ServiceUrl = settings.ibmSettings.textToSpeechURL
+      //};
+      //speechToTextTokenOptions = new TokenOptions
+      //{
+      //  IamApiKey = settings.ibmSettings.IamAPIKey,
+      //  ServiceUrl = settings.ibmSettings.speechToTextURL
+      //};
+      //textToSpeechClient = new TextToSpeechService(textToSpeechTokenOptions);
+      //speechToTextClient = new SpeechToTextService(speechToTextTokenOptions);
     }
 
     public static IBMWebService Create(Settings settings)

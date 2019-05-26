@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -30,6 +31,11 @@ namespace SpeechToSpeech
     private IBMWebService ibmWebService;
     private CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
     private OpenFileDialog openFileDialog = new OpenFileDialog();
+    private bool listeningForPush2Talk = false;
+    private bool listeningForAppPush2Talk = false;
+    private List<Key> keysDown = new List<Key>();
+    private Hotkey push2TalkKeys;
+    private Hotkey appPush2TalkKeys;
 
     public SettingsDialog(
       SettingsService settingsService,
@@ -54,6 +60,7 @@ namespace SpeechToSpeech
       audioInDeviceBox.ItemsSource = audioDevices;
       textLanguageBox.ItemsSource = languages;
       speechLanguageBox.ItemsSource = languages;
+      Applysettings();
     }
 
     private List<KeyValuePair<int, string>> GetAudioDevices()
@@ -70,11 +77,22 @@ namespace SpeechToSpeech
     private void Applysettings()
     {
       push2TalkCheckbox.IsChecked = settingsService.settings.generalSettings.IsPush2Talk;
-      audioInDeviceBox.SelectedValue = settingsService.settings.generalSettings.AudioInDevice;
-      audioOutDeviceBox.SelectedValue = settingsService.settings.generalSettings.AudioOutDevice;
-      textLanguageBox.SelectedValue = settingsService.settings.generalSettings.TextInputLanguage;
-      textLanguageBox.SelectedValue = settingsService.settings.generalSettings.SpeechInputLanguage;
-      populateVoiceLists(settingsService.settings.generalSettings.SpeechInputLanguage);
+      appPush2TalkCheckbox.IsChecked = settingsService.settings.generalSettings.IsAppPush2Talk;
+      audioInDeviceBox.SelectedItem = GetAudioDevices().Where(device =>
+      {
+        return device.Key == settingsService.settings.generalSettings.AudioInDevice;
+      }).First();
+      audioOutDeviceBox.SelectedItem = GetAudioDevices().Where(device =>
+      {
+        return device.Key == settingsService.settings.generalSettings.AudioOutDevice;
+      }).First();
+      textLanguageBox.SelectedItem = settingsService.settings.generalSettings.TextInputLanguage;
+      speechLanguageBox.SelectedItem = settingsService.settings.generalSettings.SpeechInputLanguage;
+      //populateVoiceLists(settingsService.settings.generalSettings.SpeechInputLanguage);
+      push2TalkKeys = new Hotkey(settingsService.settings.generalSettings.Push2TalkKey);
+      push2TalkBox.Text = push2TalkKeys.ToString();
+      appPush2TalkKeys = new Hotkey(settingsService.settings.generalSettings.AppPush2TalkKey);
+      appPush2TalkBox.Text = appPush2TalkKeys.ToString();
     }
 
     #region IDisposable Support
@@ -117,11 +135,16 @@ namespace SpeechToSpeech
       settingsService.settings.generalSettings.IsPush2Talk = ((CheckBox)sender).IsChecked;
     }
 
+    private void appPush2TalkCheckBox_Checked(object sender, RoutedEventArgs e)
+    {
+      settingsService.settings.generalSettings.IsAppPush2Talk = ((CheckBox)sender).IsChecked;
+    }
+
     private void textLanguageBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       var combobox = (ComboBox)sender;
       settingsService.settings.generalSettings.TextInputLanguage = (string)combobox.SelectedValue;
-      populateVoiceLists((string)combobox.SelectedValue);
+      //populateVoiceLists((string)combobox.SelectedValue);
     }
 
     private async void populateVoiceLists(string language)
@@ -198,6 +221,78 @@ namespace SpeechToSpeech
     {
       var combobox = (ComboBox)sender;
       settingsService.settings.generalSettings.AudioInDevice = (int)combobox.SelectedValue;
+    }
+
+    private void push2talkRecordButton_Click(object sender, RoutedEventArgs e)
+    {
+      if (!listeningForAppPush2Talk)
+      {
+        if (listeningForPush2Talk)
+        {
+          KeyDown -= handlePush2TalkKeyDown;
+          KeyUp -= removeDownKey;
+          push2talkRecordButton.Content = "Record";
+          listeningForPush2Talk = false;
+        }
+        else
+        {
+          keysDown.Clear();
+          KeyDown += handlePush2TalkKeyDown;
+          KeyUp += removeDownKey;
+          push2talkRecordButton.Content = "Stop Recording";
+          listeningForPush2Talk = true;
+        }
+      }
+    }
+
+    private void removeDownKey(object sender, KeyEventArgs e)
+    {
+      keysDown = keysDown.Where(key => key != e.Key).ToList();
+    }
+
+    private void handlePush2TalkKeyDown(object sender, KeyEventArgs e)
+    {
+      updateKeysDown(e.Key);
+      push2TalkKeys.Keys = keysDown.Select(key => key).ToList();
+      push2TalkBox.Text = push2TalkKeys.ToString();
+      settingsService.settings.generalSettings.Push2TalkKey = push2TalkKeys.Keys;
+    }
+
+    private void updateKeysDown(Key key)
+    {
+      if (keysDown.Contains(key))
+        return;
+      keysDown.Add(key);
+    }
+
+    private void appPush2talkRecordButton_Click(object sender, RoutedEventArgs e)
+    {
+      if (!listeningForPush2Talk)
+      {
+        if (listeningForAppPush2Talk)
+        {
+          KeyDown -= handleAppPush2TalkKeyDown;
+          KeyUp -= removeDownKey;
+          appPush2talkRecordButton.Content = "Record";
+          listeningForAppPush2Talk = false;
+        }
+        else
+        {
+          keysDown.Clear();
+          KeyDown += handleAppPush2TalkKeyDown;
+          KeyUp += removeDownKey;
+          appPush2talkRecordButton.Content = "Stop Recording";
+          listeningForAppPush2Talk = true;
+        }
+      }
+    }
+
+    private void handleAppPush2TalkKeyDown(object sender, KeyEventArgs e)
+    {
+      updateKeysDown(e.Key);
+      appPush2TalkKeys.Keys = keysDown.Select(key => key).ToList();
+      appPush2TalkBox.Text = appPush2TalkKeys.ToString();
+      settingsService.settings.generalSettings.AppPush2TalkKey = appPush2TalkKeys.Keys;
     }
   }
 

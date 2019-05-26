@@ -11,7 +11,7 @@ namespace SpeechToSpeech
 {
   public class SettingsService
   {
-    private Settings _settings = new Settings();
+    private Settings _settings;
     private string settingsFile = @".\settings.json";
     public Settings settings {
       get {
@@ -33,27 +33,29 @@ namespace SpeechToSpeech
     {
       try
       {
-        var settingsJSON = File.ReadAllText(settingsFile);
+        var settingsJSON = File.ReadAllText(settingsFile, Encoding.Unicode);
         _settings = JsonConvert.DeserializeObject<Settings>(settingsJSON);
+        if (_settings == null)
+          _settings = new Settings();
       }
       catch(FileNotFoundException e)
       {
-        Console.WriteLine("Settings file not found.");
-        MessageBox.Show("Settings file not found.");
+        Console.WriteLine("Settings file not found. Creating one.");
+        MessageBox.Show("Settings file not found. Creating one.");
+        _settings = new Settings();
+        saveSettings();
       }
     }
 
-    public void saveSettings()
+    public async void saveSettings()
     {
       var settingsJSON = JsonConvert.SerializeObject(_settings);
-      var unicodeEncoding = new UnicodeEncoding();
-      var buffer = unicodeEncoding.GetBytes(settingsJSON);
+      var buffer = Encoding.Unicode.GetBytes(settingsJSON);
       try
       {
         using (var fileStream = File.Open(settingsFile, FileMode.Create))
         {
-          fileStream.Seek(0, SeekOrigin.End);
-          fileStream.WriteAsync(buffer, 0, buffer.Length);
+          await fileStream.WriteAsync(buffer, 0, buffer.Length);
         }
       }
       catch(Exception e)
