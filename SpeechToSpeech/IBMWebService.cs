@@ -24,18 +24,34 @@ namespace SpeechToSpeech
     private IBMWebService(Settings settings)
     {
       this.settings = settings;
-      //textToSpeechTokenOptions = new TokenOptions
-      //{
-      //  IamApiKey = settings.ibmSettings.IamAPIKey,
-      //  ServiceUrl = settings.ibmSettings.textToSpeechURL
-      //};
-      //speechToTextTokenOptions = new TokenOptions
-      //{
-      //  IamApiKey = settings.ibmSettings.IamAPIKey,
-      //  ServiceUrl = settings.ibmSettings.speechToTextURL
-      //};
-      //textToSpeechClient = new TextToSpeechService(textToSpeechTokenOptions);
-      //speechToTextClient = new SpeechToTextService(speechToTextTokenOptions);
+      createClients();
+    }
+
+    public void createClients()
+    {
+      try
+      {
+        if (settings.ibmSettings.IamAPIKey != "" && settings.ibmSettings.speechToTextURL != "" && settings.ibmSettings.textToSpeechURL != "")
+        {
+          textToSpeechTokenOptions = new TokenOptions
+          {
+            IamApiKey = settings.ibmSettings.IamAPIKey,
+            ServiceUrl = settings.ibmSettings.textToSpeechURL
+          };
+          speechToTextTokenOptions = new TokenOptions
+          {
+            IamApiKey = settings.ibmSettings.IamAPIKey,
+            ServiceUrl = settings.ibmSettings.speechToTextURL
+          };
+          textToSpeechClient = new TextToSpeechService(textToSpeechTokenOptions);
+          speechToTextClient = new SpeechToTextService(speechToTextTokenOptions);
+        }
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine($"IBM credentials not set. Error: {e.Message}");
+        MessageBox.Show($"IBM credentials not set. Error: {e.Message}");
+      }
     }
 
     public static IBMWebService Create(Settings settings)
@@ -45,6 +61,8 @@ namespace SpeechToSpeech
 
     public async Task<List<Voice>> GetVoices()
     {
+      if (textToSpeechClient == null)
+        return new List<Voice>();
       var voices = await Task.Run(() =>
       {
         return textToSpeechClient.ListVoices();
@@ -54,6 +72,8 @@ namespace SpeechToSpeech
 
     public async Task<List<Voice>> GetVoices(string language)
     {
+      if (textToSpeechClient == null)
+        return new List<Voice>();
       var voices = await Task.Run(() =>
       {
         return textToSpeechClient.ListVoices();
@@ -63,9 +83,11 @@ namespace SpeechToSpeech
 
     public async Task<string> ToAudio(string transcript)
     {
+      if (textToSpeechClient == null)
+        return "";
       var BUFFER_SIZE = 2048;
       var timeStamp = DateTime.Now.ToString("MM-dd-yyyy_HH_mm_ss");
-      var outputFileName = $@".\vocalized/{timeStamp}.mp3";
+      var outputFileName = $@".\vocalized\{timeStamp}.mp3";
       var text = new Text();
       text._Text = transcript;
       try

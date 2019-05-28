@@ -11,7 +11,7 @@ namespace SpeechToSpeech
 {
   public class GoogleSettings
   {
-    public string ServiceAccountKey { get; set; }
+    public string ServiceAccountKey { get; set; } = "";
     public Voice Voice { get; set; }
   }
 }

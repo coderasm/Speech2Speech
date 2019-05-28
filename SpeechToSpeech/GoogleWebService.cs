@@ -1,5 +1,8 @@
-﻿using Google.Cloud.Speech.V1;
+﻿using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Speech.V1;
 using Google.Cloud.TextToSpeech.V1;
+using Grpc.Auth;
+using Grpc.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,8 +22,30 @@ namespace SpeechToSpeech
     private GoogleWebService(Settings settings)
     {
       this.settings = settings;
-      //toSpeechClient = TextToSpeechClient.Create();
-      //toTextClient = SpeechClient.Create();
+      createClients();
+    }
+
+    public void createClients()
+    {
+      try
+      {
+        if (settings.googleSettings.ServiceAccountKey != "")
+        {
+          var credential = GoogleCredential.FromFile(settings.googleSettings.ServiceAccountKey)
+            .CreateScoped(TextToSpeechClient.DefaultScopes);
+          var channel = new Channel(TextToSpeechClient.DefaultEndpoint.ToString(), credential.ToChannelCredentials());
+          toSpeechClient = TextToSpeechClient.Create(channel);
+          credential = GoogleCredential.FromFile(settings.googleSettings.ServiceAccountKey)
+            .CreateScoped(SpeechClient.DefaultScopes);
+          channel = new Channel(SpeechClient.DefaultEndpoint.ToString(), credential.ToChannelCredentials());
+          toTextClient = SpeechClient.Create(channel);
+        }
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine($"Google credentials not set. Error: {e.Message}");
+        MessageBox.Show($"Google credentials not set. Error: {e.Message}");
+      }
     }
 
     public static GoogleWebService Create(Settings settings)
@@ -30,6 +55,8 @@ namespace SpeechToSpeech
 
     public async Task<List<Voice>> GetVoices()
     {
+      if (toSpeechClient == null)
+        return new List<Voice>();
       var response = await toSpeechClient.ListVoicesAsync(new ListVoicesRequest
       {
         LanguageCode = settings.generalSettings.TextInputLanguage
@@ -39,6 +66,8 @@ namespace SpeechToSpeech
 
     public async Task<List<Voice>> GetVoices(string language)
     {
+      if (toSpeechClient == null)
+        return new List<Voice>();
       var response = await toSpeechClient.ListVoicesAsync(new ListVoicesRequest
       {
         LanguageCode = language
@@ -48,9 +77,11 @@ namespace SpeechToSpeech
 
     public async Task<string> ToAudio(string transcript)
     {
+      if (toSpeechClient == null)
+        return "";
       var BUFFER_SIZE = 2048;
       var timeStamp = DateTime.Now.ToString("MM-dd-yyyy_HH_mm_ss");
-      var outputFileName = $@".\vocalized/{timeStamp}.mp3";
+      var outputFileName = $@".\vocalized\{timeStamp}.mp3";
       try
       {
         using (var fileStream = File.Create(outputFileName))
@@ -64,7 +95,8 @@ namespace SpeechToSpeech
             // Note: voices can also be specified by name
             Voice = new VoiceSelectionParams
             {
-              Name = settings.googleSettings.Voice.Name
+              Name = settings.googleSettings.Voice.Name,
+              LanguageCode = settings.generalSettings.TextInputLanguage
             },
             AudioConfig = new AudioConfig
             {

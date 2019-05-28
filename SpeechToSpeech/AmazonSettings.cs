@@ -1,18 +1,13 @@
-﻿using Amazon.Polly.Model;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using Amazon;
+using Amazon.Polly.Model;
 
 namespace SpeechToSpeech
 {
   public class AmazonSettings
   {
-    public string AccessKeyId { get; set; }
-    public string SecretAccessKey { get; set; }
+    public string AccessKeyId { get; set; } = "";
+    public string SecretAccessKey { get; set; } = "";
     public Voice Voice { get; set; }
+    public RegionEndpoint RegionEndpoint { get; set; } = RegionEndpoint.USWest1;
   }
 }

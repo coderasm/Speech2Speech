@@ -1,4 +1,5 @@
-﻿using Amazon.Polly;
+﻿using Amazon;
+using Amazon.Polly;
 using Amazon.Polly.Model;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,25 @@ namespace SpeechToSpeech
     private AmazonWebService(Settings settings)
     {
       this.settings = settings;
-      //client = new AmazonPollyClient(settings.amazonSettings.AccessKeyId, settings.amazonSettings.SecretAccessKey);
+      createClients();
+    }
+
+    public void createClients()
+    {
+      try
+      {
+        if (settings.amazonSettings.AccessKeyId != "" && settings.amazonSettings.SecretAccessKey != "")
+          client = new AmazonPollyClient(
+            settings.amazonSettings.AccessKeyId,
+            settings.amazonSettings.SecretAccessKey,
+            settings.amazonSettings.RegionEndpoint
+            );
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine($"Amazon credentials not set. Error: {e.Message}");
+        MessageBox.Show($"Amazon credentials not set. Error: {e.Message}");
+      }
     }
 
     public static AmazonWebService Create(Settings settings)
@@ -28,6 +47,8 @@ namespace SpeechToSpeech
 
     public async Task<List<Voice>> GetVoices(string language)
     {
+      if (client == null)
+        return new List<Voice>();
       var voiceRequest = new DescribeVoicesRequest();
       voiceRequest.LanguageCode = language;
       return await FetchVoices(voiceRequest);
@@ -35,6 +56,8 @@ namespace SpeechToSpeech
 
     public async Task<List<Voice>> GetVoices()
     {
+      if (client == null)
+        return new List<Voice>();
       var voiceRequest = new DescribeVoicesRequest();
       return await FetchVoices(voiceRequest);
     }
@@ -64,9 +87,11 @@ namespace SpeechToSpeech
 
     public async Task<string> ToAudio(string transcript)
     {
+      if (client == null)
+        return "";
       var BUFFER_SIZE = 2048;
       var timeStamp = DateTime.Now.ToString("MM-dd-yyyy_HH_mm_ss");
-      var outputFileName = $@".\vocalized/{timeStamp}.mp3";
+      var outputFileName = $@".\vocalized\{timeStamp}.mp3";
 
       SynthesizeSpeechRequest synthesizeSpeechRequest = new SynthesizeSpeechRequest();
       synthesizeSpeechRequest.OutputFormat = OutputFormat.Mp3;

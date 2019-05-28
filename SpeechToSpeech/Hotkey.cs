@@ -1,25 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows.Input;
+using WindowsInput;
+using WindowsInput.Native;
 
 namespace SpeechToSpeech
 {
   class Hotkey
   {
-    public List<Key> Keys { get; set; }
+    public List<Key> HotKeys { get; set; }
+    private InputSimulator simulator = new InputSimulator();
 
     public Hotkey(List<Key> keys)
     {
-      Keys = keys;
+      HotKeys = keys;
+    }
+
+    public void BroadcastDown()
+    {
+      HotKeys.ForEach(key =>
+      {
+        var virtualKeyCode = KeyInterop.VirtualKeyFromKey(key);
+        simulator.Keyboard.KeyDown((VirtualKeyCode)virtualKeyCode);
+      });
+    }
+
+    public void BroadcastUp()
+    {
+      HotKeys.ForEach(key =>
+      {
+
+        var virtualKeyCode = KeyInterop.VirtualKeyFromKey(key);
+        simulator.Keyboard.KeyUp((VirtualKeyCode)virtualKeyCode);
+      });
     }
 
     public override string ToString()
     {
       var text = "";
-      Keys.ForEach(key =>
+      HotKeys.ForEach(key =>
       {
         switch (key)
         {

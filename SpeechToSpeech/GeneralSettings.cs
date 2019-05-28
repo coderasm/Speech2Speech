@@ -18,5 +18,6 @@ namespace SpeechToSpeech
     public string TextInputLanguage { get; set; } = CultureInfo.CurrentCulture.Name;
     public int AudioOutDevice { get; set; } = -1;
     public int AudioInDevice { get; set; } = -1;
+    public int ActiveTextToSpeechService { get; set; } = 0;
   }
 }

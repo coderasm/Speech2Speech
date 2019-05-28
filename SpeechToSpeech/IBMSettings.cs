@@ -11,9 +11,9 @@ namespace SpeechToSpeech
 {
   public class IBMSettings
   {
-    public string IamAPIKey { get; set; }
+    public string IamAPIKey { get; set; } = "";
     public Voice Voice { get; set; }
-    public string textToSpeechURL { get; set; }
-    public string speechToTextURL { get; set; }
+    public string textToSpeechURL { get; set; } = "";
+    public string speechToTextURL { get; set; } = "";
   }
 }
