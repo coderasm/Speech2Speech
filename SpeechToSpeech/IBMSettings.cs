@@ -13,7 +13,7 @@ namespace SpeechToSpeech
   {
     public string IamAPIKey { get; set; } = "";
     public Voice Voice { get; set; }
-    public string textToSpeechURL { get; set; } = "";
-    public string speechToTextURL { get; set; } = "";
+    public string textToSpeechURL { get; set; } = $"https://stream.watsonplatform.net/text-to-speech/api";
+    public string speechToTextURL { get; set; } = $"https://stream.watsonplatform.net/speech-to-text/api";
   }
 }

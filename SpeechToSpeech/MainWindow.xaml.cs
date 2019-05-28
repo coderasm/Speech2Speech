@@ -17,14 +17,20 @@ namespace SpeechToSpeech
     private WaveOutEvent outputDevice = null;
     private AudioFileReader audioFile = null;
     private Hotkey hotkeys;
+    private ITranscribeAndVocalize<Voice>[] webServices;
 
     public MainWindow()
     {
       InitializeComponent();
       settingsService = SettingsService.Create();
+      DatabaseService.Initialize(settingsService.settings);
       googleWebService = GoogleWebService.Create(settingsService.settings);
       amazonWebService = AmazonWebService.Create(settingsService.settings);
       ibmWebService = IBMWebService.Create(settingsService.settings);
+      webServices = new ITranscribeAndVocalize<Voice>[]
+      {
+        googleWebService, amazonWebService, ibmWebService
+      };
       createFolders();
     }
 
@@ -48,20 +54,8 @@ namespace SpeechToSpeech
     private async void sendTextButton_Click(object sender, RoutedEventArgs e)
     {
       string audioFile = "";
-      switch (settingsService.settings.generalSettings.ActiveTextToSpeechService)
-      {
-        case 0:
-          audioFile = await googleWebService.ToAudio(textToSendBox.Text);
-          break;
-        case 1:
-          audioFile = await amazonWebService.ToAudio(textToSendBox.Text);
-          break;
-        case 2:
-          audioFile = await ibmWebService.ToAudio(textToSendBox.Text);
-          break;
-        default:
-          break;
-      }
+      var activeService = webServices[settingsService.settings.generalSettings.ActiveTextToSpeechService];
+      audioFile = await activeService.ToAudio(textToSendBox.Text);
       if (audioFile != "")
         playFile(audioFile);
     }

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace SpeechToSpeech
@@ -19,5 +15,6 @@ namespace SpeechToSpeech
     public int AudioOutDevice { get; set; } = -1;
     public int AudioInDevice { get; set; } = -1;
     public int ActiveTextToSpeechService { get; set; } = 0;
+    public string Database { get; set; } = $@".\speechtospeech.sdf";
   }
 }

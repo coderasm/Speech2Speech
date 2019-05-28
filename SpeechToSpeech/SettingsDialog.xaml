@@ -29,7 +29,7 @@
           <ComboBox x:Name="audioOutDeviceBox" HorizontalAlignment="Left" Margin="70,190,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="audioOutDeviceBox_SelectionChanged"/>
           <Label Content="Audio In" HorizontalAlignment="Left" Margin="188,169,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0" Width="62" HorizontalContentAlignment="Center"/>
           <ComboBox x:Name="audioInDeviceBox" HorizontalAlignment="Left" Margin="188,190,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="audioInDeviceBox_SelectionChanged"/>
-          <ComboBox x:Name="textToSpeechServiceBox" HorizontalAlignment="Left" Margin="31,239,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="textToSpeechServiceBox_SelectionChanged"/>
+          <ComboBox x:Name="textToSpeechServiceBox" HorizontalAlignment="Left" Margin="27,239,0,0" VerticalAlignment="Top" Width="85" SelectionChanged="textToSpeechServiceBox_SelectionChanged"/>
         </Grid>
       </TabItem>
       <TabItem Header="Google">

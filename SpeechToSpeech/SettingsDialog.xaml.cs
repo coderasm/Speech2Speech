@@ -281,13 +281,13 @@ namespace SpeechToSpeech
     private void amazonVoiceListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       var listbox = (ListBox)sender;
-      settingsService.settings.amazonSettings.Voice = (Amazon.Polly.Model.Voice)listbox.SelectedValue;
+      settingsService.settings.amazonSettings.Voice = (Voice)listbox.SelectedValue;
     }
 
     private void ibmVoiceListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       var listbox = (ListBox)sender;
-      settingsService.settings.ibmSettings.Voice = (IBM.WatsonDeveloperCloud.TextToSpeech.v1.Model.Voice)listbox.SelectedValue;
+      settingsService.settings.ibmSettings.Voice = (Voice)listbox.SelectedValue;
     }
 
     private void push2talkRecordButton_Click(object sender, RoutedEventArgs e)

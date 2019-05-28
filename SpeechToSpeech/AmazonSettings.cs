@@ -1,5 +1,4 @@
 ﻿using Amazon;
-using Amazon.Polly.Model;
 
 namespace SpeechToSpeech
 {
