@@ -1,11 +1,9 @@
-﻿using Amazon;
-using Amazon.Polly;
+﻿using Amazon.Polly;
 using Amazon.Polly.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -15,6 +13,7 @@ namespace SpeechToSpeech
   {
     private AmazonPollyClient client;
     private Settings settings = new Settings();
+    private List<Voice> voiceCache = new List<Voice>();
 
     private AmazonWebService(Settings settings)
     {
@@ -35,8 +34,8 @@ namespace SpeechToSpeech
       }
       catch (Exception e)
       {
-        Console.WriteLine($"Amazon credentials not set. Error: {e.Message}");
-        MessageBox.Show($"Amazon credentials not set. Error: {e.Message}");
+        Console.WriteLine($"Amazon credentials not set. Error: {e}");
+        MessageBox.Show($"Amazon credentials not set. Error: {e}");
       }
     }
 
@@ -45,44 +44,63 @@ namespace SpeechToSpeech
       return new AmazonWebService(settings);
     }
 
-    public async Task<List<Voice>> GetVoices(string language)
-    {
-      if (client == null)
-        return new List<Voice>();
-      var voiceRequest = new DescribeVoicesRequest();
-      voiceRequest.LanguageCode = language;
-      return await FetchVoices(voiceRequest);
-    }
-
     public async Task<List<Voice>> GetVoices()
     {
       if (client == null)
         return new List<Voice>();
+      var cachedVoices = voiceCache.Where(voice => voice.Language == settings.generalSettings.TextInputLanguage);
+      if (cachedVoices.Count() > 0)
+        return cachedVoices.ToList();
       var voiceRequest = new DescribeVoicesRequest();
-      return await FetchVoices(voiceRequest);
+      voiceRequest.LanguageCode = settings.generalSettings.TextInputLanguage;
+      var fetchedVoices = await FetchVoices(voiceRequest);
+      voiceCache.AddRange(fetchedVoices);
+      return fetchedVoices;
+    }
+
+    public async Task<List<Voice>> GetVoices(string language)
+    {
+      if (client == null)
+        return new List<Voice>();
+      var cachedVoices = voiceCache.Where(voice => voice.Language == language);
+      if (cachedVoices.Count() > 0)
+        return cachedVoices.ToList();
+      var voiceRequest = new DescribeVoicesRequest();
+      voiceRequest.LanguageCode = language;
+      var fetchedVoices = await FetchVoices(voiceRequest);
+      voiceCache.AddRange(fetchedVoices);
+      return fetchedVoices;
     }
 
     public async Task<List<Voice>> FetchVoices(DescribeVoicesRequest voiceRequest)
     {
-      var voices = new List<Voice>();
       try
       {
+        var voices = new List<Amazon.Polly.Model.Voice>();
         string nextToken;
         do
         {
           var allVoicesResult = await client.DescribeVoicesAsync(voiceRequest);
           nextToken = allVoicesResult.NextToken;
           voiceRequest.NextToken = nextToken;
-          voices = allVoicesResult.Voices;
+          voices.AddRange(allVoicesResult.Voices);
         } while (nextToken != null);
-        return voices;
+        return voices.Select(voice =>
+        new Voice
+        {
+          Id = voice.Id,
+          Name = voice.Name,
+          Gender = voice.Gender,
+          Language = voiceRequest.LanguageCode
+        }
+        ).ToList();
       }
       catch (Exception e)
       {
         Console.WriteLine("Exception caught: " + e);
         MessageBox.Show("Exception caught: " + e);
       }
-      return voices;
+      return new List<Voice>();
     }
 
     public async Task<string> ToAudio(string transcript)

@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -18,6 +17,7 @@ namespace SpeechToSpeech
     private TextToSpeechClient toSpeechClient;
     private SpeechClient toTextClient;
     private Settings settings = new Settings();
+    private List<Voice> voiceCache = new List<Voice>();
 
     private GoogleWebService(Settings settings)
     {
@@ -43,8 +43,8 @@ namespace SpeechToSpeech
       }
       catch (Exception e)
       {
-        Console.WriteLine($"Google credentials not set. Error: {e.Message}");
-        MessageBox.Show($"Google credentials not set. Error: {e.Message}");
+        Console.WriteLine($"Google credentials not set. Error: {e}");
+        MessageBox.Show($"Google credentials not set. Error: {e}");
       }
     }
 
@@ -57,22 +57,54 @@ namespace SpeechToSpeech
     {
       if (toSpeechClient == null)
         return new List<Voice>();
-      var response = await toSpeechClient.ListVoicesAsync(new ListVoicesRequest
+      var cachedVoices = voiceCache.Where(voice => voice.Language == settings.generalSettings.TextInputLanguage);
+      if (cachedVoices.Count() > 0)
+        return cachedVoices.ToList();
+      var request = new ListVoicesRequest
       {
         LanguageCode = settings.generalSettings.TextInputLanguage
-      });
-      return response.Voices.Select(voice => voice).ToList();
+      };
+      var fetchedVoices = await FetchVoices(request);
+      voiceCache.AddRange(fetchedVoices);
+      return fetchedVoices;
     }
 
     public async Task<List<Voice>> GetVoices(string language)
     {
       if (toSpeechClient == null)
         return new List<Voice>();
-      var response = await toSpeechClient.ListVoicesAsync(new ListVoicesRequest
+      var cachedVoices = voiceCache.Where(voice => voice.Language == language);
+      if (cachedVoices.Count() > 0)
+        return cachedVoices.ToList();
+      var request = new ListVoicesRequest
       {
         LanguageCode = language
-      });
-      return response.Voices.Select(voice => voice).ToList();
+      };
+      var fetchedVoices = await FetchVoices(request);
+      voiceCache.AddRange(fetchedVoices);
+      return fetchedVoices;
+    }
+
+    private async Task<List<Voice>> FetchVoices(ListVoicesRequest request)
+    {
+      try
+      {
+        var response = await toSpeechClient.ListVoicesAsync(request);
+        return response.Voices.Select(voice =>
+         new Voice
+         {
+           Name = voice.Name,
+           SsmlGender = voice.SsmlGender,
+           Language = request.LanguageCode
+         }
+        ).ToList();
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine("Exception caught: " + e);
+        MessageBox.Show("Exception caught: " + e);
+      }
+      return new List<Voice>();
     }
 
     public async Task<string> ToAudio(string transcript)
@@ -116,7 +148,7 @@ namespace SpeechToSpeech
         }
         return outputFileName;
       }
-      catch(Exception e)
+      catch (Exception e)
       {
         Console.WriteLine("Exception caught: " + e);
         MessageBox.Show("Exception caught: " + e);

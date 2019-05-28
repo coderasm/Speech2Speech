@@ -1,10 +1,8 @@
 ﻿using IBM.WatsonDeveloperCloud.TextToSpeech.v1.Model;
-using IBM.WatsonDeveloperCloud;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using IBM.WatsonDeveloperCloud.Util;
 using IBM.WatsonDeveloperCloud.TextToSpeech.v1;
@@ -20,6 +18,7 @@ namespace SpeechToSpeech
     private TextToSpeechService textToSpeechClient;
     private SpeechToTextService speechToTextClient;
     private Settings settings = new Settings();
+    private List<Voice> voiceCache = new List<Voice>();
 
     private IBMWebService(Settings settings)
     {
@@ -49,8 +48,8 @@ namespace SpeechToSpeech
       }
       catch (Exception e)
       {
-        Console.WriteLine($"IBM credentials not set. Error: {e.Message}");
-        MessageBox.Show($"IBM credentials not set. Error: {e.Message}");
+        Console.WriteLine($"IBM credentials not set. Error: {e}");
+        MessageBox.Show($"IBM credentials not set. Error: {e}");
       }
     }
 
@@ -63,22 +62,50 @@ namespace SpeechToSpeech
     {
       if (textToSpeechClient == null)
         return new List<Voice>();
-      var voices = await Task.Run(() =>
-      {
-        return textToSpeechClient.ListVoices();
-      });
-      return voices._Voices.Where(voice => voice.Language.Contains(settings.generalSettings.TextInputLanguage)).ToList();
+      var cachedVoices = voiceCache.Where(voice => voice.Language == settings.generalSettings.TextInputLanguage);
+      if (cachedVoices.Count() > 0)
+        return cachedVoices.ToList();
+      var fetchedVoices = await FetchVoices(settings.generalSettings.TextInputLanguage);
+      voiceCache.AddRange(fetchedVoices);
+      return fetchedVoices;
     }
 
     public async Task<List<Voice>> GetVoices(string language)
     {
       if (textToSpeechClient == null)
         return new List<Voice>();
-      var voices = await Task.Run(() =>
+      var cachedVoices = voiceCache.Where(voice => voice.Language == language);
+      if (cachedVoices.Count() > 0)
+        return cachedVoices.ToList();
+      var fetchedVoices =  await FetchVoices(language);
+      voiceCache.AddRange(fetchedVoices);
+      return fetchedVoices;
+    }
+
+    private async Task<List<Voice>> FetchVoices(string language)
+    {
+      try
       {
-        return textToSpeechClient.ListVoices();
-      });
-      return voices._Voices.Where(voice => voice.Language.Contains(language)).ToList();
+        var voices = await Task.Run(() =>
+        {
+          return textToSpeechClient.ListVoices();
+        });
+        return voices._Voices.Where(voice => voice.Language.Contains(language))
+        .Select(voice =>
+          new Voice
+          {
+            Name = voice.Name,
+            Gender = voice.Gender,
+            Language = language
+          }
+        ).ToList();
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine("Exception caught: " + e);
+        MessageBox.Show("Exception caught: " + e);
+      }
+      return new List<Voice>();
     }
 
     public async Task<string> ToAudio(string transcript)
