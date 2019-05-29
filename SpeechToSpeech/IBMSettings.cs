@@ -11,7 +11,8 @@ namespace SpeechToSpeech
 {
   public class IBMSettings
   {
-    public string IamAPIKey { get; set; } = "";
+    public string textToSpeechAPIKey { get; set; } = "";
+    public string speechToTextAPIKey { get; set; } = "";
     public Voice Voice { get; set; }
     public string textToSpeechURL { get; set; } = $"https://stream.watsonplatform.net/text-to-speech/api";
     public string speechToTextURL { get; set; } = $"https://stream.watsonplatform.net/speech-to-text/api";

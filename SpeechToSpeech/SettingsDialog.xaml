@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpeechToSpeech"
         mc:Ignorable="d"
-        Title="Settings" Height="392.063" Width="344">
+        Title="Settings" Height="421.352" Width="344">
   <Grid Margin="0,0,2,1">
-    <TabControl HorizontalAlignment="Left" Height="324" VerticalAlignment="Top" Width="322" Margin="3,0,0,0">
+    <TabControl HorizontalAlignment="Left" Height="355" VerticalAlignment="Top" Width="322" Margin="3,0,0,0">
       <TabItem Header="General">
         <Grid Background="White">
           <CheckBox x:Name="push2TalkCheckbox" Content="" HorizontalAlignment="Left" Margin="121,9,0,0" VerticalAlignment="Top" FontSize="8" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" RenderTransformOrigin="0.5,0.5" Padding="0" Checked="push2TalkCheckBox_Checked"/>
@@ -53,19 +53,20 @@
       </TabItem>
       <TabItem Header="IBM" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top">
         <Grid Background="White">
-          <Label x:Name="googleKeyLabel_Copy1" Content="API Key" HorizontalAlignment="Left" Margin="10,2,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
-          <Button x:Name="promptForIBMKey_Copy" Content="Load" HorizontalAlignment="Left" Margin="215,23,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="promptForIBMKey_Click"/>
-          <TextBox x:Name="IBMAccountKeyBox" HorizontalAlignment="Left" Margin="10,23,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20"/>
-          <Label Content="Voices" HorizontalAlignment="Left" Margin="10,149,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
-          <Label x:Name="googleKeyLabel_Copy2" Content="Text to speech URL" HorizontalAlignment="Left" Margin="10,49,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
-          <TextBox x:Name="IBMTexttoSpeechURLBox" HorizontalAlignment="Left" Margin="10,70,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="ibmTextToSpeechURLBox_Changed"/>
-          <Label x:Name="googleKeyLabel_Copy3" Content="Speech to text URL" HorizontalAlignment="Left" Margin="10,97,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
-          <TextBox x:Name="IBMSpeechtoTextURLBox" HorizontalAlignment="Left" Margin="10,118,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="ibmSpeechToTextURLBox_Changed"/>
-          <ListBox x:Name="ibmVoiceListBox" HorizontalAlignment="Left" Height="116" Margin="10,170,0,0" VerticalAlignment="Top" Width="296" SelectionChanged="ibmVoiceListBox_SelectionChanged"/>
+          <Label x:Name="googleKeyLabel_Copy1" Content="Text to speech API Key" HorizontalAlignment="Left" Margin="10,2,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
+          <TextBox x:Name="IBMTextToSpeechAPIKeyBox" HorizontalAlignment="Left" Margin="10,23,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="IBMTextToSpeechAPIKeyBox_TextChanged"/>
+          <Label Content="Voices" HorizontalAlignment="Left" Margin="10,181,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
+          <Label x:Name="googleKeyLabel_Copy2" Content="Text to speech URL" HorizontalAlignment="Left" Margin="10,88,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
+          <TextBox x:Name="IBMTexttoSpeechURLBox" HorizontalAlignment="Left" Margin="10,109,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="ibmTextToSpeechURLBox_Changed"/>
+          <Label x:Name="googleKeyLabel_Copy3" Content="Speech to text URL" HorizontalAlignment="Left" Margin="10,136,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
+          <TextBox x:Name="IBMSpeechtoTextURLBox" HorizontalAlignment="Left" Margin="10,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="ibmSpeechToTextURLBox_Changed"/>
+          <ListBox x:Name="ibmVoiceListBox" HorizontalAlignment="Left" Height="116" Margin="10,202,0,0" VerticalAlignment="Top" Width="296" SelectionChanged="ibmVoiceListBox_SelectionChanged"/>
+          <Label x:Name="googleKeyLabel_Copy4" Content="Speech to text API Key" HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
+          <TextBox x:Name="IBMSpeechToTextAPIKeyBox" HorizontalAlignment="Left" Margin="10,66,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="IBMSpeechToTextAPIKeyBox_TextChanged"/>
         </Grid>
       </TabItem>
     </TabControl>
-    <Button x:Name="saveSettings" Content="Save" HorizontalAlignment="Left" Margin="126,329,0,0" VerticalAlignment="Top" Width="75" Click="SaveSettings_Click"/>
+    <Button x:Name="saveSettings" Content="Save" HorizontalAlignment="Left" Margin="125,360,0,0" VerticalAlignment="Top" Width="75" Click="SaveSettings_Click"/>
 
   </Grid>
 </Window>

@@ -110,7 +110,8 @@ namespace SpeechToSpeech
       googleAccountKeyBox.Text = settingsService.settings.googleSettings.ServiceAccountKey;
       amazonAccountKeyIdBox.Text = settingsService.settings.amazonSettings.AccessKeyId;
       amazonSecretAccessKeyBox.Text = settingsService.settings.amazonSettings.SecretAccessKey;
-      IBMAccountKeyBox.Text = settingsService.settings.ibmSettings.IamAPIKey;
+      IBMTextToSpeechAPIKeyBox.Text = settingsService.settings.ibmSettings.textToSpeechAPIKey;
+      IBMSpeechToTextAPIKeyBox.Text = settingsService.settings.ibmSettings.speechToTextAPIKey;
       IBMTexttoSpeechURLBox.Text = settingsService.settings.ibmSettings.textToSpeechURL;
       IBMSpeechtoTextURLBox.Text = settingsService.settings.ibmSettings.speechToTextURL;
     }
@@ -219,8 +220,7 @@ namespace SpeechToSpeech
     {
       if (openFileDialog.ShowDialog() == true)
       {
-        settingsService.settings.ibmSettings.IamAPIKey = openFileDialog.FileName;
-        ibmWebService.createClients();
+
       }
     }
 
@@ -245,6 +245,18 @@ namespace SpeechToSpeech
     {
       settingsService.settings.amazonSettings.SecretAccessKey = ((TextBox)sender).Text;
       amazonWebService.createClients();
+    }
+
+    private void IBMTextToSpeechAPIKeyBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+      settingsService.settings.ibmSettings.textToSpeechAPIKey = ((TextBox)sender).Text;
+      ibmWebService.createClients();
+    }
+
+    private void IBMSpeechToTextAPIKeyBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+      settingsService.settings.ibmSettings.speechToTextAPIKey = ((TextBox)sender).Text;
+      ibmWebService.createClients();
     }
 
     private void ibmTextToSpeechURLBox_Changed(object sender, TextChangedEventArgs e)

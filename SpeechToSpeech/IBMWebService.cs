@@ -30,16 +30,17 @@ namespace SpeechToSpeech
     {
       try
       {
-        if (settings.ibmSettings.IamAPIKey != "" && settings.ibmSettings.speechToTextURL != "" && settings.ibmSettings.textToSpeechURL != "")
+        if (settings.ibmSettings.textToSpeechAPIKey != "" && settings.ibmSettings.speechToTextAPIKey != "" &&
+          settings.ibmSettings.speechToTextURL != "" && settings.ibmSettings.textToSpeechURL != "")
         {
           textToSpeechTokenOptions = new TokenOptions
           {
-            IamApiKey = settings.ibmSettings.IamAPIKey,
+            IamApiKey = settings.ibmSettings.textToSpeechAPIKey,
             ServiceUrl = settings.ibmSettings.textToSpeechURL
           };
           speechToTextTokenOptions = new TokenOptions
           {
-            IamApiKey = settings.ibmSettings.IamAPIKey,
+            IamApiKey = settings.ibmSettings.speechToTextAPIKey,
             ServiceUrl = settings.ibmSettings.speechToTextURL
           };
           textToSpeechClient = new TextToSpeechService(textToSpeechTokenOptions);
