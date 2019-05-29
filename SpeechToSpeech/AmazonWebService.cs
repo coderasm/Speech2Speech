@@ -48,34 +48,31 @@ namespace SpeechToSpeech
     {
       if (client == null)
         return new List<Voice>();
-      var cachedVoices = voiceCache.Where(voice => voice.Language == settings.generalSettings.TextInputLanguage);
-      if (cachedVoices.Count() > 0)
-        return cachedVoices.ToList();
-      var voiceRequest = new DescribeVoicesRequest();
-      voiceRequest.LanguageCode = settings.generalSettings.TextInputLanguage;
-      var fetchedVoices = await FetchVoices(voiceRequest);
-      voiceCache.AddRange(fetchedVoices);
-      return fetchedVoices;
+      if (voiceCache.Count() == 0)
+        return await FetchVoices(settings.generalSettings.TextInputLanguage);
+      return voiceCache.Where(voice =>
+        voice.Language == settings.generalSettings.TextInputLanguage
+      )
+      .ToList();
     }
 
     public async Task<List<Voice>> GetVoices(string language)
     {
       if (client == null)
         return new List<Voice>();
-      var cachedVoices = voiceCache.Where(voice => voice.Language == language);
-      if (cachedVoices.Count() > 0)
-        return cachedVoices.ToList();
-      var voiceRequest = new DescribeVoicesRequest();
-      voiceRequest.LanguageCode = language;
-      var fetchedVoices = await FetchVoices(voiceRequest);
-      voiceCache.AddRange(fetchedVoices);
-      return fetchedVoices;
+      if (voiceCache.Count() == 0)
+        return await FetchVoices(language);
+      return voiceCache.Where(voice =>
+        voice.Language == language
+      )
+      .ToList();
     }
 
-    public async Task<List<Voice>> FetchVoices(DescribeVoicesRequest voiceRequest)
+    public async Task<List<Voice>> FetchVoices(string language)
     {
       try
       {
+        var voiceRequest = new DescribeVoicesRequest();
         var voices = new List<Amazon.Polly.Model.Voice>();
         string nextToken;
         do
@@ -85,15 +82,16 @@ namespace SpeechToSpeech
           voiceRequest.NextToken = nextToken;
           voices.AddRange(allVoicesResult.Voices);
         } while (nextToken != null);
-        return voices.Select(voice =>
+        voiceCache = voices.Select(voice =>
         new Voice
         {
           Id = voice.Id,
           Name = voice.Name,
           Gender = voice.Gender,
-          Language = voiceRequest.LanguageCode
+          Language = voice.LanguageCode
         }
         ).ToList();
+        return voiceCache.Where(voice => voice.Language == language).ToList();
       }
       catch (Exception e)
       {

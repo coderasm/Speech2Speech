@@ -16,8 +16,8 @@
           <Label Content="Push 2 talk" HorizontalAlignment="Left" Margin="57,8,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" HorizontalContentAlignment="Right"/>
           <Label Content="Text Language" HorizontalAlignment="Left" Margin="56,119,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
           <Label Content="Speech Language" HorizontalAlignment="Left" Margin="169,119,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
-          <ComboBox x:Name="textLanguageBox" HorizontalAlignment="Left" Margin="65,138,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="textLanguageBox_SelectionChanged"/>
-          <ComboBox x:Name="speechLanguageBox" HorizontalAlignment="Left" Margin="187,138,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="speechLanguageBox_SelectionChanged"/>
+          <ComboBox x:Name="textLanguageBox" ItemsSource="{Binding cultures}" HorizontalAlignment="Left" Margin="65,138,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="textLanguageBox_SelectionChanged"/>
+          <ComboBox x:Name="speechLanguageBox" ItemsSource="{Binding cultures}" HorizontalAlignment="Left" Margin="187,138,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="speechLanguageBox_SelectionChanged"/>
           <Button x:Name="push2talkRecordButton" Content="Record" HorizontalAlignment="Left" Margin="226,33,0,0" VerticalAlignment="Top" Click="push2talkRecordButton_Click"/>
           <Label Content="Text to Speach Service" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
           <CheckBox x:Name="appPush2TalkCheckbox" Content="" HorizontalAlignment="Left" Margin="121,61,0,0" VerticalAlignment="Top" FontSize="8" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" RenderTransformOrigin="0.5,0.5" Padding="0" Checked="appPush2TalkCheckBox_Checked"/>
@@ -26,10 +26,10 @@
           <Label Content="App Push 2 talk" HorizontalAlignment="Left" Margin="31,60,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" HorizontalContentAlignment="Right"/>
           <Button x:Name="appPush2talkRecordButton" Content="Record" HorizontalAlignment="Left" Margin="226,85,0,0" VerticalAlignment="Top" Click="appPush2talkRecordButton_Click"/>
           <Label Content="Audio Out" HorizontalAlignment="Left" Margin="70,169,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0" Width="62" HorizontalContentAlignment="Center"/>
-          <ComboBox x:Name="audioOutDeviceBox" HorizontalAlignment="Left" Margin="70,190,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="audioOutDeviceBox_SelectionChanged"/>
+          <ComboBox x:Name="audioOutDeviceBox" ItemsSource="{Binding audioDevices}" DisplayMemberPath="Value" SelectedValuePath="Key" HorizontalAlignment="Left" Margin="70,190,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="audioOutDeviceBox_SelectionChanged"/>
           <Label Content="Audio In" HorizontalAlignment="Left" Margin="188,169,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0" Width="62" HorizontalContentAlignment="Center"/>
-          <ComboBox x:Name="audioInDeviceBox" HorizontalAlignment="Left" Margin="188,190,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="audioInDeviceBox_SelectionChanged"/>
-          <ComboBox x:Name="textToSpeechServiceBox" HorizontalAlignment="Left" Margin="27,239,0,0" VerticalAlignment="Top" Width="85" SelectionChanged="textToSpeechServiceBox_SelectionChanged"/>
+          <ComboBox x:Name="audioInDeviceBox" ItemsSource="{Binding audioDevices}" DisplayMemberPath="Value" SelectedValuePath="Key" HorizontalAlignment="Left" Margin="188,190,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="audioInDeviceBox_SelectionChanged"/>
+          <ComboBox x:Name="textToSpeechServiceBox" DisplayMemberPath="Value" SelectedValuePath="Key" ItemsSource="{Binding webServiceLookup}" HorizontalAlignment="Left" Margin="27,239,0,0" VerticalAlignment="Top" Width="85" SelectionChanged="textToSpeechServiceBox_SelectionChanged"/>
         </Grid>
       </TabItem>
       <TabItem Header="Google">

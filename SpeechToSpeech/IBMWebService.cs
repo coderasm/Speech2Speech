@@ -63,24 +63,24 @@ namespace SpeechToSpeech
     {
       if (textToSpeechClient == null)
         return new List<Voice>();
-      var cachedVoices = voiceCache.Where(voice => voice.Language == settings.generalSettings.TextInputLanguage);
-      if (cachedVoices.Count() > 0)
-        return cachedVoices.ToList();
-      var fetchedVoices = await FetchVoices(settings.generalSettings.TextInputLanguage);
-      voiceCache.AddRange(fetchedVoices);
-      return fetchedVoices;
+      if (voiceCache.Count() == 0)
+        return await FetchVoices(settings.generalSettings.TextInputLanguage);
+      return voiceCache.Where(voice =>
+        voice.Language == settings.generalSettings.TextInputLanguage
+      )
+      .ToList();
     }
 
     public async Task<List<Voice>> GetVoices(string language)
     {
       if (textToSpeechClient == null)
         return new List<Voice>();
-      var cachedVoices = voiceCache.Where(voice => voice.Language == language);
-      if (cachedVoices.Count() > 0)
-        return cachedVoices.ToList();
-      var fetchedVoices =  await FetchVoices(language);
-      voiceCache.AddRange(fetchedVoices);
-      return fetchedVoices;
+      if (voiceCache.Count() == 0)
+        return await FetchVoices(language);
+      return voiceCache.Where(voice =>
+        voice.Language == language
+      )
+      .ToList();
     }
 
     private async Task<List<Voice>> FetchVoices(string language)
@@ -91,15 +91,15 @@ namespace SpeechToSpeech
         {
           return textToSpeechClient.ListVoices();
         });
-        return voices._Voices.Where(voice => voice.Language.Contains(language))
-        .Select(voice =>
+        voiceCache = voices._Voices.Select(voice =>
           new Voice
           {
             Name = voice.Name,
             Gender = voice.Gender,
-            Language = language
+            Language = voice.Language
           }
         ).ToList();
+        return voiceCache.Where(voice => voice.Language == language).ToList();
       }
       catch (Exception e)
       {

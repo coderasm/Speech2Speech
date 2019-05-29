@@ -57,47 +57,41 @@ namespace SpeechToSpeech
     {
       if (toSpeechClient == null)
         return new List<Voice>();
-      var cachedVoices = voiceCache.Where(voice => voice.Language == settings.generalSettings.TextInputLanguage);
-      if (cachedVoices.Count() > 0)
-        return cachedVoices.ToList();
-      var request = new ListVoicesRequest
-      {
-        LanguageCode = settings.generalSettings.TextInputLanguage
-      };
-      var fetchedVoices = await FetchVoices(request);
-      voiceCache.AddRange(fetchedVoices);
-      return fetchedVoices;
+      if (voiceCache.Count() == 0)
+        return await FetchVoices(settings.generalSettings.TextInputLanguage);
+      return voiceCache.Where(voice =>
+        voice.Language.Contains(settings.generalSettings.TextInputLanguage)
+      )
+      .ToList();
     }
 
     public async Task<List<Voice>> GetVoices(string language)
     {
       if (toSpeechClient == null)
         return new List<Voice>();
-      var cachedVoices = voiceCache.Where(voice => voice.Language == language);
-      if (cachedVoices.Count() > 0)
-        return cachedVoices.ToList();
-      var request = new ListVoicesRequest
-      {
-        LanguageCode = language
-      };
-      var fetchedVoices = await FetchVoices(request);
-      voiceCache.AddRange(fetchedVoices);
-      return fetchedVoices;
+      if (voiceCache.Count() == 0)
+        return await FetchVoices(language);
+      return voiceCache.Where(voice =>
+        voice.Language.Contains(language)
+      )
+      .ToList();
     }
 
-    private async Task<List<Voice>> FetchVoices(ListVoicesRequest request)
+    private async Task<List<Voice>> FetchVoices(string language)
     {
       try
       {
+        var request = new ListVoicesRequest();
         var response = await toSpeechClient.ListVoicesAsync(request);
-        return response.Voices.Select(voice =>
+        voiceCache = response.Voices.Select(voice =>
          new Voice
          {
            Name = voice.Name,
            SsmlGender = voice.SsmlGender,
-           Language = request.LanguageCode
+           Language = string.Join(",", voice.LanguageCodes.ToArray())
          }
         ).ToList();
+        return voiceCache.Where(voice => voice.Language.Contains(language)).ToList();
       }
       catch (Exception e)
       {

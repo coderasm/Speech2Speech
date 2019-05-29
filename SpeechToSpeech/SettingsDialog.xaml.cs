@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using NAudio.Wave;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -29,13 +30,15 @@ namespace SpeechToSpeech
     private GoogleWebService googleWebService;
     private AmazonWebService amazonWebService;
     private IBMWebService ibmWebService;
-    private List<KeyValuePair<int, string>> webServiceLookup = new List<KeyValuePair<int, string>>
+    public ObservableCollection<KeyValuePair<int, string>> webServiceLookup { get; set; } = new ObservableCollection<KeyValuePair<int, string>>
       {
         new KeyValuePair<int, string>(0, "Google"),
         new KeyValuePair<int, string>(1, "Amazon"),
         new KeyValuePair<int, string>(2, "IBM")
+
       };
-    private CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
+    public List<KeyValuePair<int, string>> audioDevices { get; set; } = new List<KeyValuePair<int, string>>();
+    public IEnumerable<string> cultures { get; set; } = CultureInfo.GetCultures(CultureTypes.AllCultures).Select(culture => culture.Name);
     private OpenFileDialog openFileDialog = new OpenFileDialog();
     private bool listeningForPush2Talk = false;
     private bool listeningForAppPush2Talk = false;
@@ -50,25 +53,13 @@ namespace SpeechToSpeech
       IBMWebService ibmWebService
       )
     {
+      DataContext = this;
       this.settingsService = settingsService;
       this.googleWebService = googleWebService;
       this.amazonWebService = amazonWebService;
       this.ibmWebService = ibmWebService;
       InitializeComponent();
-      Owner = Application.Current.Windows[0];
-      var languages = cultures.Select(culture => culture.Name);
-      var audioDevices = GetAudioDevices();
-      audioOutDeviceBox.DisplayMemberPath = "Value";
-      audioOutDeviceBox.SelectedValuePath = "Key";
-      audioOutDeviceBox.ItemsSource = audioDevices;
-      audioInDeviceBox.DisplayMemberPath = "Value";
-      audioInDeviceBox.SelectedValuePath = "Key";
-      textToSpeechServiceBox.ItemsSource = webServiceLookup;
-      textToSpeechServiceBox.DisplayMemberPath = "Value";
-      textToSpeechServiceBox.SelectedValuePath = "Key";
-      audioInDeviceBox.ItemsSource = audioDevices;
-      textLanguageBox.ItemsSource = languages;
-      speechLanguageBox.ItemsSource = languages;
+      GetAudioDevices().ForEach(audioDevice => audioDevices.Add(audioDevice));
       Applysettings();
     }
 
@@ -101,7 +92,7 @@ namespace SpeechToSpeech
       }).First();
       textLanguageBox.SelectedItem = settingsService.settings.generalSettings.TextInputLanguage;
       speechLanguageBox.SelectedItem = settingsService.settings.generalSettings.SpeechInputLanguage;
-      populateVoiceLists(settingsService.settings.generalSettings.SpeechInputLanguage);
+      populateVoiceLists(settingsService.settings.generalSettings.TextInputLanguage);
       //googleVoiceListBox.SelectedItem = 
       push2TalkKeys = new Hotkey(settingsService.settings.generalSettings.Push2TalkKey);
       push2TalkBox.Text = push2TalkKeys.ToString();
