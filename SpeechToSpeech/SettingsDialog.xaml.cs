@@ -30,6 +30,7 @@ namespace SpeechToSpeech
     private GoogleWebService googleWebService;
     private AmazonWebService amazonWebService;
     private IBMWebService ibmWebService;
+    public Settings settings { get; set; }
     public ObservableCollection<KeyValuePair<int, string>> webServiceLookup { get; set; } = new ObservableCollection<KeyValuePair<int, string>>
       {
         new KeyValuePair<int, string>(0, "Google"),
@@ -37,7 +38,7 @@ namespace SpeechToSpeech
         new KeyValuePair<int, string>(2, "IBM")
 
       };
-    public List<KeyValuePair<int, string>> audioDevices { get; set; } = new List<KeyValuePair<int, string>>();
+    public ObservableCollection<KeyValuePair<int, string>> audioDevices { get; set; } = new ObservableCollection<KeyValuePair<int, string>>();
     public IEnumerable<string> cultures { get; set; } = CultureInfo.GetCultures(CultureTypes.AllCultures).Select(culture => culture.Name);
     private OpenFileDialog openFileDialog = new OpenFileDialog();
     private bool listeningForPush2Talk = false;
@@ -54,6 +55,7 @@ namespace SpeechToSpeech
       )
     {
       DataContext = this;
+      settings = settingsService.settings;
       this.settingsService = settingsService;
       this.googleWebService = googleWebService;
       this.amazonWebService = amazonWebService;
@@ -76,24 +78,7 @@ namespace SpeechToSpeech
 
     private void Applysettings()
     {
-      push2TalkCheckbox.IsChecked = settingsService.settings.generalSettings.IsPush2Talk;
-      appPush2TalkCheckbox.IsChecked = settingsService.settings.generalSettings.IsAppPush2Talk;
-      audioInDeviceBox.SelectedItem = GetAudioDevices().Where(device =>
-      {
-        return device.Key == settingsService.settings.generalSettings.AudioInDevice;
-      }).First();
-      audioOutDeviceBox.SelectedItem = GetAudioDevices().Where(device =>
-      {
-        return device.Key == settingsService.settings.generalSettings.AudioOutDevice;
-      }).First();
-      textToSpeechServiceBox.SelectedItem = webServiceLookup.Where(webService =>
-      {
-        return webService.Key == settingsService.settings.generalSettings.ActiveTextToSpeechService;
-      }).First();
-      textLanguageBox.SelectedItem = settingsService.settings.generalSettings.TextInputLanguage;
-      speechLanguageBox.SelectedItem = settingsService.settings.generalSettings.SpeechInputLanguage;
       populateVoiceLists(settingsService.settings.generalSettings.TextInputLanguage);
-      //googleVoiceListBox.SelectedItem = 
       push2TalkKeys = new Hotkey(settingsService.settings.generalSettings.Push2TalkKey);
       push2TalkBox.Text = push2TalkKeys.ToString();
       appPush2TalkKeys = new Hotkey(settingsService.settings.generalSettings.AppPush2TalkKey);
@@ -105,58 +90,6 @@ namespace SpeechToSpeech
       IBMSpeechToTextAPIKeyBox.Text = settingsService.settings.ibmSettings.speechToTextAPIKey;
       IBMTexttoSpeechURLBox.Text = settingsService.settings.ibmSettings.textToSpeechURL;
       IBMSpeechtoTextURLBox.Text = settingsService.settings.ibmSettings.speechToTextURL;
-    }
-
-    #region IDisposable Support
-    private bool disposedValue = false; // To detect redundant calls
-
-    protected virtual void Dispose(bool disposing)
-    {
-      if (!disposedValue)
-      {
-        if (disposing)
-        {
-          // TODO: dispose managed state (managed objects).
-        }
-
-        // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-        // TODO: set large fields to null.
-
-        disposedValue = true;
-      }
-    }
-
-    // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-    // ~OptionsDialog() {
-    //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-    //   Dispose(false);
-    // }
-
-    // This code added to correctly implement the disposable pattern.
-    public void Dispose()
-    {
-      // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-      Dispose(true);
-      // TODO: uncomment the following line if the finalizer is overridden above.
-      // GC.SuppressFinalize(this);
-    }
-    #endregion
-
-    private void push2TalkCheckBox_Checked(object sender, RoutedEventArgs e)
-    {
-      settingsService.settings.generalSettings.IsPush2Talk = ((CheckBox)sender).IsChecked;
-    }
-
-    private void appPush2TalkCheckBox_Checked(object sender, RoutedEventArgs e)
-    {
-      settingsService.settings.generalSettings.IsAppPush2Talk = ((CheckBox)sender).IsChecked;
-    }
-
-    private void textLanguageBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      var combobox = (ComboBox)sender;
-      settingsService.settings.generalSettings.TextInputLanguage = (string)combobox.SelectedValue;
-      populateVoiceLists((string)combobox.SelectedValue);
     }
 
     private async void populateVoiceLists(string language)
@@ -189,6 +122,24 @@ namespace SpeechToSpeech
       ibmVoiceListBox.DisplayMemberPath = "Key";
       ibmVoiceListBox.SelectedValuePath = "Value";
     }
+
+    private void push2TalkCheckBox_Checked(object sender, RoutedEventArgs e)
+    {
+      settingsService.settings.generalSettings.IsPush2Talk = ((CheckBox)sender).IsChecked;
+    }
+
+    private void appPush2TalkCheckBox_Checked(object sender, RoutedEventArgs e)
+    {
+      settingsService.settings.generalSettings.IsAppPush2Talk = ((CheckBox)sender).IsChecked;
+    }
+
+    private void textLanguageBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      var combobox = (ComboBox)sender;
+      populateVoiceLists((string)combobox.SelectedValue);
+    }
+
+    
 
     private void speechLanguageBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
@@ -367,6 +318,41 @@ namespace SpeechToSpeech
       appPush2TalkBox.Text = appPush2TalkKeys.ToString();
       settingsService.settings.generalSettings.AppPush2TalkKey = appPush2TalkKeys.HotKeys;
     }
+
+    #region IDisposable Support
+    private bool disposedValue = false; // To detect redundant calls
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (!disposedValue)
+      {
+        if (disposing)
+        {
+          // TODO: dispose managed state (managed objects).
+        }
+
+        // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+        // TODO: set large fields to null.
+
+        disposedValue = true;
+      }
+    }
+
+    // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+    // ~OptionsDialog() {
+    //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+    //   Dispose(false);
+    // }
+
+    // This code added to correctly implement the disposable pattern.
+    public void Dispose()
+    {
+      // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+      Dispose(true);
+      // TODO: uncomment the following line if the finalizer is overridden above.
+      // GC.SuppressFinalize(this);
+    }
+    #endregion
   }
 
 }

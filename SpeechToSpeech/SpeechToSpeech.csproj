@@ -199,6 +199,7 @@
     <Compile Include="IBMWebService.cs" />
     <Compile Include="ITranscribeAndVocalize.cs" />
     <Compile Include="SettingsService.cs" />
+    <Compile Include="SettingsViewModel.cs" />
     <Compile Include="Voice.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
