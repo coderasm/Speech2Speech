@@ -1,6 +1,7 @@
 ﻿using Google.Cloud.TextToSpeech.V1;
 using Microsoft.Win32;
 using NAudio.Wave;
+using SpeechToSpeech.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,6 +19,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Unity;
 
 namespace SpeechToSpeech
 {
@@ -26,241 +28,143 @@ namespace SpeechToSpeech
   /// </summary>
   public partial class SettingsDialog : Window, IDisposable
   {
-    private SettingsService settingsService;
-    private GoogleWebService googleWebService;
-    private AmazonWebService amazonWebService;
-    private IBMWebService ibmWebService;
-    public Settings settings { get; set; }
-    public ObservableCollection<KeyValuePair<int, string>> webServiceLookup { get; set; } = new ObservableCollection<KeyValuePair<int, string>>
-      {
-        new KeyValuePair<int, string>(0, "Google"),
-        new KeyValuePair<int, string>(1, "Amazon"),
-        new KeyValuePair<int, string>(2, "IBM")
-
-      };
-    public ObservableCollection<KeyValuePair<int, string>> audioDevices { get; set; } = new ObservableCollection<KeyValuePair<int, string>>();
-    public IEnumerable<string> cultures { get; set; } = CultureInfo.GetCultures(CultureTypes.AllCultures).Select(culture => culture.Name);
     private OpenFileDialog openFileDialog = new OpenFileDialog();
-    private bool listeningForPush2Talk = false;
-    private bool listeningForAppPush2Talk = false;
-    private List<Key> keysDown = new List<Key>();
-    private Hotkey push2TalkKeys;
-    private Hotkey appPush2TalkKeys;
+
+    [Dependency]
+    public SettingsViewModel ViewModel
+    {
+      set { DataContext = value; }
+      get { return (SettingsViewModel)DataContext; }
+    }
 
     public SettingsDialog(
-      SettingsService settingsService,
-      GoogleWebService googleWebService,
-      AmazonWebService amazonWebService,
-      IBMWebService ibmWebService
       )
     {
-      settings = settingsService.settings;
-      this.settingsService = settingsService;
-      this.googleWebService = googleWebService;
-      this.amazonWebService = amazonWebService;
-      this.ibmWebService = ibmWebService;
       InitializeComponent();
-      GetAudioDevices().ForEach(audioDevice => audioDevices.Add(audioDevice));
-      Applysettings();
-    }
-
-    private List<KeyValuePair<int, string>> GetAudioDevices()
-    {
-      var audioDevices = new List<KeyValuePair<int, string>>();
-      for (int n = -1; n < WaveOut.DeviceCount; n++)
-      {
-        var caps = WaveOut.GetCapabilities(n);
-        audioDevices.Add(new KeyValuePair<int, string>(n, caps.ProductName));
-      }
-      return audioDevices;
-    }
-
-    private void Applysettings()
-    {
-      populateVoiceLists(settingsService.settings.generalSettings.TextInputLanguage);
-      push2TalkKeys = new Hotkey(settingsService.settings.generalSettings.Push2TalkKey);
-      push2TalkBox.Text = push2TalkKeys.ToString();
-      appPush2TalkKeys = new Hotkey(settingsService.settings.generalSettings.AppPush2TalkKey);
-      appPush2TalkBox.Text = appPush2TalkKeys.ToString();
-      googleAccountKeyBox.Text = settingsService.settings.googleSettings.ServiceAccountKey;
-      amazonAccountKeyIdBox.Text = settingsService.settings.amazonSettings.AccessKeyId;
-      amazonSecretAccessKeyBox.Text = settingsService.settings.amazonSettings.SecretAccessKey;
-      IBMTextToSpeechAPIKeyBox.Text = settingsService.settings.ibmSettings.textToSpeechAPIKey;
-      IBMSpeechToTextAPIKeyBox.Text = settingsService.settings.ibmSettings.speechToTextAPIKey;
-      IBMTexttoSpeechURLBox.Text = settingsService.settings.ibmSettings.textToSpeechURL;
-      IBMSpeechtoTextURLBox.Text = settingsService.settings.ibmSettings.speechToTextURL;
-    }
-
-    private async void populateVoiceLists(string language)
-    {
-      var googleVoices = await googleWebService.GetVoices(language);
-      var googleVoicesMapped = googleVoices.Select(voice => new
-      {
-        Key = voice.Name + ", " + voice.SsmlGender,
-        Value = voice
-      });
-      googleVoiceListBox.ItemsSource = googleVoicesMapped;
-      googleVoiceListBox.DisplayMemberPath = "Key";
-      googleVoiceListBox.SelectedValuePath = "Value";
-      var amazonVoices = await amazonWebService.GetVoices(language);
-      var amazonVoicesMapped = amazonVoices.Select(voice => new
-      {
-        Key = voice.Name + ", " + voice.Gender,
-        Value = voice
-      });
-      amazonVoiceListBox.ItemsSource = amazonVoicesMapped;
-      amazonVoiceListBox.DisplayMemberPath = "Key";
-      amazonVoiceListBox.SelectedValuePath = "Value";
-      var ibmVoices = await ibmWebService.GetVoices(language);
-      var ibmVoicesMapped = ibmVoices.Select(voice => new
-      {
-        Key = voice.Name + ", " + voice.Gender,
-        Value = voice
-      });
-      ibmVoiceListBox.ItemsSource = ibmVoicesMapped;
-      ibmVoiceListBox.DisplayMemberPath = "Key";
-      ibmVoiceListBox.SelectedValuePath = "Value";
     }
 
     private void push2TalkCheckBox_Checked(object sender, RoutedEventArgs e)
     {
-      settingsService.settings.generalSettings.IsPush2Talk = ((CheckBox)sender).IsChecked;
+      ViewModel.settings.generalSettings.IsPush2Talk = ((CheckBox)sender).IsChecked;
     }
 
     private void appPush2TalkCheckBox_Checked(object sender, RoutedEventArgs e)
     {
-      settingsService.settings.generalSettings.IsAppPush2Talk = ((CheckBox)sender).IsChecked;
+      ViewModel.settings.generalSettings.IsAppPush2Talk = ((CheckBox)sender).IsChecked;
     }
 
     private void textLanguageBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       var combobox = (ComboBox)sender;
-      populateVoiceLists((string)combobox.SelectedValue);
+      ViewModel.UpdateVoices((string)combobox.SelectedValue);
     }
 
-    
 
     private void speechLanguageBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      var combobox = (ComboBox)sender;
-      settingsService.settings.generalSettings.SpeechInputLanguage = (string)combobox.SelectedValue;
+      ViewModel.settings.generalSettings.SpeechInputLanguage = (string)((ComboBox)sender).SelectedValue;
     }
 
     private void promptForGoogleKey_Click(object sender, RoutedEventArgs e)
     {
       if (openFileDialog.ShowDialog() == true)
       {
-        settingsService.settings.googleSettings.ServiceAccountKey = openFileDialog.FileName;
-        googleAccountKeyBox.Text = openFileDialog.FileName;
-        Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", openFileDialog.FileName);
-        googleWebService.createClients();
-      }
-    }
-
-    private void promptForIBMKey_Click(object sender, RoutedEventArgs e)
-    {
-      if (openFileDialog.ShowDialog() == true)
-      {
-
+        ViewModel.settings.googleSettings.ServiceAccountKey = openFileDialog.FileName;
+        ViewModel.UpdateGoogleWebService();
       }
     }
 
     private void SaveSettings_Click(object sender, RoutedEventArgs e)
     {
-      settingsService.SaveSettings();
+      ViewModel.SaveSettings();
     }
 
     private void audioOutDeviceBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       var combobox = (ComboBox)sender;
-      settingsService.settings.generalSettings.AudioOutDevice = (int)combobox.SelectedValue;
+      ViewModel.settings.generalSettings.AudioOutDevice = (int)combobox.SelectedValue;
     }
 
     private void amazonAccessKeyId_Changed(object sender, TextChangedEventArgs e)
     {
-      settingsService.settings.amazonSettings.AccessKeyId = ((TextBox)sender).Text;
-      amazonWebService.createClients();
+      ViewModel.settings.amazonSettings.AccessKeyId = ((TextBox)sender).Text;
+      ViewModel.UpdateAmazonWebService();
     }
 
     private void amazonSecretAccessKey_Changed(object sender, TextChangedEventArgs e)
     {
-      settingsService.settings.amazonSettings.SecretAccessKey = ((TextBox)sender).Text;
-      amazonWebService.createClients();
+      ViewModel.settings.amazonSettings.SecretAccessKey = ((TextBox)sender).Text;
+      ViewModel.UpdateAmazonWebService();
     }
 
     private void IBMTextToSpeechAPIKeyBox_TextChanged(object sender, TextChangedEventArgs e)
     {
-      settingsService.settings.ibmSettings.textToSpeechAPIKey = ((TextBox)sender).Text;
-      ibmWebService.createClients();
+      ViewModel.settings.ibmSettings.textToSpeechAPIKey = ((TextBox)sender).Text;
+      ViewModel.UpdateIBMWebService();
     }
 
     private void IBMSpeechToTextAPIKeyBox_TextChanged(object sender, TextChangedEventArgs e)
     {
-      settingsService.settings.ibmSettings.speechToTextAPIKey = ((TextBox)sender).Text;
-      ibmWebService.createClients();
+      ViewModel.settings.ibmSettings.speechToTextAPIKey = ((TextBox)sender).Text;
+      ViewModel.UpdateIBMWebService();
     }
 
     private void ibmTextToSpeechURLBox_Changed(object sender, TextChangedEventArgs e)
     {
-      settingsService.settings.ibmSettings.textToSpeechURL = ((TextBox)sender).Text;
-      ibmWebService.createClients();
+      ViewModel.settings.ibmSettings.textToSpeechURL = ((TextBox)sender).Text;
+      ViewModel.UpdateIBMWebService();
     }
 
     private void ibmSpeechToTextURLBox_Changed(object sender, TextChangedEventArgs e)
     {
-      settingsService.settings.ibmSettings.speechToTextURL = ((TextBox)sender).Text;
-      ibmWebService.createClients();
+      ViewModel.settings.ibmSettings.speechToTextURL = ((TextBox)sender).Text;
+      ViewModel.UpdateIBMWebService();
     }
 
     private void audioInDeviceBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      var combobox = (ComboBox)sender;
-      settingsService.settings.generalSettings.AudioInDevice = (int)combobox.SelectedValue;
+      ViewModel.settings.generalSettings.AudioInDevice = (int)((ComboBox)sender).SelectedValue;
     }
 
     private void textToSpeechServiceBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      var combobox = (ComboBox)sender;
-      settingsService.settings.generalSettings.ActiveTextToSpeechService = (int)combobox.SelectedValue;
+      ViewModel.settings.generalSettings.ActiveTextToSpeechService = (int)((ComboBox)sender).SelectedValue;
     }
 
 
     private void googleVoiceListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      var listbox = (ListBox)sender;
-      settingsService.settings.googleSettings.Voice = (Voice)listbox.SelectedValue;
+      ViewModel.settings.googleSettings.Voice = (Voice)((ListBox)sender).SelectedValue;
     }
 
     private void amazonVoiceListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      var listbox = (ListBox)sender;
-      settingsService.settings.amazonSettings.Voice = (Voice)listbox.SelectedValue;
+      ViewModel.settings.amazonSettings.Voice = (Voice)((ListBox)sender).SelectedValue;
     }
 
     private void ibmVoiceListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      var listbox = (ListBox)sender;
-      settingsService.settings.ibmSettings.Voice = (Voice)listbox.SelectedValue;
+      ViewModel.settings.ibmSettings.Voice = (Voice)((ListBox)sender).SelectedValue;
     }
 
     private void push2talkRecordButton_Click(object sender, RoutedEventArgs e)
     {
-      if (!listeningForAppPush2Talk)
+      if (!ViewModel.ListeningForAppPush2Talk)
       {
-        if (listeningForPush2Talk)
+        if (ViewModel.ListeningForPush2Talk)
         {
-          KeyDown -= handlePush2TalkKeyDown;
+          keyDownLamda = (action)
           KeyUp -= removeDownKey;
           push2talkRecordButton.Content = "Record";
-          listeningForPush2Talk = false;
+          ViewModel.ListeningForPush2Talk = false;
         }
         else
         {
-          keysDown.Clear();
+          ViewModel.KeysDown.Clear();
           KeyDown += handlePush2TalkKeyDown;
           KeyUp += removeDownKey;
           push2talkRecordButton.Content = "Stop Recording";
-          listeningForPush2Talk = true;
+          ViewModel.ListeningForPush2Talk = true;
         }
       }
     }
@@ -268,54 +172,41 @@ namespace SpeechToSpeech
     private void removeDownKey(object sender, KeyEventArgs e)
     {
       var keyUp = e.Key == Key.System ? e.SystemKey : e.Key;
-      keysDown = keysDown.Where(key => key != keyUp).ToList();
+      ViewModel.KeysDown = ViewModel.KeysDown.Where(key => key != keyUp).ToList();
     }
 
     private void handlePush2TalkKeyDown(object sender, KeyEventArgs e)
     {
-      var keyDown = e.Key == Key.System ? e.SystemKey : e.Key;
-      updateKeysDown(keyDown);
-      push2TalkKeys.HotKeys = keysDown.Select(key => key).ToList();
-      push2TalkBox.Text = push2TalkKeys.ToString();
-      settingsService.settings.generalSettings.Push2TalkKey = push2TalkKeys.HotKeys;
-    }
-
-    private void updateKeysDown(Key key)
-    {
-      if (keysDown.Contains(key))
-        return;
-      keysDown.Add(key);
+      var key = e.Key == Key.System ? e.SystemKey : e.Key;
+      ViewModel.UpdatePush2TalkKeys(key);
     }
 
     private void appPush2talkRecordButton_Click(object sender, RoutedEventArgs e)
     {
-      if (!listeningForPush2Talk)
+      if (!ViewModel.ListeningForPush2Talk)
       {
-        if (listeningForAppPush2Talk)
+        if (ViewModel.ListeningForAppPush2Talk)
         {
           KeyDown -= handleAppPush2TalkKeyDown;
           KeyUp -= removeDownKey;
           appPush2talkRecordButton.Content = "Record";
-          listeningForAppPush2Talk = false;
+          ViewModel.ListeningForAppPush2Talk = false;
         }
         else
         {
-          keysDown.Clear();
+          ViewModel.KeysDown.Clear();
           KeyDown += handleAppPush2TalkKeyDown;
           KeyUp += removeDownKey;
           appPush2talkRecordButton.Content = "Stop Recording";
-          listeningForAppPush2Talk = true;
+          ViewModel.ListeningForAppPush2Talk = true;
         }
       }
     }
 
     private void handleAppPush2TalkKeyDown(object sender, KeyEventArgs e)
     {
-      var keyDown = e.Key == Key.System ? e.SystemKey : e.Key;
-      updateKeysDown(keyDown);
-      appPush2TalkKeys.HotKeys = keysDown.Select(key => key).ToList();
-      appPush2TalkBox.Text = appPush2TalkKeys.ToString();
-      settingsService.settings.generalSettings.AppPush2TalkKey = appPush2TalkKeys.HotKeys;
+      var key = e.Key == Key.System ? e.SystemKey : e.Key;
+      ViewModel.UpdateAppPush2TalkKeys(key);
     }
 
     #region IDisposable Support

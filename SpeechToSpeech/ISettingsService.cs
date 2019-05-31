@@ -1,6 +1,6 @@
 ﻿namespace SpeechToSpeech
 {
-  interface ISettingsService
+  public interface ISettingsService
   {
     Settings settings { get; }
     void LoadSettings();

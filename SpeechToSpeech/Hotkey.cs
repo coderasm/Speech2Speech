@@ -5,7 +5,7 @@ using WindowsInput.Native;
 
 namespace SpeechToSpeech
 {
-  class Hotkey
+  public class Hotkey
   {
     public List<Key> HotKeys { get; set; }
     private InputSimulator simulator = new InputSimulator();

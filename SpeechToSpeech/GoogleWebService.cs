@@ -31,6 +31,7 @@ namespace SpeechToSpeech
       {
         if (settings.googleSettings.ServiceAccountKey != "")
         {
+          //Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", settings.googleSettings.ServiceAccountKey);
           var credential = GoogleCredential.FromFile(settings.googleSettings.ServiceAccountKey)
             .CreateScoped(TextToSpeechClient.DefaultScopes);
           var channel = new Channel(TextToSpeechClient.DefaultEndpoint.ToString(), credential.ToChannelCredentials());

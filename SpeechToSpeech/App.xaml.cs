@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpeechToSpeech.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Unity;
+using Unity.Injection;
 
 namespace SpeechToSpeech
 {
@@ -19,6 +21,9 @@ namespace SpeechToSpeech
       IUnityContainer container = new UnityContainer();
       container.RegisterType<ISettingsService, SettingsService>();
       container.RegisterType<IAudioService, AudioService>();
+      container.RegisterType<ITranscribeAndVocalize<Voice>, GoogleWebService>("GoogleWebService");
+      container.RegisterType<ITranscribeAndVocalize<Voice>, AmazonWebService>("AmazonWebService");
+      container.RegisterType<ITranscribeAndVocalize<Voice>, IBMWebService>("IBMWebService");
 
       MainWindow mainWindow = container.Resolve<MainWindow>();
       mainWindow.Show();
