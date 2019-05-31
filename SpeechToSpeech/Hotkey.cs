@@ -10,9 +10,14 @@ namespace SpeechToSpeech
     public List<Key> HotKeys { get; set; }
     private InputSimulator simulator = new InputSimulator();
 
-    public Hotkey(List<Key> keys)
+    private Hotkey(List<Key> keys)
     {
       HotKeys = keys;
+    }
+
+    public static Hotkey Create(List<Key> keys)
+    {
+      return new Hotkey(keys);
     }
 
     public void BroadcastDown()

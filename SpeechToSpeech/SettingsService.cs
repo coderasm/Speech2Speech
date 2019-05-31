@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace SpeechToSpeech
 {
-  public class SettingsService
+  public class SettingsService: ISettingsService
   {
     private Settings _settings;
     private string settingsFile = @".\settings.json";
@@ -21,7 +21,7 @@ namespace SpeechToSpeech
 
     private SettingsService()
     {
-      loadSettings();
+      LoadSettings();
     }
 
     public static SettingsService Create()
@@ -29,7 +29,7 @@ namespace SpeechToSpeech
       return new SettingsService();
     }
 
-    public void loadSettings()
+    public void LoadSettings()
     {
       try
       {
@@ -43,11 +43,11 @@ namespace SpeechToSpeech
         Console.WriteLine("Settings file not found. Creating one.");
         MessageBox.Show("Settings file not found. Creating one.");
         _settings = new Settings();
-        saveSettings();
+        SaveSettings();
       }
     }
 
-    public async void saveSettings()
+    public async void SaveSettings()
     {
       var settingsJSON = JsonConvert.SerializeObject(_settings);
       var buffer = Encoding.Unicode.GetBytes(settingsJSON);

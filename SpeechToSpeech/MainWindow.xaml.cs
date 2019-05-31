@@ -14,14 +14,14 @@ namespace SpeechToSpeech
     private GoogleWebService googleWebService;
     private AmazonWebService amazonWebService;
     private IBMWebService ibmWebService;
-    private WaveOutEvent outputDevice = null;
-    private AudioFileReader audioFile = null;
     private Hotkey hotkeys;
     private ITranscribeAndVocalize<Voice>[] webServices;
+    private IAudioService audioService;
 
-    public MainWindow()
+    public MainWindow(IAudioService audioService)
     {
       InitializeComponent();
+      this.audioService = audioService;
       settingsService = SettingsService.Create();
       DatabaseService.Initialize(settingsService.settings);
       googleWebService = GoogleWebService.Create(settingsService.settings);
@@ -47,7 +47,7 @@ namespace SpeechToSpeech
       OptionsDialog = new SettingsDialog(settingsService, googleWebService, amazonWebService, ibmWebService);
       if (OptionsDialog.ShowDialog() == true)
       {
-        settingsService.saveSettings();
+        settingsService.SaveSettings();
       }
     }
 
@@ -62,33 +62,16 @@ namespace SpeechToSpeech
 
     private void playFile(string audioFileName)
     {
-      if (outputDevice == null)
-      {
-        outputDevice = new WaveOutEvent() { DeviceNumber = settingsService.settings.generalSettings.AudioOutDevice };
-        outputDevice.PlaybackStopped += OnPlaybackStopped;
-      }
-      if (audioFile == null)
-      {
-        audioFile = new AudioFileReader(audioFileName);
-        outputDevice.Init(audioFile);
-      }
-      hotkeys = new Hotkey(settingsService.settings.generalSettings.AppPush2TalkKey);
-      hotkeys.BroadcastDown();
-      outputDevice.Play();
-    }
-
-    private void OnPlaybackStopped(object sender, StoppedEventArgs args)
-    {
-      hotkeys.BroadcastUp();
-      outputDevice.Dispose();
-      outputDevice = null;
-      audioFile.Dispose();
-      audioFile = null;
+      hotkeys = Hotkey.Create(settingsService.settings.generalSettings.AppPush2TalkKey);
+      audioService
+        .OnPlay(() => hotkeys.BroadcastDown())
+        .OnPlayStopped(() => hotkeys.BroadcastUp())
+        .Play(audioFileName, settingsService.settings.generalSettings.AudioOutDevice);
     }
 
     private void OnButtonStopClick(object sender, StoppedEventArgs args)
     {
-      outputDevice?.Stop();
+      audioService.Stop();
     }
   }
 }

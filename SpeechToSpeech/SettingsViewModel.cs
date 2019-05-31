@@ -8,9 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace SpeechToSpeech
+namespace SpeechToSpeech.ViewModels
 {
-  class SettingsViewModel : INotifyPropertyChanged
+  public class SettingsViewModel : INotifyPropertyChanged
   {
     public event PropertyChangedEventHandler PropertyChanged;
     private SettingsService settingsService;

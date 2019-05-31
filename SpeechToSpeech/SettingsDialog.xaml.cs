@@ -54,7 +54,6 @@ namespace SpeechToSpeech
       IBMWebService ibmWebService
       )
     {
-      DataContext = this;
       settings = settingsService.settings;
       this.settingsService = settingsService;
       this.googleWebService = googleWebService;
@@ -168,7 +167,7 @@ namespace SpeechToSpeech
 
     private void SaveSettings_Click(object sender, RoutedEventArgs e)
     {
-      settingsService.saveSettings();
+      settingsService.SaveSettings();
     }
 
     private void audioOutDeviceBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
