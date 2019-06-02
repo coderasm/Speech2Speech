@@ -1,4 +1,4 @@
-﻿namespace SpeechToSpeech
+﻿namespace SpeechToSpeech.Services
 {
   public interface ISettingsService
   {

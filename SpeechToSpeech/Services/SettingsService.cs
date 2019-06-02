@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace SpeechToSpeech
+namespace SpeechToSpeech.Services
 {
   public class SettingsService: ISettingsService
   {
@@ -19,14 +19,9 @@ namespace SpeechToSpeech
       }
     }
 
-    private SettingsService()
+    public SettingsService()
     {
       LoadSettings();
-    }
-
-    public static SettingsService Create()
-    {
-      return new SettingsService();
     }
 
     public void LoadSettings()

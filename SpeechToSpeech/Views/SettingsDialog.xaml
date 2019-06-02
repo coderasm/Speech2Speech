@@ -1,69 +1,67 @@
-﻿<Window x:Class="SpeechToSpeech.SettingsDialog"
+﻿<Window x:Name="SettingsWindow" x:Class="SpeechToSpeech.Views.SettingsDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SpeechToSpeech"
-        DataContext="{StaticResource SettingsViewModel}"
         mc:Ignorable="d"
-        Title="Settings" Height="421.352" Width="344">
+        Title="Settings" Height="421.352" Width="344" Loaded="SettingsWindow_Loaded">
   <Grid Margin="0,0,2,1">
     <TabControl HorizontalAlignment="Left" Height="355" VerticalAlignment="Top" Width="322" Margin="3,0,0,0">
       <TabItem Header="General">
         <Grid Background="White">
-          <CheckBox x:Name="push2TalkCheckbox" IsChecked="{Binding Path=settings.generalSettings.IsPush2Talk}" Content="" HorizontalAlignment="Left" Margin="121,9,0,0" VerticalAlignment="Top" FontSize="8" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" RenderTransformOrigin="0.5,0.5" Padding="0" Checked="push2TalkCheckBox_Checked"/>
-          <TextBox x:Name="push2TalkBox" HorizontalAlignment="Left" Margin="121,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" Height="20" IsEnabled="False"/>
+          <CheckBox x:Name="push2TalkCheckbox" IsChecked="{Binding Path=settings.generalSettings.IsPush2Talk}" Content="" HorizontalAlignment="Left" Margin="121,9,0,0" VerticalAlignment="Top" FontSize="8" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" RenderTransformOrigin="0.5,0.5" Padding="0"/>
+          <TextBox x:Name="push2TalkBox" Text="{Binding Path=Push2TalkKeys.Printed, Mode=OneWay}" HorizontalAlignment="Left" Margin="121,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" Height="20" IsEnabled="False"/>
           <Label Content="Push 2 talk key" HorizontalAlignment="Left" Margin="19,35,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" Width="100" HorizontalContentAlignment="Right"/>
           <Label Content="Push 2 talk" HorizontalAlignment="Left" Margin="57,8,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" HorizontalContentAlignment="Right"/>
           <Label Content="Text Language" HorizontalAlignment="Left" Margin="56,119,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
           <Label Content="Speech Language" HorizontalAlignment="Left" Margin="169,119,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
           <ComboBox x:Name="textLanguageBox" ItemsSource="{Binding cultures}" SelectedItem="{Binding Path=settings.generalSettings.TextInputLanguage, Mode=TwoWay}" HorizontalAlignment="Left" Margin="65,138,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="textLanguageBox_SelectionChanged"/>
-          <ComboBox x:Name="speechLanguageBox" ItemsSource="{Binding cultures}" SelectedItem="{Binding Path=settings.generalSettings.SpeechInputLanguage, Mode=TwoWay}" HorizontalAlignment="Left" Margin="187,138,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="speechLanguageBox_SelectionChanged"/>
+          <ComboBox x:Name="speechLanguageBox" ItemsSource="{Binding cultures}" SelectedItem="{Binding Path=settings.generalSettings.SpeechInputLanguage, Mode=TwoWay}" HorizontalAlignment="Left" Margin="187,138,0,0" VerticalAlignment="Top" Width="62"/>
           <Button x:Name="push2talkRecordButton" Content="Record" HorizontalAlignment="Left" Margin="226,33,0,0" VerticalAlignment="Top" Click="push2talkRecordButton_Click"/>
           <Label Content="Text to Speach Service" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
-          <CheckBox x:Name="appPush2TalkCheckbox" Content="" IsChecked="{Binding Path=settings.generalSettings.IsAppPush2Talk}" HorizontalAlignment="Left" Margin="121,61,0,0" VerticalAlignment="Top" FontSize="8" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" RenderTransformOrigin="0.5,0.5" Padding="0" Checked="appPush2TalkCheckBox_Checked"/>
-          <TextBox x:Name="appPush2TalkBox" HorizontalAlignment="Left" Margin="121,85,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" Height="20" IsEnabled="False"/>
+          <CheckBox x:Name="appPush2TalkCheckbox" Content="" IsChecked="{Binding Path=settings.generalSettings.IsAppPush2Talk}" HorizontalAlignment="Left" Margin="121,61,0,0" VerticalAlignment="Top" FontSize="8" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" RenderTransformOrigin="0.5,0.5" Padding="0"/>
+          <TextBox x:Name="appPush2TalkBox" Text="{Binding Path=AppPush2TalkKeys.Printed, Mode=OneWay}" HorizontalAlignment="Left" Margin="121,85,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" Height="20" IsEnabled="False"/>
           <Label Content="App Push 2 talk key" HorizontalAlignment="Left" Margin="10,87,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" HorizontalContentAlignment="Right"/>
           <Label Content="App Push 2 talk" HorizontalAlignment="Left" Margin="31,60,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" HorizontalContentAlignment="Right"/>
           <Button x:Name="appPush2talkRecordButton" Content="Record" HorizontalAlignment="Left" Margin="226,85,0,0" VerticalAlignment="Top" Click="appPush2talkRecordButton_Click"/>
           <Label Content="Audio Out" HorizontalAlignment="Left" Margin="70,169,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0" Width="62" HorizontalContentAlignment="Center"/>
-          <ComboBox x:Name="audioOutDeviceBox" ItemsSource="{Binding audioDevices}" SelectedValue="{Binding Path=settings.generalSettings.AudioOutDevice, Mode=TwoWay}" DisplayMemberPath="Value" SelectedValuePath="Key" HorizontalAlignment="Left" Margin="70,190,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="audioOutDeviceBox_SelectionChanged"/>
+          <ComboBox x:Name="audioOutDeviceBox" ItemsSource="{Binding audioDevices}" SelectedValue="{Binding Path=settings.generalSettings.AudioOutDevice, Mode=TwoWay}" DisplayMemberPath="Value" SelectedValuePath="Key" HorizontalAlignment="Left" Margin="70,190,0,0" VerticalAlignment="Top" Width="62"/>
           <Label Content="Audio In" HorizontalAlignment="Left" Margin="188,169,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0" Width="62" HorizontalContentAlignment="Center"/>
-          <ComboBox x:Name="audioInDeviceBox" ItemsSource="{Binding audioDevices}" SelectedValue="{Binding Path=settings.generalSettings.AudioInDevice, Mode=TwoWay}" DisplayMemberPath="Value" SelectedValuePath="Key" HorizontalAlignment="Left" Margin="188,190,0,0" VerticalAlignment="Top" Width="62" SelectionChanged="audioInDeviceBox_SelectionChanged"/>
-          <ComboBox x:Name="textToSpeechServiceBox" DisplayMemberPath="Value" SelectedValuePath="Key" ItemsSource="{Binding webServiceLookup}" SelectedValue="{Binding Path=settings.generalSettings.ActiveTextToSpeechService, Mode=TwoWay}" HorizontalAlignment="Left" Margin="27,239,0,0" VerticalAlignment="Top" Width="85" SelectionChanged="textToSpeechServiceBox_SelectionChanged"/>
+          <ComboBox x:Name="audioInDeviceBox" ItemsSource="{Binding audioDevices}" SelectedValue="{Binding Path=settings.generalSettings.AudioInDevice, Mode=TwoWay}" DisplayMemberPath="Value" SelectedValuePath="Key" HorizontalAlignment="Left" Margin="188,190,0,0" VerticalAlignment="Top" Width="62"/>
+          <ComboBox x:Name="textToSpeechServiceBox" DisplayMemberPath="Value" SelectedValuePath="Key" ItemsSource="{Binding webServiceLookup}" SelectedValue="{Binding Path=settings.generalSettings.ActiveTextToSpeechService, Mode=TwoWay}" HorizontalAlignment="Left" Margin="27,239,0,0" VerticalAlignment="Top" Width="85"/>
         </Grid>
       </TabItem>
       <TabItem Header="Google">
         <Grid Background="White">
           <Label x:Name="googleKeyLabel" Content="Account Key" HorizontalAlignment="Left" Margin="10,2,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
           <Button x:Name="promptForGoogleKey" Content="Load" HorizontalAlignment="Left" Margin="215,23,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="promptForGoogleKey_Click"/>
-          <TextBox x:Name="googleAccountKeyBox" HorizontalAlignment="Left" Margin="10,23,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" IsEnabled="False"/>
+          <TextBox x:Name="googleAccountKeyBox" Text="{Binding Path=settings.googleSettings.ServiceAccountKey, Mode=OneWay}" HorizontalAlignment="Left" Margin="10,23,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" IsEnabled="False"/>
           <Label Content="Voices" HorizontalAlignment="Left" Margin="10,52,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
-          <ListBox x:Name="googleVoiceListBox" HorizontalAlignment="Left" Height="213" Margin="10,73,0,0" VerticalAlignment="Top" Width="296" SelectionChanged="googleVoiceListBox_SelectionChanged"/>
+          <ListBox x:Name="googleVoiceListBox" ItemsSource="{Binding GoogleVoices}" SelectedValue="{Binding Path=settings.googleSettings.Voice, Mode=TwoWay}" DisplayMemberPath="Key" SelectedValuePath="Value" HorizontalAlignment="Left" Height="213" Margin="10,73,0,0" VerticalAlignment="Top" Width="296"/>
         </Grid>
       </TabItem>
       <TabItem Header="Amazon" HorizontalAlignment="Left" VerticalAlignment="Top">
         <Grid Background="White">
           <Label x:Name="googleKeyLabel_Copy" Content="Access Key ID" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" Margin="10,3,0,0"/>
-          <TextBox x:Name="amazonAccountKeyIdBox" HorizontalAlignment="Left" Margin="10,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="amazonAccessKeyId_Changed"/>
+          <TextBox x:Name="amazonAccountKeyIdBox" Text="{Binding Path=settings.amazonSettings.AccessKeyId, Mode=TwoWay}" HorizontalAlignment="Left" Margin="10,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="amazonAccessKeyId_Changed"/>
           <Label Content="Voices" HorizontalAlignment="Left" Margin="10,98,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
           <Label x:Name="googleKeyLabel_Copy8" Content="Secret Access Key" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" Margin="10,48,0,0"/>
-          <TextBox x:Name="amazonSecretAccessKeyBox" HorizontalAlignment="Left" Margin="10,69,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="amazonSecretAccessKey_Changed"/>
-          <ListBox x:Name="amazonVoiceListBox" HorizontalAlignment="Left" Height="167" Margin="10,119,0,0" VerticalAlignment="Top" Width="296" SelectionChanged="amazonVoiceListBox_SelectionChanged"/>
+          <TextBox x:Name="amazonSecretAccessKeyBox" Text="{Binding Path=settings.amazonSettings.SecretAccessKey, Mode=TwoWay}" HorizontalAlignment="Left" Margin="10,69,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="amazonSecretAccessKey_Changed"/>
+          <ListBox x:Name="amazonVoiceListBox" ItemsSource="{Binding AmazonVoices}" SelectedValue="{Binding Path=settings.amazonSettings.Voice, Mode=TwoWay}" DisplayMemberPath="Key" SelectedValuePath="Value" HorizontalAlignment="Left" Height="167" Margin="10,119,0,0" VerticalAlignment="Top" Width="296"/>
         </Grid>
       </TabItem>
       <TabItem Header="IBM" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top">
         <Grid Background="White">
           <Label x:Name="googleKeyLabel_Copy1" Content="Text to speech API Key" HorizontalAlignment="Left" Margin="10,2,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
-          <TextBox x:Name="IBMTextToSpeechAPIKeyBox" HorizontalAlignment="Left" Margin="10,23,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="IBMTextToSpeechAPIKeyBox_TextChanged"/>
+          <TextBox x:Name="IBMTextToSpeechAPIKeyBox" Text="{Binding Path=settings.ibmSettings.textToSpeechAPIKey, Mode=TwoWay}" HorizontalAlignment="Left" Margin="10,23,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="IBMTextToSpeechAPIKeyBox_TextChanged"/>
           <Label Content="Voices" HorizontalAlignment="Left" Margin="10,181,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
           <Label x:Name="googleKeyLabel_Copy2" Content="Text to speech URL" HorizontalAlignment="Left" Margin="10,88,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
-          <TextBox x:Name="IBMTexttoSpeechURLBox" HorizontalAlignment="Left" Margin="10,109,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="ibmTextToSpeechURLBox_Changed"/>
+          <TextBox x:Name="IBMTexttoSpeechURLBox" Text="{Binding Path=settings.ibmSettings.textToSpeechURL, Mode=TwoWay}" HorizontalAlignment="Left" Margin="10,109,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="ibmTextToSpeechURLBox_Changed"/>
           <Label x:Name="googleKeyLabel_Copy3" Content="Speech to text URL" HorizontalAlignment="Left" Margin="10,136,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
-          <TextBox x:Name="IBMSpeechtoTextURLBox" HorizontalAlignment="Left" Margin="10,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="ibmSpeechToTextURLBox_Changed"/>
-          <ListBox x:Name="ibmVoiceListBox" HorizontalAlignment="Left" Height="116" Margin="10,202,0,0" VerticalAlignment="Top" Width="296" SelectionChanged="ibmVoiceListBox_SelectionChanged"/>
+          <TextBox x:Name="IBMSpeechtoTextURLBox" Text="{Binding Path=settings.ibmSettings.speechToTextURL, Mode=TwoWay}" HorizontalAlignment="Left" Margin="10,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="ibmSpeechToTextURLBox_Changed"/>
+          <ListBox x:Name="ibmVoiceListBox" ItemsSource="{Binding IBMVoices}" SelectedValue="{Binding Path=settings.ibmSettings.Voice, Mode=TwoWay}" DisplayMemberPath="Key" SelectedValuePath="Value" HorizontalAlignment="Left" Height="116" Margin="10,202,0,0" VerticalAlignment="Top" Width="296"/>
           <Label x:Name="googleKeyLabel_Copy4" Content="Speech to text API Key" HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
-          <TextBox x:Name="IBMSpeechToTextAPIKeyBox" HorizontalAlignment="Left" Margin="10,66,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="IBMSpeechToTextAPIKeyBox_TextChanged"/>
+          <TextBox x:Name="IBMSpeechToTextAPIKeyBox" Text="{Binding Path=settings.ibmSettings.speechToTextAPIKey, Mode=TwoWay}" HorizontalAlignment="Left" Margin="10,66,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="IBMSpeechToTextAPIKeyBox_TextChanged"/>
         </Grid>
       </TabItem>
     </TabControl>

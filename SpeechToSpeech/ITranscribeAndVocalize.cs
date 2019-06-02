@@ -13,5 +13,6 @@ namespace SpeechToSpeech
     string ToTranscript(string audioFile);
     Task<List<T>> GetVoices();
     Task<List<T>> GetVoices(string language);
+    void CreateClients();
   }
 }

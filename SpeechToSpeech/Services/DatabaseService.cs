@@ -5,7 +5,7 @@ using System.Data.SqlServerCe;
 using System.IO;
 using System.Windows;
 
-namespace SpeechToSpeech
+namespace SpeechToSpeech.Services
 {
   public class DatabaseService
   {

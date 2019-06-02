@@ -19,9 +19,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Unity;
+using Unity.Attributes;
 
-namespace SpeechToSpeech
+namespace SpeechToSpeech.Views
 {
   /// <summary>
   /// Interaction logic for Options.xaml
@@ -29,7 +29,7 @@ namespace SpeechToSpeech
   public partial class SettingsDialog : Window, IDisposable
   {
     private OpenFileDialog openFileDialog = new OpenFileDialog();
-
+    
     [Dependency]
     public SettingsViewModel ViewModel
     {
@@ -37,20 +37,14 @@ namespace SpeechToSpeech
       get { return (SettingsViewModel)DataContext; }
     }
 
-    public SettingsDialog(
-      )
+    public SettingsDialog()
     {
       InitializeComponent();
     }
 
-    private void push2TalkCheckBox_Checked(object sender, RoutedEventArgs e)
+    private void SettingsWindow_Loaded(object sender, RoutedEventArgs e)
     {
-      ViewModel.settings.generalSettings.IsPush2Talk = ((CheckBox)sender).IsChecked;
-    }
-
-    private void appPush2TalkCheckBox_Checked(object sender, RoutedEventArgs e)
-    {
-      ViewModel.settings.generalSettings.IsAppPush2Talk = ((CheckBox)sender).IsChecked;
+      ViewModel.UpdateVoices();
     }
 
     private void textLanguageBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -62,7 +56,6 @@ namespace SpeechToSpeech
 
     private void speechLanguageBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      ViewModel.settings.generalSettings.SpeechInputLanguage = (string)((ComboBox)sender).SelectedValue;
     }
 
     private void promptForGoogleKey_Click(object sender, RoutedEventArgs e)
@@ -79,73 +72,50 @@ namespace SpeechToSpeech
       ViewModel.SaveSettings();
     }
 
-    private void audioOutDeviceBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      var combobox = (ComboBox)sender;
-      ViewModel.settings.generalSettings.AudioOutDevice = (int)combobox.SelectedValue;
-    }
-
     private void amazonAccessKeyId_Changed(object sender, TextChangedEventArgs e)
     {
-      ViewModel.settings.amazonSettings.AccessKeyId = ((TextBox)sender).Text;
       ViewModel.UpdateAmazonWebService();
     }
 
     private void amazonSecretAccessKey_Changed(object sender, TextChangedEventArgs e)
     {
-      ViewModel.settings.amazonSettings.SecretAccessKey = ((TextBox)sender).Text;
       ViewModel.UpdateAmazonWebService();
     }
 
     private void IBMTextToSpeechAPIKeyBox_TextChanged(object sender, TextChangedEventArgs e)
     {
-      ViewModel.settings.ibmSettings.textToSpeechAPIKey = ((TextBox)sender).Text;
       ViewModel.UpdateIBMWebService();
     }
 
     private void IBMSpeechToTextAPIKeyBox_TextChanged(object sender, TextChangedEventArgs e)
     {
-      ViewModel.settings.ibmSettings.speechToTextAPIKey = ((TextBox)sender).Text;
       ViewModel.UpdateIBMWebService();
     }
 
     private void ibmTextToSpeechURLBox_Changed(object sender, TextChangedEventArgs e)
     {
-      ViewModel.settings.ibmSettings.textToSpeechURL = ((TextBox)sender).Text;
       ViewModel.UpdateIBMWebService();
     }
 
     private void ibmSpeechToTextURLBox_Changed(object sender, TextChangedEventArgs e)
     {
-      ViewModel.settings.ibmSettings.speechToTextURL = ((TextBox)sender).Text;
       ViewModel.UpdateIBMWebService();
     }
 
-    private void audioInDeviceBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      ViewModel.settings.generalSettings.AudioInDevice = (int)((ComboBox)sender).SelectedValue;
-    }
+    //private void googleVoiceListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    //{
+    //  ViewModel.settings.googleSettings.Voice = (Voice)((ListBox)sender).SelectedValue;
+    //}
 
-    private void textToSpeechServiceBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      ViewModel.settings.generalSettings.ActiveTextToSpeechService = (int)((ComboBox)sender).SelectedValue;
-    }
+    //private void amazonVoiceListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    //{
+    //  ViewModel.settings.amazonSettings.Voice = (Voice)((ListBox)sender).SelectedValue;
+    //}
 
-
-    private void googleVoiceListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      ViewModel.settings.googleSettings.Voice = (Voice)((ListBox)sender).SelectedValue;
-    }
-
-    private void amazonVoiceListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      ViewModel.settings.amazonSettings.Voice = (Voice)((ListBox)sender).SelectedValue;
-    }
-
-    private void ibmVoiceListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      ViewModel.settings.ibmSettings.Voice = (Voice)((ListBox)sender).SelectedValue;
-    }
+    //private void ibmVoiceListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    //{
+    //  ViewModel.settings.ibmSettings.Voice = (Voice)((ListBox)sender).SelectedValue;
+    //}
 
     private void push2talkRecordButton_Click(object sender, RoutedEventArgs e)
     {
@@ -153,32 +123,21 @@ namespace SpeechToSpeech
       {
         if (ViewModel.ListeningForPush2Talk)
         {
-          keyDownLamda = (action)
-          KeyUp -= removeDownKey;
+          Action<KeyEventHandler> keyDownLamda = (KeyEventHandler handler) => { KeyDown -= handler; };
+          Action<KeyEventHandler> keyUpLamda = (KeyEventHandler handler) => { KeyUp -= handler; };
+          ViewModel.StopRecordingPush2TalkKeys(keyDownLamda, keyUpLamda);
           push2talkRecordButton.Content = "Record";
           ViewModel.ListeningForPush2Talk = false;
         }
         else
         {
-          ViewModel.KeysDown.Clear();
-          KeyDown += handlePush2TalkKeyDown;
-          KeyUp += removeDownKey;
+          Action<KeyEventHandler> keyDownLamda = (KeyEventHandler handler) => { KeyDown += handler; };
+          Action<KeyEventHandler> keyUpLamda = (KeyEventHandler handler) => { KeyUp += handler; };
+          ViewModel.StartRecordingPush2TalkKeys(keyDownLamda, keyUpLamda);
           push2talkRecordButton.Content = "Stop Recording";
           ViewModel.ListeningForPush2Talk = true;
         }
       }
-    }
-
-    private void removeDownKey(object sender, KeyEventArgs e)
-    {
-      var keyUp = e.Key == Key.System ? e.SystemKey : e.Key;
-      ViewModel.KeysDown = ViewModel.KeysDown.Where(key => key != keyUp).ToList();
-    }
-
-    private void handlePush2TalkKeyDown(object sender, KeyEventArgs e)
-    {
-      var key = e.Key == Key.System ? e.SystemKey : e.Key;
-      ViewModel.UpdatePush2TalkKeys(key);
     }
 
     private void appPush2talkRecordButton_Click(object sender, RoutedEventArgs e)
@@ -187,28 +146,22 @@ namespace SpeechToSpeech
       {
         if (ViewModel.ListeningForAppPush2Talk)
         {
-          KeyDown -= handleAppPush2TalkKeyDown;
-          KeyUp -= removeDownKey;
+          Action<KeyEventHandler> keyDownLamda = (KeyEventHandler handler) => { KeyDown -= handler; };
+          Action<KeyEventHandler> keyUpLamda = (KeyEventHandler handler) => { KeyUp -= handler; };
+          ViewModel.StopRecordingAppPush2TalkKeys(keyDownLamda, keyUpLamda);
           appPush2talkRecordButton.Content = "Record";
           ViewModel.ListeningForAppPush2Talk = false;
         }
         else
         {
-          ViewModel.KeysDown.Clear();
-          KeyDown += handleAppPush2TalkKeyDown;
-          KeyUp += removeDownKey;
+          Action<KeyEventHandler> keyDownLamda = (KeyEventHandler handler) => { KeyDown += handler; };
+          Action<KeyEventHandler> keyUpLamda = (KeyEventHandler handler) => { KeyUp += handler; };
+          ViewModel.StartRecordingAppPush2TalkKeys(keyDownLamda, keyUpLamda);
           appPush2talkRecordButton.Content = "Stop Recording";
           ViewModel.ListeningForAppPush2Talk = true;
         }
       }
     }
-
-    private void handleAppPush2TalkKeyDown(object sender, KeyEventArgs e)
-    {
-      var key = e.Key == Key.System ? e.SystemKey : e.Key;
-      ViewModel.UpdateAppPush2TalkKeys(key);
-    }
-
     #region IDisposable Support
     private bool disposedValue = false; // To detect redundant calls
 

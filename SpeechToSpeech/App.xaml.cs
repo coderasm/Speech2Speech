@@ -1,32 +1,30 @@
-﻿using SpeechToSpeech.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Prism.Ioc;
+using Prism.Unity;
+using SpeechToSpeech.Services;
+using SpeechToSpeech.Views;
 using System.Windows;
-using Unity;
-using Unity.Injection;
 
 namespace SpeechToSpeech
 {
   /// <summary>
   /// Interaction logic for App.xaml
   /// </summary>
-  public partial class App : Application
+  public partial class App : PrismApplication
   {
-    protected override void OnStartup(StartupEventArgs e)
+    protected override Window CreateShell()
     {
-      IUnityContainer container = new UnityContainer();
-      container.RegisterType<ISettingsService, SettingsService>();
-      container.RegisterType<IAudioService, AudioService>();
-      container.RegisterType<ITranscribeAndVocalize<Voice>, GoogleWebService>("GoogleWebService");
-      container.RegisterType<ITranscribeAndVocalize<Voice>, AmazonWebService>("AmazonWebService");
-      container.RegisterType<ITranscribeAndVocalize<Voice>, IBMWebService>("IBMWebService");
+      return Container.Resolve<MainWindow>();
+    }
 
-      MainWindow mainWindow = container.Resolve<MainWindow>();
-      mainWindow.Show();
+    protected override void RegisterTypes(IContainerRegistry containerRegistry)
+    {
+      containerRegistry.RegisterSingleton<ISettingsService, SettingsService>();
+      containerRegistry.RegisterSingleton<GoogleWebService>();
+      containerRegistry.RegisterSingleton<AmazonWebService>();
+      containerRegistry.RegisterSingleton<IBMWebService>();
+      containerRegistry.Register<SettingsDialog>();
+      containerRegistry.RegisterSingleton<IDialogService, DialogService>();
+      containerRegistry.RegisterInstance<IAudioService>(new AudioService());
     }
   }
 }

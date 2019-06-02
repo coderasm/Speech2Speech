@@ -10,33 +10,33 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace SpeechToSpeech
+namespace SpeechToSpeech.Services
 {
   public class GoogleWebService : ITranscribeAndVocalize<Voice>
   {
     private TextToSpeechClient toSpeechClient;
     private SpeechClient toTextClient;
-    private Settings settings = new Settings();
+    private ISettingsService settingsService;
     private List<Voice> voiceCache = new List<Voice>();
 
-    private GoogleWebService(Settings settings)
+    public GoogleWebService(ISettingsService settingsService)
     {
-      this.settings = settings;
-      createClients();
+      this.settingsService = settingsService;
+      CreateClients();
     }
 
-    public void createClients()
+    public void CreateClients()
     {
       try
       {
-        if (settings.googleSettings.ServiceAccountKey != "")
+        if (settingsService.settings.googleSettings.ServiceAccountKey != "")
         {
           //Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", settings.googleSettings.ServiceAccountKey);
-          var credential = GoogleCredential.FromFile(settings.googleSettings.ServiceAccountKey)
+          var credential = GoogleCredential.FromFile(settingsService.settings.googleSettings.ServiceAccountKey)
             .CreateScoped(TextToSpeechClient.DefaultScopes);
           var channel = new Channel(TextToSpeechClient.DefaultEndpoint.ToString(), credential.ToChannelCredentials());
           toSpeechClient = TextToSpeechClient.Create(channel);
-          credential = GoogleCredential.FromFile(settings.googleSettings.ServiceAccountKey)
+          credential = GoogleCredential.FromFile(settingsService.settings.googleSettings.ServiceAccountKey)
             .CreateScoped(SpeechClient.DefaultScopes);
           channel = new Channel(SpeechClient.DefaultEndpoint.ToString(), credential.ToChannelCredentials());
           toTextClient = SpeechClient.Create(channel);
@@ -49,19 +49,14 @@ namespace SpeechToSpeech
       }
     }
 
-    public static GoogleWebService Create(Settings settings)
-    {
-      return new GoogleWebService(settings);
-    }
-
     public async Task<List<Voice>> GetVoices()
     {
       if (toSpeechClient == null)
         return new List<Voice>();
       if (voiceCache.Count() == 0)
-        return await FetchVoices(settings.generalSettings.TextInputLanguage);
+        return await FetchVoices(settingsService.settings.generalSettings.TextInputLanguage);
       return voiceCache.Where(voice =>
-        voice.Language.Contains(settings.generalSettings.TextInputLanguage)
+        voice.Language.Contains(settingsService.settings.generalSettings.TextInputLanguage)
       )
       .ToList();
     }
@@ -122,8 +117,8 @@ namespace SpeechToSpeech
             // Note: voices can also be specified by name
             Voice = new VoiceSelectionParams
             {
-              Name = settings.googleSettings.Voice.Name,
-              LanguageCode = settings.generalSettings.TextInputLanguage
+              Name = settingsService.settings.googleSettings.Voice.Name,
+              LanguageCode = settingsService.settings.generalSettings.TextInputLanguage
             },
             AudioConfig = new AudioConfig
             {

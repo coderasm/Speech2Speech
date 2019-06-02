@@ -1,36 +1,34 @@
 ﻿using NAudio.Wave;
+using SpeechToSpeech.Services;
 using System.IO;
 using System.Windows;
+using Unity.Attributes;
 
-namespace SpeechToSpeech
+namespace SpeechToSpeech.Views
 {
   /// <summary>
   /// Interaction logic for MainWindow.xaml
   /// </summary>
   public partial class MainWindow : Window
   {
-    private SettingsDialog OptionsDialog;
-    private SettingsService settingsService;
-    private GoogleWebService googleWebService;
-    private AmazonWebService amazonWebService;
-    private IBMWebService ibmWebService;
+    private ISettingsService settingsService { get; set; }
+    private IDialogService dialogService { get; set; }
+    [Dependency]
+    public GoogleWebService googleWebService { get; set; }
+    [Dependency]
+    public AmazonWebService amazonWebService { get; set; }
+    [Dependency]
+    public IBMWebService ibmWebService { get; set; }
     private Hotkey hotkeys;
-    private ITranscribeAndVocalize<Voice>[] webServices;
-    private IAudioService audioService;
+    private IAudioService audioService { get; set; }
 
-    public MainWindow(IAudioService audioService)
+    public MainWindow(ISettingsService settingsService, IAudioService audioService, IDialogService dialogService)
     {
       InitializeComponent();
+      this.settingsService = settingsService;
+      this.dialogService = dialogService;
       this.audioService = audioService;
-      settingsService = SettingsService.Create();
       DatabaseService.Initialize(settingsService.settings);
-      googleWebService = GoogleWebService.Create(settingsService.settings);
-      amazonWebService = AmazonWebService.Create(settingsService.settings);
-      ibmWebService = IBMWebService.Create(settingsService.settings);
-      webServices = new ITranscribeAndVocalize<Voice>[]
-      {
-        googleWebService, amazonWebService, ibmWebService
-      };
       createFolders();
     }
 
@@ -44,8 +42,7 @@ namespace SpeechToSpeech
 
     private void OnOptionsClicked(object sender, RoutedEventArgs e)
     {
-      OptionsDialog = new SettingsDialog(settingsService, googleWebService, amazonWebService, ibmWebService);
-      if (OptionsDialog.ShowDialog() == true)
+      if (dialogService.ShowDialog<SettingsDialog>() == true)
       {
         settingsService.SaveSettings();
       }
@@ -54,6 +51,10 @@ namespace SpeechToSpeech
     private async void sendTextButton_Click(object sender, RoutedEventArgs e)
     {
       string audioFile = "";
+      var webServices = new ITranscribeAndVocalize<Voice>[]
+      {
+        googleWebService, amazonWebService, ibmWebService
+      };
       var activeService = webServices[settingsService.settings.generalSettings.ActiveTextToSpeechService];
       audioFile = await activeService.ToAudio(textToSendBox.Text);
       if (audioFile != "")

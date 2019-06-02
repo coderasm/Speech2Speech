@@ -1,5 +1,6 @@
 ﻿using Amazon.Polly;
 using Amazon.Polly.Model;
+using SpeechToSpeech.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,24 +13,24 @@ namespace SpeechToSpeech
   public class AmazonWebService : ITranscribeAndVocalize<Voice>
   {
     private AmazonPollyClient client;
-    private Settings settings = new Settings();
+    private ISettingsService settingsService;
     private List<Voice> voiceCache = new List<Voice>();
 
-    private AmazonWebService(Settings settings)
+    public AmazonWebService(ISettingsService settingsService)
     {
-      this.settings = settings;
-      createClients();
+      this.settingsService = settingsService;
+      CreateClients();
     }
 
-    public void createClients()
+    public void CreateClients()
     {
       try
       {
-        if (settings.amazonSettings.AccessKeyId != "" && settings.amazonSettings.SecretAccessKey != "")
+        if (settingsService.settings.amazonSettings.AccessKeyId != "" && settingsService.settings.amazonSettings.SecretAccessKey != "")
           client = new AmazonPollyClient(
-            settings.amazonSettings.AccessKeyId,
-            settings.amazonSettings.SecretAccessKey,
-            settings.amazonSettings.RegionEndpoint
+            settingsService.settings.amazonSettings.AccessKeyId,
+            settingsService.settings.amazonSettings.SecretAccessKey,
+            settingsService.settings.amazonSettings.RegionEndpoint
             );
       }
       catch (Exception e)
@@ -39,19 +40,14 @@ namespace SpeechToSpeech
       }
     }
 
-    public static AmazonWebService Create(Settings settings)
-    {
-      return new AmazonWebService(settings);
-    }
-
     public async Task<List<Voice>> GetVoices()
     {
       if (client == null)
         return new List<Voice>();
       if (voiceCache.Count() == 0)
-        return await FetchVoices(settings.generalSettings.TextInputLanguage);
+        return await FetchVoices(settingsService.settings.generalSettings.TextInputLanguage);
       return voiceCache.Where(voice =>
-        voice.Language == settings.generalSettings.TextInputLanguage
+        voice.Language == settingsService.settings.generalSettings.TextInputLanguage
       )
       .ToList();
     }
@@ -111,7 +107,7 @@ namespace SpeechToSpeech
 
       SynthesizeSpeechRequest synthesizeSpeechRequest = new SynthesizeSpeechRequest();
       synthesizeSpeechRequest.OutputFormat = OutputFormat.Mp3;
-      synthesizeSpeechRequest.VoiceId = settings.amazonSettings.Voice.Id;
+      synthesizeSpeechRequest.VoiceId = settingsService.settings.amazonSettings.Voice.Id;
       synthesizeSpeechRequest.Text = transcript;
       try
       {

@@ -9,7 +9,7 @@ using IBM.WatsonDeveloperCloud.TextToSpeech.v1;
 using IBM.WatsonDeveloperCloud.SpeechToText.v1;
 using System.Windows;
 
-namespace SpeechToSpeech
+namespace SpeechToSpeech.Services
 {
   public class IBMWebService : ITranscribeAndVocalize<Voice>
   {
@@ -17,31 +17,31 @@ namespace SpeechToSpeech
     private TokenOptions speechToTextTokenOptions;
     private TextToSpeechService textToSpeechClient;
     private SpeechToTextService speechToTextClient;
-    private Settings settings = new Settings();
+    private ISettingsService settingsService;
     private List<Voice> voiceCache = new List<Voice>();
 
-    private IBMWebService(Settings settings)
+    public IBMWebService(ISettingsService settingsService)
     {
-      this.settings = settings;
-      createClients();
+      this.settingsService = settingsService;
+      CreateClients();
     }
 
-    public void createClients()
+    public void CreateClients()
     {
       try
       {
-        if (settings.ibmSettings.textToSpeechAPIKey != "" && settings.ibmSettings.speechToTextAPIKey != "" &&
-          settings.ibmSettings.speechToTextURL != "" && settings.ibmSettings.textToSpeechURL != "")
+        if (settingsService.settings.ibmSettings.textToSpeechAPIKey != "" && settingsService.settings.ibmSettings.speechToTextAPIKey != "" &&
+          settingsService.settings.ibmSettings.speechToTextURL != "" && settingsService.settings.ibmSettings.textToSpeechURL != "")
         {
           textToSpeechTokenOptions = new TokenOptions
           {
-            IamApiKey = settings.ibmSettings.textToSpeechAPIKey,
-            ServiceUrl = settings.ibmSettings.textToSpeechURL
+            IamApiKey = settingsService.settings.ibmSettings.textToSpeechAPIKey,
+            ServiceUrl = settingsService.settings.ibmSettings.textToSpeechURL
           };
           speechToTextTokenOptions = new TokenOptions
           {
-            IamApiKey = settings.ibmSettings.speechToTextAPIKey,
-            ServiceUrl = settings.ibmSettings.speechToTextURL
+            IamApiKey = settingsService.settings.ibmSettings.speechToTextAPIKey,
+            ServiceUrl = settingsService.settings.ibmSettings.speechToTextURL
           };
           textToSpeechClient = new TextToSpeechService(textToSpeechTokenOptions);
           speechToTextClient = new SpeechToTextService(speechToTextTokenOptions);
@@ -54,19 +54,14 @@ namespace SpeechToSpeech
       }
     }
 
-    public static IBMWebService Create(Settings settings)
-    {
-      return new IBMWebService(settings);
-    }
-
     public async Task<List<Voice>> GetVoices()
     {
       if (textToSpeechClient == null)
         return new List<Voice>();
       if (voiceCache.Count() == 0)
-        return await FetchVoices(settings.generalSettings.TextInputLanguage);
+        return await FetchVoices(settingsService.settings.generalSettings.TextInputLanguage);
       return voiceCache.Where(voice =>
-        voice.Language == settings.generalSettings.TextInputLanguage
+        voice.Language == settingsService.settings.generalSettings.TextInputLanguage
       )
       .ToList();
     }
@@ -127,7 +122,7 @@ namespace SpeechToSpeech
             return textToSpeechClient.Synthesize(
                     text: text,
                     accept: "audio/mp3",
-                    voice: settings.ibmSettings.Voice.Name
+                    voice: settingsService.settings.ibmSettings.Voice.Name
                     );
           });
           byte[] buffer = new byte[BUFFER_SIZE];

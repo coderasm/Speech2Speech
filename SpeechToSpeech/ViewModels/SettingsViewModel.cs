@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpeechToSpeech.Services;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -7,17 +8,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Unity.Attributes;
 
 namespace SpeechToSpeech.ViewModels
 {
-  public class SettingsViewModel : INotifyPropertyChanged
+  public class SettingsViewModel
   {
-    public event PropertyChangedEventHandler PropertyChanged;
     private ISettingsService settingsService;
     private IAudioService audioService;
-    private GoogleWebService googleWebService;
-    private AmazonWebService amazonWebService;
-    private IBMWebService ibmWebService;
+    [Dependency]
+    public GoogleWebService googleWebService { get; set; }
+    [Dependency]
+    public AmazonWebService amazonWebService { get; set; }
+    [Dependency]
+    public IBMWebService ibmWebService { get; set; }
     public bool ListeningForAppPush2Talk { get; set; } = false;
     public bool ListeningForPush2Talk { get; set; } = false;
     public List<Key> KeysDown = new List<Key>();
@@ -34,29 +38,26 @@ namespace SpeechToSpeech.ViewModels
     public ObservableCollection<KeyValuePair<string, Voice>> AmazonVoices { get; set; } = new ObservableCollection<KeyValuePair<string, Voice>>();
     public ObservableCollection<KeyValuePair<string, Voice>> IBMVoices { get; set; } = new ObservableCollection<KeyValuePair<string, Voice>>();
     public IEnumerable<string> cultures { get; set; } = CultureInfo.GetCultures(CultureTypes.AllCultures).Select(culture => culture.Name);
-    private bool listeningForPush2Talk = false;
-    private bool listeningForAppPush2Talk = false;
     private List<Key> keysDown = new List<Key>();
-    public Hotkey Push2TalkKeys { get; set; }
     public Hotkey AppPush2TalkKeys { get; set; }
+    public Hotkey Push2TalkKeys { get; set; }
 
     public SettingsViewModel(
       IAudioService audioService,
-      ISettingsService settingsService,
-      GoogleWebService googleWebService,
-      AmazonWebService amazonWebService,
-      IBMWebService ibmWebService
+      ISettingsService settingsService
       )
     {
       settings = settingsService.settings;
       this.audioService = audioService;
       this.settingsService = settingsService;
-      this.googleWebService = googleWebService;
-      this.amazonWebService = amazonWebService;
-      this.ibmWebService = ibmWebService;
       audioService.Devices.ForEach(audioDevice => audioDevices.Add(audioDevice));
-      Push2TalkKeys = Hotkey.Create(settingsService.settings.generalSettings.Push2TalkKey);
-      AppPush2TalkKeys = Hotkey.Create(settingsService.settings.generalSettings.AppPush2TalkKey);
+      Push2TalkKeys = Hotkey.Create(settings.generalSettings.Push2TalkKey);
+      AppPush2TalkKeys = Hotkey.Create(settings.generalSettings.AppPush2TalkKey);
+    }
+
+    public void UpdateVoices()
+    {
+      UpdateVoices(settings.generalSettings.TextInputLanguage);
     }
 
     public async void UpdateVoices(string language)
@@ -97,26 +98,61 @@ namespace SpeechToSpeech.ViewModels
 
     public void UpdateGoogleWebService()
     {
-      googleWebService.createClients();
+      googleWebService.CreateClients();
     }
 
     public void UpdateAmazonWebService()
     {
-      amazonWebService.createClients();
+      amazonWebService.CreateClients();
     }
 
     public void UpdateIBMWebService()
     {
-      ibmWebService.createClients();
+      ibmWebService.CreateClients();
     }
 
-    public void StopRecordingPush2TalkKeys(Action<Action> keyDownHandler, Action<Action> keyUpHandler)
+    public void StartRecordingPush2TalkKeys(Action<KeyEventHandler> keyDownLamda, Action<KeyEventHandler> keyUpLamda)
     {
+      KeysDown.Clear();
+      keyDownLamda(handlePush2TalkKeyDown);
+      keyUpLamda(removeDownKey);
+    }
 
-      KeyDown -= handlePush2TalkKeyDown;
-      KeyUp -= removeDownKey;
-      push2talkRecordButton.Content = "Record";
-      ViewModel.ListeningForPush2Talk = false;
+    public void StopRecordingPush2TalkKeys(Action<KeyEventHandler> keyDownLamda, Action<KeyEventHandler> keyUpLamda)
+    {
+      keyDownLamda(handlePush2TalkKeyDown);
+      keyUpLamda(removeDownKey);
+    }
+
+    private void removeDownKey(object sender, KeyEventArgs e)
+    {
+      var keyUp = e.Key == Key.System ? e.SystemKey : e.Key;
+      KeysDown = KeysDown.Where(key => key != keyUp).ToList();
+    }
+
+    private void handlePush2TalkKeyDown(object sender, KeyEventArgs e)
+    {
+      var key = e.Key == Key.System ? e.SystemKey : e.Key;
+      UpdatePush2TalkKeys(key);
+    }
+
+    public void StartRecordingAppPush2TalkKeys(Action<KeyEventHandler> keyDownLamda, Action<KeyEventHandler> keyUpLamda)
+    {
+      KeysDown.Clear();
+      keyDownLamda(handleAppPush2TalkKeyDown);
+      keyUpLamda(removeDownKey);
+    }
+
+    public void StopRecordingAppPush2TalkKeys(Action<KeyEventHandler> keyDownLamda, Action<KeyEventHandler> keyUpLamda)
+    {
+      keyDownLamda(handleAppPush2TalkKeyDown);
+      keyUpLamda(removeDownKey);
+    }
+
+    private void handleAppPush2TalkKeyDown(object sender, KeyEventArgs e)
+    {
+      var key = e.Key == Key.System ? e.SystemKey : e.Key;
+      UpdateAppPush2TalkKeys(key);
     }
 
     public void UpdatePush2TalkKeys(Key keyDown)
@@ -138,11 +174,6 @@ namespace SpeechToSpeech.ViewModels
       if (KeysDown.Contains(key))
         return;
       KeysDown.Add(key);
-    }
-
-    private void NotifyPropertyChanged(string prop)
-    {
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
   }
 }

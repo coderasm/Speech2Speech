@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SpeechToSpeech
+namespace SpeechToSpeech.Services
 {
   public class AudioService : IAudioService
   {
