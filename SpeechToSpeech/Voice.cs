@@ -1,16 +1,33 @@
 ﻿using Amazon.Polly;
 using Google.Cloud.TextToSpeech.V1;
 using System;
+using System.ComponentModel;
 
 namespace SpeechToSpeech
 {
-  public class Voice: IEquatable<Voice>
+  public class Voice: IEquatable<Voice>, INotifyPropertyChanged
   {
-    public string Name { get; set; }
     public VoiceId Id { get; set; }
     public string Gender { get; set; }
     public SsmlVoiceGender SsmlGender { get; set; }
     public string Language { get; set; }
+    private string _name;
+    public string Name {
+      get
+      {
+        return _name;
+      }
+      set
+      {
+        if(_name != value)
+        {
+          _name = value;
+          NotifyPropertyChanged("Name");
+        }
+      }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
 
     public bool Equals(Voice other)
     {
@@ -45,6 +62,11 @@ namespace SpeechToSpeech
         //hashCode = (hashCode * 397) ^ ssmlGenderHashCode;
         return hashCode;
       }
+    }
+
+    private void NotifyPropertyChanged(string prop)
+    {
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
   }
 }

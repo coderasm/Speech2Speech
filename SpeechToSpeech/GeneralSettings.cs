@@ -92,7 +92,22 @@ namespace SpeechToSpeech
         }
       }
     }
-    public int ActiveTextToSpeechService { get; set; } = 0;
+    private int _activeTextToSpeechService = 0;
+    public int ActiveTextToSpeechService
+    {
+      get
+      {
+        return _activeTextToSpeechService;
+      }
+      set
+      {
+        if (_activeTextToSpeechService != value)
+        {
+          _activeTextToSpeechService = value;
+          NotifyPropertyChanged("ActiveTextToSpeechService");
+        }
+      }
+    }
     public string Database { get; set; } = $@".\speechtospeech.sdf";
 
     public event PropertyChangedEventHandler PropertyChanged;

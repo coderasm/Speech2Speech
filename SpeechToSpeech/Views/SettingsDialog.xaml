@@ -38,6 +38,8 @@
           <TextBox x:Name="googleAccountKeyBox" Text="{Binding Path=settings.googleSettings.ServiceAccountKey, Mode=OneWay}" HorizontalAlignment="Left" Margin="10,23,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" IsEnabled="False"/>
           <Label Content="Voices" HorizontalAlignment="Left" Margin="10,52,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
           <ListBox x:Name="googleVoiceListBox" ItemsSource="{Binding GoogleVoices}" SelectedValue="{Binding Path=settings.googleSettings.Voice, Mode=TwoWay}" DisplayMemberPath="Key" SelectedValuePath="Value" HorizontalAlignment="Left" Height="213" Margin="10,73,0,0" VerticalAlignment="Top" Width="296"/>
+          <Label Content="Active:" HorizontalAlignment="Left" Margin="106,47,0,0" VerticalAlignment="Top"/>
+          <Label Content="{Binding Path=settings.googleSettings.Voice.Name, Mode=OneWay}" HorizontalAlignment="Left" Margin="151,48,0,0" VerticalAlignment="Top" Width="155" Height="20"/>
         </Grid>
       </TabItem>
       <TabItem Header="Amazon" HorizontalAlignment="Left" VerticalAlignment="Top">
@@ -48,6 +50,8 @@
           <Label x:Name="googleKeyLabel_Copy8" Content="Secret Access Key" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0" Margin="10,48,0,0"/>
           <TextBox x:Name="amazonSecretAccessKeyBox" Text="{Binding Path=settings.amazonSettings.SecretAccessKey, Mode=TwoWay}" HorizontalAlignment="Left" Margin="10,69,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="amazonSecretAccessKey_Changed"/>
           <ListBox x:Name="amazonVoiceListBox" ItemsSource="{Binding AmazonVoices}" SelectedValue="{Binding Path=settings.amazonSettings.Voice, Mode=TwoWay}" DisplayMemberPath="Key" SelectedValuePath="Value" HorizontalAlignment="Left" Height="167" Margin="10,119,0,0" VerticalAlignment="Top" Width="296"/>
+          <Label Content="Active:" HorizontalAlignment="Left" Margin="106,94,0,0" VerticalAlignment="Top"/>
+          <Label Content="{Binding Path=settings.amazonSettings.Voice.Name, Mode=OneWay}" HorizontalAlignment="Left" Margin="151,98,0,0" VerticalAlignment="Top" Width="155" Height="16"/>
         </Grid>
       </TabItem>
       <TabItem Header="IBM" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top">
@@ -62,6 +66,8 @@
           <ListBox x:Name="ibmVoiceListBox" ItemsSource="{Binding IBMVoices}" SelectedValue="{Binding Path=settings.ibmSettings.Voice, Mode=TwoWay}" DisplayMemberPath="Key" SelectedValuePath="Value" HorizontalAlignment="Left" Height="116" Margin="10,202,0,0" VerticalAlignment="Top" Width="296"/>
           <Label x:Name="googleKeyLabel_Copy4" Content="Speech to text API Key" HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.189,0.441" Padding="0,0,5,0"/>
           <TextBox x:Name="IBMSpeechToTextAPIKeyBox" Text="{Binding Path=settings.ibmSettings.speechToTextAPIKey, Mode=TwoWay}" HorizontalAlignment="Left" Margin="10,66,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="20" TextChanged="IBMSpeechToTextAPIKeyBox_TextChanged"/>
+          <Label Content="Active:" HorizontalAlignment="Left" Margin="106,177,0,0" VerticalAlignment="Top"/>
+          <Label Content="{Binding Path=settings.ibmSettings.Voice.Name, Mode=OneWay}" HorizontalAlignment="Left" Margin="151,177,0,0" VerticalAlignment="Top" Width="155"/>
         </Grid>
       </TabItem>
     </TabControl>
