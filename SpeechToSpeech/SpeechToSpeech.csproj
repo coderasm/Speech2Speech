@@ -229,6 +229,7 @@
     <Compile Include="Services\ISettingsService.cs" />
     <Compile Include="ITranscribeAndVocalize.cs" />
     <Compile Include="Services\SettingsService.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Voice.cs" />
     <Page Include="Views\MainWindow.xaml">
