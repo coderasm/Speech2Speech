@@ -12,8 +12,9 @@ using Unity.Attributes;
 
 namespace SpeechToSpeech.ViewModels
 {
-  public class SettingsViewModel
+  public class SettingsViewModel: INotifyPropertyChanged
   {
+    public event PropertyChangedEventHandler PropertyChanged;
     private ISettingsService settingsService;
     private IAudioService audioService;
     [Dependency]
@@ -50,7 +51,7 @@ namespace SpeechToSpeech.ViewModels
       settings = settingsService.settings;
       this.audioService = audioService;
       this.settingsService = settingsService;
-      audioService.Devices.ForEach(audioDevice => audioDevices.Add(audioDevice));
+      audioDevices.AddRange(audioService.Devices);
       Push2TalkKeys = Hotkey.Create(settings.generalSettings.Push2TalkKey);
       AppPush2TalkKeys = Hotkey.Create(settings.generalSettings.AppPush2TalkKey);
     }
@@ -64,31 +65,31 @@ namespace SpeechToSpeech.ViewModels
     {
       var googleVoices = await googleWebService.GetVoices(language);
       GoogleVoices.Clear();
-      googleVoices.ForEach(voice =>
-        GoogleVoices.Add(new KeyValuePair<string, Voice>
-        (
-          voice.Name + ", " + voice.Gender,
-          voice
-        )
-      ));
+        var voices = googleVoices.Select(
+          voice => new KeyValuePair<string, Voice>(
+              voice.Name + ", " + voice.Gender,
+              voice
+          )
+        );
+      GoogleVoices.AddRange(voices);
       var amazonVoices = await amazonWebService.GetVoices(language);
       AmazonVoices.Clear();
-      amazonVoices.ForEach(voice =>
-        AmazonVoices.Add(new KeyValuePair<string, Voice>
-        (
-          voice.Name + ", " + voice.Gender,
-          voice
-        )
-      ));
+      voices = amazonVoices.Select(
+          voice => new KeyValuePair<string, Voice>(
+              voice.Name + ", " + voice.Gender,
+              voice
+          )
+        );
+      AmazonVoices.AddRange(voices);
       var ibmVoices = await ibmWebService.GetVoices(language);
       IBMVoices.Clear();
-      ibmVoices.ForEach(voice =>
-        IBMVoices.Add(new KeyValuePair<string, Voice>
-        (
-          voice.Name + ", " + voice.Gender,
-          voice
-        )
-      ));
+      voices = ibmVoices.Select(
+          voice => new KeyValuePair<string, Voice>(
+              voice.Name + ", " + voice.Gender,
+              voice
+          )
+        );
+      IBMVoices.AddRange(voices);
     }
 
     public void SaveSettings()
@@ -174,6 +175,11 @@ namespace SpeechToSpeech.ViewModels
       if (KeysDown.Contains(key))
         return;
       KeysDown.Add(key);
+    }
+
+    private void NotifyPropertyChanged(string prop)
+    {
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
   }
 }

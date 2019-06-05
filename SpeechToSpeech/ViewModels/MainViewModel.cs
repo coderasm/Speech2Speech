@@ -1,11 +1,13 @@
 ﻿using SpeechToSpeech.Services;
 using SpeechToSpeech.Views;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using Unity.Attributes;
 
 namespace SpeechToSpeech.ViewModels
 {
-  public class MainViewModel
+  public class MainViewModel: INotifyPropertyChanged
   {
     private ISettingsService settingsService { get; set; }
     private IDialogService dialogService { get; set; }
@@ -16,7 +18,11 @@ namespace SpeechToSpeech.ViewModels
     [Dependency]
     public IBMWebService ibmWebService { get; set; }
     private Hotkey hotkeys;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
     private IAudioService audioService { get; set; }
+    public ObservableCollection<TextToSpeech> TextToSpeeches { get; set; } = new ObservableCollection<TextToSpeech>();
 
     public MainViewModel(ISettingsService settingsService, IAudioService audioService, IDialogService dialogService)
     {
@@ -53,6 +59,7 @@ namespace SpeechToSpeech.ViewModels
       };
       var activeService = webServices[settingsService.settings.generalSettings.ActiveTextToSpeechService];
       audioFile = await activeService.ToAudio(text);
+      TextToSpeeches.Add(new TextToSpeech { Text = text, AudioFile = audioFile });
       if (audioFile != "")
         playFile(audioFile);
     }
@@ -69,6 +76,11 @@ namespace SpeechToSpeech.ViewModels
     public void stopAudio()
     {
       audioService.Stop();
+    }
+
+    private void NotifyPropertyChanged(string prop)
+    {
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
   }
 }

@@ -217,7 +217,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AmazonWebService.cs" />
+    <Compile Include="Services\AmazonWebService.cs" />
     <Compile Include="Services\AudioService.cs" />
     <Compile Include="Services\DatabaseService.cs" />
     <Compile Include="Services\DialogService.cs" />
@@ -229,6 +229,7 @@
     <Compile Include="Services\ISettingsService.cs" />
     <Compile Include="ITranscribeAndVocalize.cs" />
     <Compile Include="Services\SettingsService.cs" />
+    <Compile Include="TextToSpeech.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Voice.cs" />
