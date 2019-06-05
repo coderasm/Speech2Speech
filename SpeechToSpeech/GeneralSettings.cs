@@ -7,8 +7,25 @@ namespace SpeechToSpeech
 {
   public class GeneralSettings : INotifyPropertyChanged
   {
-    private bool? _isPush2Talk = false;
-    public bool? IsPush2Talk
+    private bool _isAutoPlayVocalized = true;
+    public bool IsAutoPlayVocalized
+    {
+      get
+      {
+        return _isAutoPlayVocalized;
+      }
+      set
+      {
+        if (_isAutoPlayVocalized != value)
+        {
+          _isAutoPlayVocalized = value;
+          NotifyPropertyChanged("AutoPlayVocalized");
+        }
+      }
+    }
+
+    private bool _isPush2Talk = false;
+    public bool IsPush2Talk
     {
       get
       {
@@ -24,8 +41,8 @@ namespace SpeechToSpeech
       }
     }
 
-    private bool? _isAppPush2Talk = false;
-    public bool? IsAppPush2Talk
+    private bool _isAppPush2Talk = false;
+    public bool IsAppPush2Talk
     {
       get
       {

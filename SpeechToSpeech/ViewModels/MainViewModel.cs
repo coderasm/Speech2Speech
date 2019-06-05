@@ -3,11 +3,13 @@ using SpeechToSpeech.Views;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Windows.Controls;
+using System.Windows.Input;
 using Unity.Attributes;
 
 namespace SpeechToSpeech.ViewModels
 {
-  public class MainViewModel: INotifyPropertyChanged
+  public class MainViewModel : INotifyPropertyChanged
   {
     private ISettingsService settingsService { get; set; }
     private IDialogService dialogService { get; set; }
@@ -18,6 +20,14 @@ namespace SpeechToSpeech.ViewModels
     [Dependency]
     public IBMWebService ibmWebService { get; set; }
     private Hotkey hotkeys;
+    private Settings settings;
+    public RoutedCommand PlayCmd { get; set; } = new RoutedCommand();
+    public RoutedCommand StopCmd { get; set; } = new RoutedCommand();
+    public RoutedCommand PauseCmd { get; set; } = new RoutedCommand();
+    public RoutedCommand MuteCmd { get; set; } = new RoutedCommand();
+    public RoutedCommand VolumeCmd { get; set; } = new RoutedCommand();
+    public RoutedCommand BalanceCmd { get; set; } = new RoutedCommand();
+
 
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -28,6 +38,7 @@ namespace SpeechToSpeech.ViewModels
     {
 
       this.settingsService = settingsService;
+      this.settings = settingsService.settings;
       this.dialogService = dialogService;
       this.audioService = audioService;
       DatabaseService.Initialize(settingsService.settings);
@@ -57,20 +68,42 @@ namespace SpeechToSpeech.ViewModels
       {
         googleWebService, amazonWebService, ibmWebService
       };
-      var activeService = webServices[settingsService.settings.generalSettings.ActiveTextToSpeechService];
+      var activeService = webServices[settings.generalSettings.ActiveTextToSpeechService];
       audioFile = await activeService.ToAudio(text);
       TextToSpeeches.Add(new TextToSpeech { Text = text, AudioFile = audioFile });
-      if (audioFile != "")
+      if (audioFile != "" && settings.generalSettings.IsAutoPlayVocalized)
         playFile(audioFile);
     }
 
     private void playFile(string audioFileName)
     {
-      hotkeys = Hotkey.Create(settingsService.settings.generalSettings.AppPush2TalkKey);
+      hotkeys = Hotkey.Create(settings.generalSettings.AppPush2TalkKey);
       audioService
-        .OnPlay(() => hotkeys.BroadcastDown())
-        .OnPlayStopped(() => hotkeys.BroadcastUp())
-        .Play(audioFileName, settingsService.settings.generalSettings.AudioOutDevice);
+        .OnPlay(() => { if (settings.generalSettings.IsAppPush2Talk) hotkeys.BroadcastDown(); })
+        .OnPlayStopped(() => { if (settings.generalSettings.IsAppPush2Talk) hotkeys.BroadcastUp(); })
+        .Play(audioFileName, settings.generalSettings.AudioOutDevice);
+    }
+
+    private void PlayCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+    {
+      var target = e.Source as Button;
+      if (target != null)
+      {
+
+      }
+    }
+
+    // CanExecuteRoutedEventHandler for the custom color command.
+    private void PlayCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+    {
+      if (e.Source is Button)
+      {
+        e.CanExecute = true;
+      }
+      else
+      {
+        e.CanExecute = false;
+      }
     }
 
     public void stopAudio()
