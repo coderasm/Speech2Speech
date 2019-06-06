@@ -3,25 +3,23 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:SpeechToSpeech.ViewModels"
         mc:Ignorable="d"
         Title="Speech2Speech" Height="425.902" Width="392">
   <Window.Resources>
     <DataTemplate x:Key="VocalizedTextDataTemplate">
       <Grid>
-        <TextBlock Grid.Column="0" Text="{Binding Text}"/>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Column="0" Text="{Binding Text}" Padding="0 0 5 0"/>
         <StackPanel Grid.Column="1" Orientation="Horizontal">
-          <Button Content="Play"/>
-          <Button Content="Stop"/>
+          <Button Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.PlayCmd}" CommandParameter="{Binding AudioFile}" Content="Play"/>
+          <Button Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.StopCmd}" Content="Stop"/>
         </StackPanel>
       </Grid>
     </DataTemplate>
   </Window.Resources>
-  <Window.CommandBindings>
-    <CommandBinding Command="{Binding PlayCmd}"
-                    Executed="{Binding PlayCmdExecuted}"
-                    CanExecute="{Binding PlayCmdCanExecute}"/>
-  </Window.CommandBindings>
   <Grid>
     <DockPanel HorizontalAlignment="Left" Height="19" LastChildFill="False" VerticalAlignment="Top" Width="376">
       <Menu Width="33">

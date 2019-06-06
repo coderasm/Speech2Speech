@@ -217,6 +217,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Commands\StopCommand.cs" />
+    <Compile Include="Commands\PlayCommand.cs" />
     <Compile Include="Services\AmazonWebService.cs" />
     <Compile Include="Services\AudioService.cs" />
     <Compile Include="Services\DatabaseService.cs" />
@@ -225,6 +227,7 @@
     <Compile Include="Hotkey.cs" />
     <Compile Include="Services\IAudioService.cs" />
     <Compile Include="Services\IBMWebService.cs" />
+    <Compile Include="Services\IDataBaseService.cs" />
     <Compile Include="Services\IDialogService.cs" />
     <Compile Include="Services\ISettingsService.cs" />
     <Compile Include="ITranscribeAndVocalize.cs" />
@@ -232,6 +235,7 @@
     <Compile Include="TextToSpeech.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\IMainViewModel.cs" />
     <Compile Include="Voice.cs" />
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

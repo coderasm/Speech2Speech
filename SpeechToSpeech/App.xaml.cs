@@ -16,9 +16,16 @@ namespace SpeechToSpeech
       return Container.Resolve<MainWindow>();
     }
 
+    protected override void OnStartup(StartupEventArgs e)
+    {
+      base.OnStartup(e);
+      Container.Resolve<DatabaseService>();
+    }
+
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
       containerRegistry.RegisterSingleton<ISettingsService, SettingsService>();
+      containerRegistry.RegisterSingleton<IDatabaseService, DatabaseService>();
       containerRegistry.RegisterSingleton<GoogleWebService>();
       containerRegistry.RegisterSingleton<AmazonWebService>();
       containerRegistry.RegisterSingleton<IBMWebService>();

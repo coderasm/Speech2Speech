@@ -1,4 +1,5 @@
-﻿using SpeechToSpeech.Services;
+﻿using SpeechToSpeech.Commands;
+using SpeechToSpeech.Services;
 using SpeechToSpeech.Views;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -9,20 +10,23 @@ using Unity.Attributes;
 
 namespace SpeechToSpeech.ViewModels
 {
-  public class MainViewModel : INotifyPropertyChanged
+  public class MainViewModel : INotifyPropertyChanged, IMainViewModel
   {
     private ISettingsService settingsService { get; set; }
-    private IDialogService dialogService { get; set; }
+    [Dependency]
+    public IDialogService dialogService { get; set; }
     [Dependency]
     public GoogleWebService googleWebService { get; set; }
     [Dependency]
     public AmazonWebService amazonWebService { get; set; }
     [Dependency]
     public IBMWebService ibmWebService { get; set; }
+    [Dependency]
+    public IAudioService audioService { get; set; }
     private Hotkey hotkeys;
     private Settings settings;
-    public RoutedCommand PlayCmd { get; set; } = new RoutedCommand();
-    public RoutedCommand StopCmd { get; set; } = new RoutedCommand();
+    public ICommand PlayCmd { get; set; }
+    public ICommand StopCmd { get; set; }
     public RoutedCommand PauseCmd { get; set; } = new RoutedCommand();
     public RoutedCommand MuteCmd { get; set; } = new RoutedCommand();
     public RoutedCommand VolumeCmd { get; set; } = new RoutedCommand();
@@ -30,18 +34,14 @@ namespace SpeechToSpeech.ViewModels
 
 
     public event PropertyChangedEventHandler PropertyChanged;
-
-    private IAudioService audioService { get; set; }
     public ObservableCollection<TextToSpeech> TextToSpeeches { get; set; } = new ObservableCollection<TextToSpeech>();
 
-    public MainViewModel(ISettingsService settingsService, IAudioService audioService, IDialogService dialogService)
+    public MainViewModel(ISettingsService settingsService)
     {
-
       this.settingsService = settingsService;
-      this.settings = settingsService.settings;
-      this.dialogService = dialogService;
-      this.audioService = audioService;
-      DatabaseService.Initialize(settingsService.settings);
+      settings = settingsService.settings;
+      PlayCmd = new PlayCommand(this);
+      StopCmd = new StopCommand(this);
       createFolders();
     }
 
@@ -75,6 +75,11 @@ namespace SpeechToSpeech.ViewModels
         playFile(audioFile);
     }
 
+    public void PlayHandler(object parameter)
+    {
+      playFile(parameter as string);
+    }
+
     private void playFile(string audioFileName)
     {
       hotkeys = Hotkey.Create(settings.generalSettings.AppPush2TalkKey);
@@ -84,26 +89,9 @@ namespace SpeechToSpeech.ViewModels
         .Play(audioFileName, settings.generalSettings.AudioOutDevice);
     }
 
-    private void PlayCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+    public void StopHandler()
     {
-      var target = e.Source as Button;
-      if (target != null)
-      {
-
-      }
-    }
-
-    // CanExecuteRoutedEventHandler for the custom color command.
-    private void PlayCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
-    {
-      if (e.Source is Button)
-      {
-        e.CanExecute = true;
-      }
-      else
-      {
-        e.CanExecute = false;
-      }
+      stopAudio();
     }
 
     public void stopAudio()
