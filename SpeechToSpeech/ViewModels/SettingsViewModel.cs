@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Unity.Attributes;
+using SpeechToSpeech.Models;
 
 namespace SpeechToSpeech.ViewModels
 {
@@ -27,13 +28,7 @@ namespace SpeechToSpeech.ViewModels
     public bool ListeningForPush2Talk { get; set; } = false;
     public List<Key> KeysDown = new List<Key>();
     public Settings settings { get; set; }
-    public ObservableCollection<KeyValuePair<int, string>> webServiceLookup { get; set; } = new ObservableCollection<KeyValuePair<int, string>>
-      {
-        new KeyValuePair<int, string>(0, "Google"),
-        new KeyValuePair<int, string>(1, "Amazon"),
-        new KeyValuePair<int, string>(2, "IBM")
-
-      };
+    public ObservableCollection<KeyValuePair<int, string>> webServiceLookup { get; set; } = new ObservableCollection<KeyValuePair<int, string>>();
     public ObservableCollection<KeyValuePair<int, string>> audioDevices { get; set; } = new ObservableCollection<KeyValuePair<int, string>>();
     public ObservableCollection<KeyValuePair<string, Voice>> GoogleVoices { get; set; } = new ObservableCollection<KeyValuePair<string, Voice>>();
     public ObservableCollection<KeyValuePair<string, Voice>> AmazonVoices { get; set; } = new ObservableCollection<KeyValuePair<string, Voice>>();

@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpeechToSpeech.Services
+namespace SpeechToSpeech.Models
 {
-  public interface IDatabaseService
+  public class WebService
   {
-    string ConnectionString { get; }
+    public int Id { get; set; }
+    public string Name { get; set; }
   }
 }

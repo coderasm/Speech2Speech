@@ -3,11 +3,12 @@ using Google.Cloud.TextToSpeech.V1;
 using System;
 using System.ComponentModel;
 
-namespace SpeechToSpeech
+namespace SpeechToSpeech.Models
 {
   public class Voice: IEquatable<Voice>, INotifyPropertyChanged
   {
-    public VoiceId Id { get; set; }
+    public int Id { get; set; }
+    public VoiceId VoiceId { get; set; }
     public string Gender { get; set; }
     public SsmlVoiceGender SsmlGender { get; set; }
     public string Language { get; set; }

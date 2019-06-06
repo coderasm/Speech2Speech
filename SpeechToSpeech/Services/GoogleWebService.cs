@@ -9,15 +9,16 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using SToSVoice = SpeechToSpeech.Models.Voice;
 
 namespace SpeechToSpeech.Services
 {
-  public class GoogleWebService : ITranscribeAndVocalize<Voice>
+  public class GoogleWebService : ITranscribeAndVocalize<SToSVoice>
   {
     private TextToSpeechClient toSpeechClient;
     private SpeechClient toTextClient;
     private ISettingsService settingsService;
-    private List<Voice> voiceCache = new List<Voice>();
+    private List<SToSVoice> voiceCache = new List<SToSVoice>();
 
     public GoogleWebService(ISettingsService settingsService)
     {
@@ -49,10 +50,10 @@ namespace SpeechToSpeech.Services
       }
     }
 
-    public async Task<List<Voice>> GetVoices()
+    public async Task<List<SToSVoice>> GetVoices()
     {
       if (toSpeechClient == null)
-        return new List<Voice>();
+        return new List<SToSVoice>();
       if (voiceCache.Count() == 0)
         return await FetchVoices(settingsService.settings.generalSettings.TextInputLanguage);
       return voiceCache.Where(voice =>
@@ -61,10 +62,10 @@ namespace SpeechToSpeech.Services
       .ToList();
     }
 
-    public async Task<List<Voice>> GetVoices(string language)
+    public async Task<List<SToSVoice>> GetVoices(string language)
     {
       if (toSpeechClient == null)
-        return new List<Voice>();
+        return new List<SToSVoice>();
       if (voiceCache.Count() == 0)
         return await FetchVoices(language);
       return voiceCache.Where(voice =>
@@ -73,14 +74,14 @@ namespace SpeechToSpeech.Services
       .ToList();
     }
 
-    private async Task<List<Voice>> FetchVoices(string language)
+    private async Task<List<SToSVoice>> FetchVoices(string language)
     {
       try
       {
         var request = new ListVoicesRequest();
         var response = await toSpeechClient.ListVoicesAsync(request);
         voiceCache = response.Voices.Select(voice =>
-         new Voice
+         new SToSVoice
          {
            Name = voice.Name,
            SsmlGender = voice.SsmlGender,
@@ -94,7 +95,7 @@ namespace SpeechToSpeech.Services
         Console.WriteLine("Exception caught: " + e);
         MessageBox.Show("Exception caught: " + e);
       }
-      return new List<Voice>();
+      return new List<SToSVoice>();
     }
 
     public async Task<string> ToAudio(string transcript)

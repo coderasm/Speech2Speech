@@ -1,4 +1,5 @@
 ﻿using SpeechToSpeech.Commands;
+using SpeechToSpeech.Models;
 using SpeechToSpeech.Services;
 using SpeechToSpeech.Views;
 using System.Collections.ObjectModel;

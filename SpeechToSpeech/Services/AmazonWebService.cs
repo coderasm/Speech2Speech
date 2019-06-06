@@ -1,19 +1,20 @@
 ﻿using Amazon.Polly;
-using Amazon.Polly.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using SToSVoice = SpeechToSpeech.Models.Voice;
+using Amazon.Polly.Model;
 
 namespace SpeechToSpeech.Services
 {
-  public class AmazonWebService : ITranscribeAndVocalize<Voice>
+  public class AmazonWebService : ITranscribeAndVocalize<SToSVoice>
   {
     private AmazonPollyClient client;
     private ISettingsService settingsService;
-    private List<Voice> voiceCache = new List<Voice>();
+    private List<SToSVoice> voiceCache = new List<SToSVoice>();
 
     public AmazonWebService(ISettingsService settingsService)
     {
@@ -39,10 +40,10 @@ namespace SpeechToSpeech.Services
       }
     }
 
-    public async Task<List<Voice>> GetVoices()
+    public async Task<List<SToSVoice>> GetVoices()
     {
       if (client == null)
-        return new List<Voice>();
+        return new List<SToSVoice>();
       if (voiceCache.Count() == 0)
         return await FetchVoices(settingsService.settings.generalSettings.TextInputLanguage);
       return voiceCache.Where(voice =>
@@ -51,10 +52,10 @@ namespace SpeechToSpeech.Services
       .ToList();
     }
 
-    public async Task<List<Voice>> GetVoices(string language)
+    public async Task<List<SToSVoice>> GetVoices(string language)
     {
       if (client == null)
-        return new List<Voice>();
+        return new List<SToSVoice>();
       if (voiceCache.Count() == 0)
         return await FetchVoices(language);
       return voiceCache.Where(voice =>
@@ -63,7 +64,7 @@ namespace SpeechToSpeech.Services
       .ToList();
     }
 
-    public async Task<List<Voice>> FetchVoices(string language)
+    public async Task<List<SToSVoice>> FetchVoices(string language)
     {
       try
       {
@@ -78,9 +79,9 @@ namespace SpeechToSpeech.Services
           voices.AddRange(allVoicesResult.Voices);
         } while (nextToken != null);
         voiceCache = voices.Select(voice =>
-        new Voice
+        new SToSVoice
         {
-          Id = voice.Id,
+          VoiceId = voice.Id,
           Name = voice.Name,
           Gender = voice.Gender,
           Language = voice.LanguageCode
@@ -93,7 +94,7 @@ namespace SpeechToSpeech.Services
         Console.WriteLine("Exception caught: " + e);
         MessageBox.Show("Exception caught: " + e);
       }
-      return new List<Voice>();
+      return new List<SToSVoice>();
     }
 
     public async Task<string> ToAudio(string transcript)
@@ -106,7 +107,7 @@ namespace SpeechToSpeech.Services
 
       SynthesizeSpeechRequest synthesizeSpeechRequest = new SynthesizeSpeechRequest();
       synthesizeSpeechRequest.OutputFormat = OutputFormat.Mp3;
-      synthesizeSpeechRequest.VoiceId = settingsService.settings.amazonSettings.Voice.Id;
+      synthesizeSpeechRequest.VoiceId = settingsService.settings.amazonSettings.Voice.VoiceId;
       synthesizeSpeechRequest.Text = transcript;
       try
       {

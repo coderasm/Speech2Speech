@@ -12,7 +12,8 @@ namespace SpeechToSpeech.Services
     private Action onPlayStopped = () => { };
     private Action onPlay = () => { };
 
-    public int OutputDevice {
+    public int OutputDevice
+    {
       set
       {
         outputDevice = new WaveOutEvent() { DeviceNumber = value };
@@ -28,7 +29,7 @@ namespace SpeechToSpeech.Services
     }
 
     public AudioService() { }
-    
+
 
     public AudioService(int inputDevice, int outputDevice)
     {
@@ -58,9 +59,11 @@ namespace SpeechToSpeech.Services
     private void Dispose(object sender, StoppedEventArgs args)
     {
       onPlayStopped();
-      outputDevice.Dispose();
+      if (outputDevice != null)
+        outputDevice.Dispose();
       outputDevice = null;
-      audioFile.Dispose();
+      if (audioFile != null)
+        audioFile.Dispose();
       audioFile = null;
     }
 

@@ -1,5 +1,6 @@
 ﻿using Amazon;
 using System.ComponentModel;
+using SpeechToSpeech.Models;
 
 namespace SpeechToSpeech
 {

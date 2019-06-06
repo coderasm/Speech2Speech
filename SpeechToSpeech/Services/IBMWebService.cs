@@ -8,17 +8,18 @@ using IBM.WatsonDeveloperCloud.Util;
 using IBM.WatsonDeveloperCloud.TextToSpeech.v1;
 using IBM.WatsonDeveloperCloud.SpeechToText.v1;
 using System.Windows;
+using SToSVoice = SpeechToSpeech.Models.Voice;
 
 namespace SpeechToSpeech.Services
 {
-  public class IBMWebService : ITranscribeAndVocalize<Voice>
+  public class IBMWebService : ITranscribeAndVocalize<SToSVoice>
   {
     private TokenOptions textToSpeechTokenOptions;
     private TokenOptions speechToTextTokenOptions;
     private TextToSpeechService textToSpeechClient;
     private SpeechToTextService speechToTextClient;
     private ISettingsService settingsService;
-    private List<Voice> voiceCache = new List<Voice>();
+    private List<SToSVoice> voiceCache = new List<SToSVoice>();
 
     public IBMWebService(ISettingsService settingsService)
     {
@@ -54,10 +55,10 @@ namespace SpeechToSpeech.Services
       }
     }
 
-    public async Task<List<Voice>> GetVoices()
+    public async Task<List<SToSVoice>> GetVoices()
     {
       if (textToSpeechClient == null)
-        return new List<Voice>();
+        return new List<SToSVoice>();
       if (voiceCache.Count() == 0)
         return await FetchVoices(settingsService.settings.generalSettings.TextInputLanguage);
       return voiceCache.Where(voice =>
@@ -66,10 +67,10 @@ namespace SpeechToSpeech.Services
       .ToList();
     }
 
-    public async Task<List<Voice>> GetVoices(string language)
+    public async Task<List<SToSVoice>> GetVoices(string language)
     {
       if (textToSpeechClient == null)
-        return new List<Voice>();
+        return new List<SToSVoice>();
       if (voiceCache.Count() == 0)
         return await FetchVoices(language);
       return voiceCache.Where(voice =>
@@ -78,7 +79,7 @@ namespace SpeechToSpeech.Services
       .ToList();
     }
 
-    private async Task<List<Voice>> FetchVoices(string language)
+    private async Task<List<SToSVoice>> FetchVoices(string language)
     {
       try
       {
@@ -87,7 +88,7 @@ namespace SpeechToSpeech.Services
           return textToSpeechClient.ListVoices();
         });
         voiceCache = voices._Voices.Select(voice =>
-          new Voice
+          new SToSVoice
           {
             Name = voice.Name,
             Gender = voice.Gender,
@@ -101,7 +102,7 @@ namespace SpeechToSpeech.Services
         Console.WriteLine("Exception caught: " + e);
         MessageBox.Show("Exception caught: " + e);
       }
-      return new List<Voice>();
+      return new List<SToSVoice>();
     }
 
     public async Task<string> ToAudio(string transcript)

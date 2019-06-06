@@ -1,5 +1,6 @@
 ﻿using Prism.Ioc;
 using Prism.Unity;
+using SpeechToSpeech.Repositories;
 using SpeechToSpeech.Services;
 using SpeechToSpeech.Views;
 using System.Windows;
@@ -26,6 +27,8 @@ namespace SpeechToSpeech
     {
       containerRegistry.RegisterSingleton<ISettingsService, SettingsService>();
       containerRegistry.RegisterSingleton<IDatabaseService, DatabaseService>();
+      containerRegistry.RegisterSingleton<IWebServiceRepository, WebServiceRepository>();
+      containerRegistry.RegisterSingleton<IVoiceRepository, VoiceRepository>();
       containerRegistry.RegisterSingleton<GoogleWebService>();
       containerRegistry.RegisterSingleton<AmazonWebService>();
       containerRegistry.RegisterSingleton<IBMWebService>();
