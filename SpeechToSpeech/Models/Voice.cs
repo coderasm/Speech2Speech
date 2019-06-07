@@ -1,17 +1,24 @@
 ﻿using Amazon.Polly;
+using Dapper.Contrib.Extensions;
 using Google.Cloud.TextToSpeech.V1;
 using System;
 using System.ComponentModel;
 
 namespace SpeechToSpeech.Models
 {
+  [Table("voice")]
   public class Voice: IEquatable<Voice>, INotifyPropertyChanged
   {
+    [Key]
     public int Id { get; set; }
     public VoiceId VoiceId { get; set; }
+    [Key]
     public string Gender { get; set; }
     public SsmlVoiceGender SsmlGender { get; set; }
+    [Key]
     public string Language { get; set; }
+    [Key]
+    public int ServiceId { get; set; }
     private string _name;
     public string Name {
       get

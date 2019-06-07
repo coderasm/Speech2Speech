@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlServerCe;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Dapper;
+using Dapper.Contrib.Extensions;
 using SpeechToSpeech.Models;
 using SpeechToSpeech.Services;
 
@@ -10,49 +13,81 @@ namespace SpeechToSpeech.Repositories
 {
   public class VoiceRepository : IVoiceRepository
   {
-    private IDatabaseService databaseService;
-    public VoiceRepository(IDatabaseService databaseService)
+    private ISettingsService settingsService;
+    private Settings settings;
+    private string ConnectionString
     {
-      this.databaseService = databaseService;
+      get
+      {
+        return string.Format("DataSource=\"{0}\";Max Database Size={1};", settings.generalSettings.Database, settings.databaseSettings.MaxDatabaseSize);
+      }
     }
-    public int CreateVoice(Voice voice)
+    public VoiceRepository(ISettingsService settingsService)
+    {
+      this.settingsService = settingsService;
+      settings = settingsService.settings;
+    }
+    public async Task<int> Insert(Voice voice)
+    {
+      using (var cnn = new SqlCeConnection(ConnectionString))
+      {
+        return await cnn.InsertAsync(voice);
+      }
+    }
+
+    public int InsertMultiple(List<Voice> voices)
+    {
+      var ids = new List<int>();
+      using (var cnn = new SqlCeConnection(ConnectionString))
+      {
+        return (int)cnn.Insert(voices);
+      }
+    }
+
+    public async Task<bool> Delete(int id)
+    {
+      using (var cnn = new SqlCeConnection(ConnectionString))
+      {
+        return await cnn.DeleteAsync(new Voice { Id = id });
+      }
+    }
+
+    public bool DeleteAll()
     {
       throw new NotImplementedException();
     }
 
-    public List<int> CreateVoices(List<Voice> voices)
+    public bool DeleteAllById(List<int> ids)
     {
       throw new NotImplementedException();
     }
 
-    public bool DeleteVoice(int id)
+    public async Task<Voice> Get(int id)
     {
-      throw new NotImplementedException();
+      using (var cnn = new SqlCeConnection(ConnectionString))
+      {
+        return await cnn.GetAsync<Voice>(id);
+      }
     }
 
-    public bool DeleteVoices()
+    public async Task<List<Voice>> GetAll(int serviceId, string language)
     {
-      throw new NotImplementedException();
+      using (var cnn = new SqlCeConnection(ConnectionString))
+      {
+        var obj = new { ServiceId = serviceId, Language = language };
+        var results = await cnn.QueryAsync<Voice>("select * from voice where ServiceId = @ServiceId && Language = @Language", obj);
+        return results.ToList();
+      }
     }
 
-    public bool DeleteVoices(List<int> ids)
+    public async Task<List<Voice>> GetAllByService(int serviceId)
     {
-      throw new NotImplementedException();
-    }
-
-    public Voice GetVoice(int id)
-    {
-      throw new NotImplementedException();
-    }
-
-    public List<Voice> GetVoices(int serviceId, string language)
-    {
-      throw new NotImplementedException();
-    }
-
-    public List<Voice> GetVoicesByService(int serviceId)
-    {
-      throw new NotImplementedException();
+      using (var cnn = new SqlCeConnection(ConnectionString))
+      {
+        var obj = new { ServiceId = serviceId };
+        var results = await cnn.QueryAsync<Voice>("select * from voice where ServiceId = @ServiceId", obj);
+        return results.ToList();
+      }
     }
   }
 }

@@ -10,10 +10,12 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Unity.Attributes;
 using SpeechToSpeech.Models;
+using SpeechToSpeech.Repositories;
+using System.Windows.Threading;
 
 namespace SpeechToSpeech.ViewModels
 {
-  public class SettingsViewModel: INotifyPropertyChanged
+  public class SettingsViewModel : INotifyPropertyChanged
   {
     public event PropertyChangedEventHandler PropertyChanged;
     private ISettingsService settingsService;
@@ -24,11 +26,33 @@ namespace SpeechToSpeech.ViewModels
     public AmazonWebService amazonWebService { get; set; }
     [Dependency]
     public IBMWebService ibmWebService { get; set; }
+    [Dependency]
+    public IWebServiceRepository webServiceRepository { get; set; }
     public bool ListeningForAppPush2Talk { get; set; } = false;
     public bool ListeningForPush2Talk { get; set; } = false;
     public List<Key> KeysDown = new List<Key>();
     public Settings settings { get; set; }
-    public ObservableCollection<KeyValuePair<int, string>> webServiceLookup { get; set; } = new ObservableCollection<KeyValuePair<int, string>>();
+    private ObservableCollection<WebService> _webServices = new ObservableCollection<WebService>();
+    public ObservableCollection<WebService> webServices
+    {
+      get
+      {
+        if (_webServices.Count == 0)
+          Dispatcher.CurrentDispatcher.InvokeAsync(async () => {
+            var collection = new ObservableCollection<WebService>();
+            var results = await webServiceRepository.GetAll();
+            results.ForEach(service => collection.Add(service));
+            webServices = collection;
+            });
+        return _webServices;
+      }
+      set
+      {
+        _webServices.Clear();
+        _webServices.AddRange(value);
+        NotifyPropertyChanged("webServices");
+      }
+    }
     public ObservableCollection<KeyValuePair<int, string>> audioDevices { get; set; } = new ObservableCollection<KeyValuePair<int, string>>();
     public ObservableCollection<KeyValuePair<string, Voice>> GoogleVoices { get; set; } = new ObservableCollection<KeyValuePair<string, Voice>>();
     public ObservableCollection<KeyValuePair<string, Voice>> AmazonVoices { get; set; } = new ObservableCollection<KeyValuePair<string, Voice>>();
@@ -51,6 +75,7 @@ namespace SpeechToSpeech.ViewModels
       AppPush2TalkKeys = Hotkey.Create(settings.generalSettings.AppPush2TalkKey);
     }
 
+
     public void UpdateVoices()
     {
       UpdateVoices(settings.generalSettings.TextInputLanguage);
@@ -60,12 +85,12 @@ namespace SpeechToSpeech.ViewModels
     {
       var googleVoices = await googleWebService.GetVoices(language);
       GoogleVoices.Clear();
-        var voices = googleVoices.Select(
-          voice => new KeyValuePair<string, Voice>(
-              voice.Name + ", " + voice.Gender,
-              voice
-          )
-        );
+      var voices = googleVoices.Select(
+        voice => new KeyValuePair<string, Voice>(
+            voice.Name + ", " + voice.Gender,
+            voice
+        )
+      );
       GoogleVoices.AddRange(voices);
       var amazonVoices = await amazonWebService.GetVoices(language);
       AmazonVoices.Clear();

@@ -109,7 +109,7 @@ namespace SpeechToSpeech
         }
       }
     }
-    private int _activeTextToSpeechService = 0;
+    private int _activeTextToSpeechService = 1;
     public int ActiveTextToSpeechService
     {
       get

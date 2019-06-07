@@ -35,9 +35,10 @@ namespace SpeechToSpeech.Services
     {
       if (File.Exists(settings.generalSettings.Database))
         return;
-      connectionString = String.Format("DataSource=\"{0}\";Max Database Size=4000;", settings.generalSettings.Database);
+      connectionString = String.Format("DataSource=\"{0}\";Max Database Size={1};", settings.generalSettings.Database, settings.databaseSettings.MaxDatabaseSize);
       CreateDatabase();
       CreateTables();
+      PopulateTables();
     }
 
     private void CreateDatabase()
@@ -64,7 +65,7 @@ namespace SpeechToSpeech.Services
         {
           comm.Connection = conn;
           comm.CommandType = CommandType.Text;
-          comm.CommandText = "CREATE TABLE voice ([Id] [int] identity(1,1) primary key, [ServiceId] [int] NOT NULL, [VoiceId] [nvarchar](100), [Name] [nvarchar](100) not null, [Gender] [nvarchar](50) not null, [Language] [nvarchar](50) not null, [SsmlGender] [tinyint])";
+          comm.CommandText = "CREATE TABLE voice ([Id] [int] identity(1,1), [ServiceId] [int] NOT NULL, [VoiceId] [nvarchar](100), [Name] [nvarchar](100) not null, [Gender] [nvarchar](50) not null, [Language] [nvarchar](50) not null, [SsmlGender] [tinyint], primary key (Name, ServiceId, Gender, Language))";
           comm.ExecuteNonQuery();
           comm.CommandText = "CREATE TABLE service ([Id] [int] identity(1,1) primary key, [Name] [nvarchar](100) not null)";
           comm.ExecuteNonQuery();
@@ -83,7 +84,7 @@ namespace SpeechToSpeech.Services
         new WebService{Name = "Google"},
         new WebService{Name = "IBM"}
       };
-
+      webServiceRepository.InsertMultiple(webServices);
     }
 
     private void CreateTableIndex()

@@ -9,6 +9,7 @@ using IBM.WatsonDeveloperCloud.TextToSpeech.v1;
 using IBM.WatsonDeveloperCloud.SpeechToText.v1;
 using System.Windows;
 using SToSVoice = SpeechToSpeech.Models.Voice;
+using SpeechToSpeech.Repositories;
 
 namespace SpeechToSpeech.Services
 {
@@ -20,10 +21,13 @@ namespace SpeechToSpeech.Services
     private SpeechToTextService speechToTextClient;
     private ISettingsService settingsService;
     private List<SToSVoice> voiceCache = new List<SToSVoice>();
+    private IVoiceRepository voiceRepository;
+    private int WEB_SERVICE_ID = 3;
 
-    public IBMWebService(ISettingsService settingsService)
+    public IBMWebService(ISettingsService settingsService, IVoiceRepository voiceRepository)
     {
       this.settingsService = settingsService;
+      this.voiceRepository = voiceRepository;
       CreateClients();
     }
 
@@ -83,18 +87,26 @@ namespace SpeechToSpeech.Services
     {
       try
       {
-        var voices = await Task.Run(() =>
+        var voices = await voiceRepository.GetAllByService(WEB_SERVICE_ID);
+        if (voices.Count == 0)
         {
-          return textToSpeechClient.ListVoices();
-        });
-        voiceCache = voices._Voices.Select(voice =>
-          new SToSVoice
+          var ibmVoices = await Task.Run(() =>
           {
-            Name = voice.Name,
-            Gender = voice.Gender,
-            Language = voice.Language
-          }
-        ).ToList();
+            return textToSpeechClient.ListVoices();
+          });
+          voiceCache = ibmVoices._Voices.Select(voice =>
+            new SToSVoice
+            {
+              ServiceId = WEB_SERVICE_ID,
+              Name = voice.Name,
+              Gender = voice.Gender,
+              Language = voice.Language
+            }
+          ).ToList();
+          voiceRepository.InsertMultiple(voiceCache);
+        }
+        else
+          voiceCache = voices;
         return voiceCache.Where(voice => voice.Language == language).ToList();
       }
       catch (Exception e)

@@ -3,6 +3,7 @@ using Google.Cloud.Speech.V1;
 using Google.Cloud.TextToSpeech.V1;
 using Grpc.Auth;
 using Grpc.Core;
+using SpeechToSpeech.Repositories;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,10 +20,13 @@ namespace SpeechToSpeech.Services
     private SpeechClient toTextClient;
     private ISettingsService settingsService;
     private List<SToSVoice> voiceCache = new List<SToSVoice>();
+    private IVoiceRepository voiceRepository;
+    private int WEB_SERVICE_ID = 2;
 
-    public GoogleWebService(ISettingsService settingsService)
+    public GoogleWebService(ISettingsService settingsService, IVoiceRepository voiceRepository)
     {
       this.settingsService = settingsService;
+      this.voiceRepository = voiceRepository;
       CreateClients();
     }
 
@@ -78,16 +82,24 @@ namespace SpeechToSpeech.Services
     {
       try
       {
-        var request = new ListVoicesRequest();
-        var response = await toSpeechClient.ListVoicesAsync(request);
-        voiceCache = response.Voices.Select(voice =>
-         new SToSVoice
-         {
-           Name = voice.Name,
-           SsmlGender = voice.SsmlGender,
-           Language = string.Join(",", voice.LanguageCodes.ToArray())
-         }
-        ).ToList();
+        var voices = await voiceRepository.GetAllByService(WEB_SERVICE_ID);
+        if (voices.Count == 0)
+        {
+          var request = new ListVoicesRequest();
+          var response = await toSpeechClient.ListVoicesAsync(request);
+          voiceCache = response.Voices.Select(voice =>
+           new SToSVoice
+           {
+             ServiceId = WEB_SERVICE_ID,
+             Name = voice.Name,
+             SsmlGender = voice.SsmlGender,
+             Language = string.Join(",", voice.LanguageCodes.ToArray())
+           }
+          ).ToList();
+          voiceRepository.InsertMultiple(voiceCache);
+        }
+        else
+          voiceCache = voices;
         return voiceCache.Where(voice => voice.Language.Contains(language)).ToList();
       }
       catch (Exception e)

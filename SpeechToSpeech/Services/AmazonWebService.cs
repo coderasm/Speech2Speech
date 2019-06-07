@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using SToSVoice = SpeechToSpeech.Models.Voice;
 using Amazon.Polly.Model;
+using SpeechToSpeech.Repositories;
 
 namespace SpeechToSpeech.Services
 {
@@ -15,10 +16,13 @@ namespace SpeechToSpeech.Services
     private AmazonPollyClient client;
     private ISettingsService settingsService;
     private List<SToSVoice> voiceCache = new List<SToSVoice>();
+    private IVoiceRepository voiceRepository;
+    private int WEB_SERVICE_ID = 1;
 
-    public AmazonWebService(ISettingsService settingsService)
+    public AmazonWebService(ISettingsService settingsService, IVoiceRepository voiceRepository)
     {
       this.settingsService = settingsService;
+      this.voiceRepository = voiceRepository;
       CreateClients();
     }
 
@@ -68,25 +72,33 @@ namespace SpeechToSpeech.Services
     {
       try
       {
-        var voiceRequest = new DescribeVoicesRequest();
-        var voices = new List<Amazon.Polly.Model.Voice>();
-        string nextToken;
-        do
+        var voices = await voiceRepository.GetAllByService(WEB_SERVICE_ID);
+        if (voices.Count == 0)
         {
-          var allVoicesResult = await client.DescribeVoicesAsync(voiceRequest);
-          nextToken = allVoicesResult.NextToken;
-          voiceRequest.NextToken = nextToken;
-          voices.AddRange(allVoicesResult.Voices);
-        } while (nextToken != null);
-        voiceCache = voices.Select(voice =>
-        new SToSVoice
-        {
-          VoiceId = voice.Id,
-          Name = voice.Name,
-          Gender = voice.Gender,
-          Language = voice.LanguageCode
+          var voiceRequest = new DescribeVoicesRequest();
+          var amazonVoices = new List<Amazon.Polly.Model.Voice>();
+          string nextToken;
+          do
+          {
+            var allVoicesResult = await client.DescribeVoicesAsync(voiceRequest);
+            nextToken = allVoicesResult.NextToken;
+            voiceRequest.NextToken = nextToken;
+            amazonVoices.AddRange(allVoicesResult.Voices);
+          } while (nextToken != null);
+          voiceCache = amazonVoices.Select(voice =>
+          new SToSVoice
+          {
+            ServiceId = WEB_SERVICE_ID,
+            VoiceId = voice.Id,
+            Name = voice.Name,
+            Gender = voice.Gender,
+            Language = voice.LanguageCode
+          }
+          ).ToList();
+          voiceRepository.InsertMultiple(voiceCache);
         }
-        ).ToList();
+        else
+          voiceCache = voices;
         return voiceCache.Where(voice => voice.Language == language).ToList();
       }
       catch (Exception e)

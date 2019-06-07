@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace SpeechToSpeech.Repositories
 {
-  public interface IWebServiceRepository
+  interface ITextToSpeechRepository
   {
-    Task<List<WebService>> GetAll();
-    Task<int> Insert(WebService webService);
-    int InsertMultiple(List<WebService> webService);
+    Task<int> Insert(TextToSpeech textToSpeech);
     Task<bool> Delete(int id);
+    Task<TextToSpeech> Get(int id);
+    Task<List<TextToSpeech>> GetAll();
+    Task<List<TextToSpeech>> GetPage(int page, int amount);
   }
 }
