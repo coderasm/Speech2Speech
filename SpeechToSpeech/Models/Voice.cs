@@ -9,17 +9,18 @@ namespace SpeechToSpeech.Models
   [Table("voice")]
   public class Voice: IEquatable<Voice>, INotifyPropertyChanged
   {
-    [Key]
+    [Write(false)]
     public int Id { get; set; }
-    public VoiceId VoiceId { get; set; }
-    [Key]
+    public string VoiceId { get; set; }
+    [ExplicitKey]
     public string Gender { get; set; }
     public SsmlVoiceGender SsmlGender { get; set; }
-    [Key]
+    [ExplicitKey]
     public string Language { get; set; }
-    [Key]
+    [ExplicitKey]
     public int ServiceId { get; set; }
     private string _name;
+    [ExplicitKey]
     public string Name {
       get
       {

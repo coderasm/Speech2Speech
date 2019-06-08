@@ -89,7 +89,7 @@ namespace SpeechToSpeech.Services
           new SToSVoice
           {
             ServiceId = WEB_SERVICE_ID,
-            VoiceId = voice.Id,
+            VoiceId = voice.Id.Value,
             Name = voice.Name,
             Gender = voice.Gender,
             Language = voice.LanguageCode
@@ -119,7 +119,7 @@ namespace SpeechToSpeech.Services
 
       SynthesizeSpeechRequest synthesizeSpeechRequest = new SynthesizeSpeechRequest();
       synthesizeSpeechRequest.OutputFormat = OutputFormat.Mp3;
-      synthesizeSpeechRequest.VoiceId = settingsService.settings.amazonSettings.Voice.VoiceId;
+      synthesizeSpeechRequest.VoiceId = VoiceId.FindValue(settingsService.settings.amazonSettings.Voice.VoiceId);
       synthesizeSpeechRequest.Text = transcript;
       try
       {

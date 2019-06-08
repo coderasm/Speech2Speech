@@ -40,7 +40,15 @@ namespace SpeechToSpeech.Repositories
       var ids = new List<int>();
       using (var cnn = new SqlCeConnection(ConnectionString))
       {
-        return (int)cnn.Insert(voices);
+        try
+        {
+          return (int)cnn.Insert(voices);
+        }
+        catch (SqlCeException e)
+        {
+          Console.WriteLine("Error: " + e);
+        }
+        return 0;
       }
     }
 

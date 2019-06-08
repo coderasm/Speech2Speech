@@ -93,6 +93,7 @@ namespace SpeechToSpeech.Services
              ServiceId = WEB_SERVICE_ID,
              Name = voice.Name,
              SsmlGender = voice.SsmlGender,
+             Gender = voice.SsmlGender.ToString(),
              Language = string.Join(",", voice.LanguageCodes.ToArray())
            }
           ).ToList();

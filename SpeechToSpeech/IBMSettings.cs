@@ -1,12 +1,5 @@
-﻿using IBM.WatsonDeveloperCloud.TextToSpeech.v1.Model;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.ComponentModel;
+using SpeechToSpeech.Models;
 
 namespace SpeechToSpeech
 {
