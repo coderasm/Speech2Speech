@@ -1,12 +1,15 @@
 ﻿using SpeechToSpeech.Commands;
 using SpeechToSpeech.Models;
+using SpeechToSpeech.Repositories;
 using SpeechToSpeech.Services;
 using SpeechToSpeech.Views;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Unity.Attributes;
 
 namespace SpeechToSpeech.ViewModels
@@ -14,6 +17,7 @@ namespace SpeechToSpeech.ViewModels
   public class MainViewModel : INotifyPropertyChanged, IMainViewModel
   {
     private ISettingsService settingsService { get; set; }
+    private ITextToSpeechRepository textToSpeechRepository { get; set; }
     [Dependency]
     public IDialogService dialogService { get; set; }
     [Dependency]
@@ -24,10 +28,13 @@ namespace SpeechToSpeech.ViewModels
     public IBMWebService ibmWebService { get; set; }
     [Dependency]
     public IAudioService audioService { get; set; }
+    [Dependency]
+    public IFileManagementService fileManagementService { get; set; }
     private Hotkey hotkeys;
     private Settings settings;
     public ICommand PlayCmd { get; set; }
     public ICommand StopCmd { get; set; }
+    public ICommand DeleteCmd { get; set; }
     public RoutedCommand PauseCmd { get; set; } = new RoutedCommand();
     public RoutedCommand MuteCmd { get; set; } = new RoutedCommand();
     public RoutedCommand VolumeCmd { get; set; } = new RoutedCommand();
@@ -35,14 +42,37 @@ namespace SpeechToSpeech.ViewModels
 
 
     public event PropertyChangedEventHandler PropertyChanged;
-    public ObservableCollection<TextToSpeech> TextToSpeeches { get; set; } = new ObservableCollection<TextToSpeech>();
+    private ObservableCollection<TextToSpeech> _textToSpeeches = new ObservableCollection<TextToSpeech>();
+    public ObservableCollection<TextToSpeech> TextToSpeeches
+    {
+      get
+      {
+        if (_textToSpeeches.Count == 0)
+          Dispatcher.CurrentDispatcher.InvokeAsync(async () =>
+          {
+            var collection = new ObservableCollection<TextToSpeech>();
+            var results = await textToSpeechRepository.GetAll();
+            results.ForEach(service => collection.Add(service));
+            TextToSpeeches = collection;
+          });
+        return _textToSpeeches;
+      }
+      set
+      {
+        _textToSpeeches.Clear();
+        _textToSpeeches.AddRange(value);
+        NotifyPropertyChanged("TextToSpeeches");
+      }
+    }
 
-    public MainViewModel(ISettingsService settingsService)
+    public MainViewModel(ISettingsService settingsService, ITextToSpeechRepository textToSpeechRepository)
     {
       this.settingsService = settingsService;
       settings = settingsService.settings;
+      this.textToSpeechRepository = textToSpeechRepository;
       PlayCmd = new PlayCommand(this);
       StopCmd = new StopCommand(this);
+      DeleteCmd = new DeleteCommand(this);
       createFolders();
     }
 
@@ -69,9 +99,11 @@ namespace SpeechToSpeech.ViewModels
       {
         googleWebService, amazonWebService, ibmWebService
       };
-      var activeService = webServices[settings.generalSettings.ActiveTextToSpeechService];
+      var activeService = webServices[settings.generalSettings.ActiveTextToSpeechService - 1];
       audioFile = await activeService.ToAudio(text);
-      TextToSpeeches.Add(new TextToSpeech { Text = text, AudioFile = audioFile });
+      var textTospeech = new TextToSpeech { Text = text, AudioFile = audioFile };
+      textTospeech.Id = await textToSpeechRepository.Insert(textTospeech);
+      TextToSpeeches.Add(textTospeech);
       if (audioFile != "" && settings.generalSettings.IsAutoPlayVocalized)
         playFile(audioFile);
     }
@@ -95,9 +127,25 @@ namespace SpeechToSpeech.ViewModels
       stopAudio();
     }
 
-    public void stopAudio()
+    private void stopAudio()
     {
       audioService.Stop();
+    }
+
+    public void DeleteHandler(object parameter)
+    {
+      deleteTextToSpeechEntry(parameter as TextToSpeech);
+    }
+
+    private async void deleteTextToSpeechEntry(TextToSpeech toRemove)
+    {
+      var result = await textToSpeechRepository.Delete(toRemove.Id);
+      if (result) {
+        var remaining = TextToSpeeches.Where(textToSpeech => textToSpeech.Id != toRemove.Id);
+        TextToSpeeches.Clear();
+        TextToSpeeches.AddRange(remaining);
+        fileManagementService.Delete(toRemove.AudioFile);
+      }
     }
 
     private void NotifyPropertyChanged(string prop)

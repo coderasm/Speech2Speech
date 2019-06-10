@@ -33,15 +33,5 @@ namespace SpeechToSpeech.Views
     {
       ViewModel.vocalizeText(textToSendBox.Text);
     }
-
-    private void OnButtonStopClick(object sender, StoppedEventArgs args)
-    {
-      ViewModel.stopAudio();
-    }
-
-    private void Button_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
   }
 }

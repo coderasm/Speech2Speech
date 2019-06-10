@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SpeechToSpeech.Repositories
 {
-  interface ITextToSpeechRepository
+  public interface ITextToSpeechRepository
   {
     Task<int> Insert(TextToSpeech textToSpeech);
     Task<bool> Delete(int id);

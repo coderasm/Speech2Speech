@@ -9,6 +9,7 @@ namespace SpeechToSpeech.ViewModels
   public interface IMainViewModel
   {
     void PlayHandler(object parameter);
+    void DeleteHandler(object parameter);
     void StopHandler();
   }
 }

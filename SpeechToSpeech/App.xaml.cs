@@ -30,6 +30,7 @@ namespace SpeechToSpeech
       containerRegistry.RegisterSingleton<IWebServiceRepository, WebServiceRepository>();
       containerRegistry.RegisterSingleton<ITextToSpeechRepository, TextToSpeechRepository>();
       containerRegistry.RegisterSingleton<IVoiceRepository, VoiceRepository>();
+      containerRegistry.RegisterSingleton<IFileManagementService, FileMangementService>();
       containerRegistry.RegisterSingleton<GoogleWebService>();
       containerRegistry.RegisterSingleton<AmazonWebService>();
       containerRegistry.RegisterSingleton<IBMWebService>();

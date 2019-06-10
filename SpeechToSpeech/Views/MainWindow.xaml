@@ -16,6 +16,7 @@
         <StackPanel Grid.Column="1" Orientation="Horizontal">
           <Button Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.PlayCmd}" CommandParameter="{Binding AudioFile}" Content="Play"/>
           <Button Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.StopCmd}" Content="Stop"/>
+          <Button Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.DeleteCmd}" CommandParameter="{Binding}" Content="Delete"/>
         </StackPanel>
       </Grid>
     </DataTemplate>

@@ -227,6 +227,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Commands\DeleteCommand.cs" />
     <Compile Include="Commands\StopCommand.cs" />
     <Compile Include="Commands\PlayCommand.cs" />
     <Compile Include="DatabaseSettings.cs" />
@@ -241,12 +242,14 @@
     <Compile Include="Services\AudioService.cs" />
     <Compile Include="Services\DatabaseService.cs" />
     <Compile Include="Services\DialogService.cs" />
+    <Compile Include="Services\FileMangementService.cs" />
     <Compile Include="Services\GoogleWebService.cs" />
     <Compile Include="Hotkey.cs" />
     <Compile Include="Services\IAudioService.cs" />
     <Compile Include="Services\IBMWebService.cs" />
     <Compile Include="Services\IDataBaseService.cs" />
     <Compile Include="Services\IDialogService.cs" />
+    <Compile Include="Services\IFileManagementService.cs" />
     <Compile Include="Services\ISettingsService.cs" />
     <Compile Include="ITranscribeAndVocalize.cs" />
     <Compile Include="Services\SettingsService.cs" />
