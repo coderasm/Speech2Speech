@@ -24,6 +24,23 @@ namespace SpeechToSpeech
       }
     }
 
+    private int _keyUpDelay = 0;
+    public int KeyUpDelay
+    {
+      get
+      {
+        return _keyUpDelay;
+      }
+      set
+      {
+        if (_keyUpDelay != value)
+        {
+          _keyUpDelay = value;
+          NotifyPropertyChanged("KeyUpDelay");
+        }
+      }
+    }
+
     private bool _isPush2Talk = false;
     public bool IsPush2Talk
     {

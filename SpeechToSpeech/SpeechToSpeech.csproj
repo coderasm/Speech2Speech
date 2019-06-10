@@ -252,8 +252,10 @@
     <Compile Include="Services\IFileManagementService.cs" />
     <Compile Include="Services\ISettingsService.cs" />
     <Compile Include="ITranscribeAndVocalize.cs" />
+    <Compile Include="Services\IStringValidationService.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Models\TextToSpeech.cs" />
+    <Compile Include="Services\StringValidationService.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\IMainViewModel.cs" />

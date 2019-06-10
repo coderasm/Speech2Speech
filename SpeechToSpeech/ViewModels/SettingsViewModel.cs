@@ -31,17 +31,23 @@ namespace SpeechToSpeech.ViewModels
     public List<Key> KeysDown = new List<Key>();
     public Settings settings { get; set; }
     private ObservableCollection<WebService> _webServices = new ObservableCollection<WebService>();
+    //public ObservableCollection<WebService> webServices { get; set; } = new ObservableCollection<WebService> {
+    //  new WebService {Id = 1, Name = "Amazon"},
+    //  new WebService {Id = 2, Name = "Google"},
+    //  new WebService {Id = 3, Name = "IBM"}
+    //};
     public ObservableCollection<WebService> webServices
     {
       get
       {
         if (_webServices.Count == 0)
-          Dispatcher.CurrentDispatcher.InvokeAsync(async () => {
+          Dispatcher.CurrentDispatcher.InvokeAsync(async () =>
+          {
             var collection = new ObservableCollection<WebService>();
             var results = await webServiceRepository.GetAll();
             results.ForEach(service => collection.Add(service));
             webServices = collection;
-            });
+          });
         return _webServices;
       }
       set

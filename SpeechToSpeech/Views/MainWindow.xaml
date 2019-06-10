@@ -4,26 +4,47 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Speech2Speech" Height="425.902" Width="392">
+        Title="Speech2Speech" Width="400" Height="500" MinWidth="400" MinHeight="500">
   <Window.Resources>
     <DataTemplate x:Key="VocalizedTextDataTemplate">
       <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="*" />
-          <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Column="0" Text="{Binding Text}" Padding="0 0 5 0"/>
-        <StackPanel Grid.Column="1" Orientation="Horizontal">
-          <Button Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.PlayCmd}" CommandParameter="{Binding AudioFile}" Content="Play"/>
-          <Button Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.StopCmd}" Content="Stop"/>
-          <Button Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.DeleteCmd}" CommandParameter="{Binding}" Content="Delete"/>
-        </StackPanel>
+        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0 0 0 5" Text="{Binding Text}"/>
+        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="0">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <Button Grid.Row="0" Grid.Column="0" Margin="0 0 5 0" Padding="3" Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.PlayCmd}" CommandParameter="{Binding AudioFile}" Content="Play"/>
+          <Button Grid.Row="0" Grid.Column="1" Margin="0 0 5 0" Padding="3" Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.StopCmd}" Content="Stop"/>
+          <Button Grid.Row="0" Grid.Column="2" Margin="0 0 5 0" Padding="3" Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.DeleteCmd}" CommandParameter="{Binding}" Content="Delete"/>
+        </Grid>
       </Grid>
     </DataTemplate>
   </Window.Resources>
   <Grid>
-    <DockPanel HorizontalAlignment="Left" Height="19" LastChildFill="False" VerticalAlignment="Top" Width="376">
-      <Menu Width="33">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="1*" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="3*" />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+    <DockPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Height="Auto" LastChildFill="False" VerticalAlignment="Top" Width="Auto">
+      <Menu Width="Auto">
         <MenuItem Header="_File">
           <MenuItem Header="_Options" Click="OnOptionsClicked" />
           <Separator />
@@ -31,11 +52,10 @@
         </MenuItem>
       </Menu>
     </DockPanel>
-    <TextBox x:Name="textToSendBox" HorizontalAlignment="Left" Height="103" Margin="10,29,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="356"/>
-    <Button x:Name="sendTextButton" Content="Send" HorizontalAlignment="Left" Margin="148,137,0,0" VerticalAlignment="Top" Height="36" Width="58" Click="sendTextButton_Click"/>
+    <TextBox Grid.Row="1" Grid.Column="0" x:Name="textToSendBox" HorizontalAlignment="Stretch" Margin="10,5,10,0" TextWrapping="Wrap" VerticalAlignment="Stretch"/>
+    <Button Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" x:Name="sendTextButton" Content="Send" HorizontalAlignment="Center" VerticalAlignment="Center" Height="36" Width="58" Click="sendTextButton_Click"/>
 
-    <Label Content="Text/Speech history" HorizontalAlignment="Left" Margin="115,175,0,0" VerticalAlignment="Top"/>
-    <ListBox HorizontalAlignment="Left" ItemsSource="{Binding TextToSpeeches}" Height="182" Margin="10,203,0,0" VerticalAlignment="Top" Width="356" ItemTemplate="{DynamicResource VocalizedTextDataTemplate}">
-    </ListBox>
+    <Label Grid.Row="3" Grid.Column="0" Content="Text/Speech history" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <ListBox Grid.Row="4" Grid.Column="0" HorizontalAlignment="Stretch" ItemsSource="{Binding TextToSpeeches}" Margin="10,0,10,10" VerticalAlignment="Stretch" ItemTemplate="{DynamicResource VocalizedTextDataTemplate}"/>
   </Grid>
 </Window>

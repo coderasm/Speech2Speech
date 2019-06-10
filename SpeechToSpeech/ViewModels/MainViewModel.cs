@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -61,7 +62,7 @@ namespace SpeechToSpeech.ViewModels
       {
         _textToSpeeches.Clear();
         _textToSpeeches.AddRange(value);
-        NotifyPropertyChanged("TextToSpeeches");
+        //NotifyPropertyChanged("TextToSpeeches");
       }
     }
 
@@ -97,7 +98,7 @@ namespace SpeechToSpeech.ViewModels
       string audioFile = "";
       var webServices = new ITranscribeAndVocalize<Voice>[]
       {
-        googleWebService, amazonWebService, ibmWebService
+        amazonWebService, googleWebService, ibmWebService
       };
       var activeService = webServices[settings.generalSettings.ActiveTextToSpeechService - 1];
       audioFile = await activeService.ToAudio(text);
@@ -117,8 +118,14 @@ namespace SpeechToSpeech.ViewModels
     {
       hotkeys = Hotkey.Create(settings.generalSettings.AppPush2TalkKey);
       audioService
-        .OnPlay(() => { if (settings.generalSettings.IsAppPush2Talk) hotkeys.BroadcastDown(); })
-        .OnPlayStopped(() => { if (settings.generalSettings.IsAppPush2Talk) hotkeys.BroadcastUp(); })
+        .OnPlay(() => { hotkeys.BroadcastDown(); })
+        .OnPlayStopped(() => {
+          if (settings.generalSettings.IsAppPush2Talk)
+            Task.Run(async () => {
+              await Task.Delay(settings.generalSettings.KeyUpDelay * 1000);
+              hotkeys.BroadcastUp();
+            });
+        })
         .Play(audioFileName, settings.generalSettings.AudioOutDevice);
     }
 

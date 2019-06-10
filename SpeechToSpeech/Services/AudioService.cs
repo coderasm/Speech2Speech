@@ -96,6 +96,7 @@ namespace SpeechToSpeech.Services
       outputDevice.PlaybackStopped += Dispose;
       audioFile = new AudioFileReader(fileName);
       outputDevice.Init(audioFile);
+      onPlay();
       outputDevice.Play();
       return this;
     }

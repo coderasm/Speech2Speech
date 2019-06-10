@@ -1,6 +1,7 @@
 ﻿using Google.Cloud.TextToSpeech.V1;
 using Microsoft.Win32;
 using NAudio.Wave;
+using SpeechToSpeech.Services;
 using SpeechToSpeech.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace SpeechToSpeech.Views
   public partial class SettingsDialog : Window, IDisposable
   {
     private OpenFileDialog openFileDialog = new OpenFileDialog();
-    
+    private IStringValidationService stringValidationService;
     [Dependency]
     public SettingsViewModel ViewModel
     {
@@ -37,9 +38,10 @@ namespace SpeechToSpeech.Views
       get { return (SettingsViewModel)DataContext; }
     }
 
-    public SettingsDialog()
+    public SettingsDialog(IStringValidationService stringValidationService)
     {
       InitializeComponent();
+      this.stringValidationService = stringValidationService;
     }
 
     private void SettingsWindow_Loaded(object sender, RoutedEventArgs e)
@@ -102,20 +104,15 @@ namespace SpeechToSpeech.Views
       ViewModel.UpdateIBMWebService();
     }
 
-    //private void googleVoiceListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    //{
-    //  ViewModel.settings.googleSettings.Voice = (Voice)((ListBox)sender).SelectedValue;
-    //}
+    private void KeyUpDelayBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+    {
+      e.Handled = !stringValidationService.isInteger(((TextBox)sender).Text + e.Text);
+    }
 
-    //private void amazonVoiceListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    //{
-    //  ViewModel.settings.amazonSettings.Voice = (Voice)((ListBox)sender).SelectedValue;
-    //}
+    private void KeyUpDelayBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
 
-    //private void ibmVoiceListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    //{
-    //  ViewModel.settings.ibmSettings.Voice = (Voice)((ListBox)sender).SelectedValue;
-    //}
+    }
 
     private void push2talkRecordButton_Click(object sender, RoutedEventArgs e)
     {
@@ -196,6 +193,7 @@ namespace SpeechToSpeech.Views
       // GC.SuppressFinalize(this);
     }
     #endregion
+
   }
 
 }
