@@ -122,7 +122,7 @@ namespace SpeechToSpeech.ViewModels
         .OnPlayStopped(() => {
           if (settings.generalSettings.IsAppPush2Talk)
             Task.Run(async () => {
-              await Task.Delay(settings.generalSettings.KeyUpDelay * 1000);
+              await Task.Delay(settings.generalSettings.KeyUpDelay);
               hotkeys.BroadcastUp();
             });
         })
