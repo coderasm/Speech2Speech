@@ -228,6 +228,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Commands\DeleteCommand.cs" />
+    <Compile Include="Commands\PauseCommand.cs" />
+    <Compile Include="Commands\VolumeCommand.cs" />
     <Compile Include="Commands\StopCommand.cs" />
     <Compile Include="Commands\PlayCommand.cs" />
     <Compile Include="DatabaseSettings.cs" />

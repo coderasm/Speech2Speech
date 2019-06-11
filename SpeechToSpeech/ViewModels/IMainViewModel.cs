@@ -10,6 +10,8 @@ namespace SpeechToSpeech.ViewModels
   {
     void PlayHandler(object parameter);
     void DeleteHandler(object parameter);
+    void PauseHandler();
+    void VolumeHandler(object parameter);
     void StopHandler();
   }
 }

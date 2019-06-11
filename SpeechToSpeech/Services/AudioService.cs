@@ -11,6 +11,7 @@ namespace SpeechToSpeech.Services
     private AudioFileReader audioFile;
     private Action onPlayStopped = () => { };
     private Action onPlay = () => { };
+    private float INITIAL_OUTPUT_VOLUME = .5F;
 
     public int OutputDevice
     {
@@ -28,13 +29,25 @@ namespace SpeechToSpeech.Services
       }
     }
 
+    public double Volume {
+      get
+      {
+        return outputDevice != null ? outputDevice.Volume : INITIAL_OUTPUT_VOLUME;
+      }
+      set
+      {
+        if(outputDevice != null)
+        outputDevice.Volume = (float)value;
+      }
+    }
+
     public AudioService() { }
 
 
     public AudioService(int inputDevice, int outputDevice)
     {
       this.inputDevice = new WaveInEvent() { DeviceNumber = inputDevice };
-      this.outputDevice = new WaveOutEvent() { DeviceNumber = outputDevice };
+      this.outputDevice = new WaveOutEvent() { DeviceNumber = outputDevice, Volume = INITIAL_OUTPUT_VOLUME};
     }
 
     public List<KeyValuePair<int, string>> Devices
@@ -92,12 +105,18 @@ namespace SpeechToSpeech.Services
 
     public IAudioService Play(string fileName, int deviceNumber)
     {
-      outputDevice = new WaveOutEvent() { DeviceNumber = deviceNumber };
+      outputDevice = new WaveOutEvent() { DeviceNumber = deviceNumber, Volume = INITIAL_OUTPUT_VOLUME };
       outputDevice.PlaybackStopped += Dispose;
       audioFile = new AudioFileReader(fileName);
       outputDevice.Init(audioFile);
       onPlay();
       outputDevice.Play();
+      return this;
+    }
+
+    public IAudioService Pause()
+    {
+      outputDevice?.Pause();
       return this;
     }
 

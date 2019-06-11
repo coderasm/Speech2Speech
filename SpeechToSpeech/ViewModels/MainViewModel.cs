@@ -37,7 +37,7 @@ namespace SpeechToSpeech.ViewModels
     public ICommand PlayCmd { get; set; }
     public ICommand StopCmd { get; set; }
     public ICommand DeleteCmd { get; set; }
-    public RoutedCommand PauseCmd { get; set; } = new RoutedCommand();
+    public ICommand PauseCmd { get; set; }
     public RoutedCommand MuteCmd { get; set; } = new RoutedCommand();
     public RoutedCommand VolumeCmd { get; set; } = new RoutedCommand();
     public RoutedCommand BalanceCmd { get; set; } = new RoutedCommand();
@@ -114,6 +114,16 @@ namespace SpeechToSpeech.ViewModels
       playFile(parameter as string);
     }
 
+    public void VolumeHandler(object parameter)
+    {
+      audioService.Volume = (double)parameter;
+    }
+
+    public void PauseHandler()
+    {
+      audioService.Pause();
+    }
+
     private void playFile(string audioFileName)
     {
       hotkeys = Hotkey.Create(settings.generalSettings.AppPush2TalkKey);
@@ -130,11 +140,6 @@ namespace SpeechToSpeech.ViewModels
     }
 
     public void StopHandler()
-    {
-      stopAudio();
-    }
-
-    private void stopAudio()
     {
       audioService.Stop();
     }
