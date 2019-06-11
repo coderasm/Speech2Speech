@@ -3,6 +3,8 @@ using SpeechToSpeech.Services;
 using SpeechToSpeech.ViewModels;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using Unity.Attributes;
 
 namespace SpeechToSpeech.Views
@@ -31,7 +33,22 @@ namespace SpeechToSpeech.Views
 
     private void sendTextButton_Click(object sender, RoutedEventArgs e)
     {
-      ViewModel.vocalizeText(textToSendBox.Text);
+      vocalize();
+    }
+
+    private void TextToSendBox_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.Key == Key.Enter)
+        vocalize();
+    }
+
+    private void vocalize()
+    {
+      if (textToSendBox.Text != "")
+      {
+        ViewModel.vocalizeText(textToSendBox.Text);
+        textToSendBox.Text = "";
+      }
     }
   }
 }

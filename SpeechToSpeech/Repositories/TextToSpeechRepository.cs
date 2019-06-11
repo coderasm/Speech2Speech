@@ -37,6 +37,15 @@ namespace SpeechToSpeech.Repositories
       }
     }
 
+    public async Task<bool> DeleteByAudioFile(string audioFile)
+    {
+      using (var cnn = new SqlCeConnection(ConnectionString))
+      {
+        var result = await cnn.ExecuteAsync("delete from texttospeech where AudioFile = @AudioFile", new { AudioFile = audioFile});
+        return result == 1;
+      }
+    }
+
     public async Task<TextToSpeech> Get(int id)
     {
       using (var cnn = new SqlCeConnection(ConnectionString))

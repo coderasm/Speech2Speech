@@ -52,7 +52,7 @@
         </MenuItem>
       </Menu>
     </DockPanel>
-    <TextBox Grid.Row="1" Grid.Column="0" x:Name="textToSendBox" HorizontalAlignment="Stretch" Margin="10,5,10,0" TextWrapping="Wrap" VerticalAlignment="Stretch"/>
+    <TextBox Grid.Row="1" Grid.Column="0" x:Name="textToSendBox" HorizontalAlignment="Stretch" Margin="10,5,10,0" TextWrapping="Wrap" VerticalAlignment="Stretch" KeyDown="TextToSendBox_KeyDown"/>
     <Button Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" x:Name="sendTextButton" Content="Send" HorizontalAlignment="Center" VerticalAlignment="Center" Height="36" Width="58" Click="sendTextButton_Click"/>
 
     <Label Grid.Row="3" Grid.Column="0" Content="Text/Speech history" HorizontalAlignment="Center" VerticalAlignment="Center"/>

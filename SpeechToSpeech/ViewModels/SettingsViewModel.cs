@@ -31,11 +31,6 @@ namespace SpeechToSpeech.ViewModels
     public List<Key> KeysDown = new List<Key>();
     public Settings settings { get; set; }
     private ObservableCollection<WebService> _webServices = new ObservableCollection<WebService>();
-    //public ObservableCollection<WebService> webServices { get; set; } = new ObservableCollection<WebService> {
-    //  new WebService {Id = 1, Name = "Amazon"},
-    //  new WebService {Id = 2, Name = "Google"},
-    //  new WebService {Id = 3, Name = "IBM"}
-    //};
     public ObservableCollection<WebService> webServices
     {
       get
@@ -47,6 +42,7 @@ namespace SpeechToSpeech.ViewModels
             var results = await webServiceRepository.GetAll();
             results.ForEach(service => collection.Add(service));
             webServices = collection;
+            settings.generalSettings.notifySelectedWebService();
           });
         return _webServices;
       }
@@ -54,7 +50,6 @@ namespace SpeechToSpeech.ViewModels
       {
         _webServices.Clear();
         _webServices.AddRange(value);
-        NotifyPropertyChanged("webServices");
       }
     }
     public ObservableCollection<KeyValuePair<int, string>> audioDevices { get; set; } = new ObservableCollection<KeyValuePair<int, string>>();

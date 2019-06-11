@@ -11,6 +11,7 @@ namespace SpeechToSpeech.Repositories
   {
     Task<int> Insert(TextToSpeech textToSpeech);
     Task<bool> Delete(int id);
+    Task<bool> DeleteByAudioFile(string audioFile);
     Task<TextToSpeech> Get(int id);
     Task<List<TextToSpeech>> GetAll();
     Task<List<TextToSpeech>> GetPage(int page, int amount);

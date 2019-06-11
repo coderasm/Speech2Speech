@@ -144,6 +144,11 @@ namespace SpeechToSpeech
     }
     public string Database { get; set; } = $@".\speechtospeech.sdf";
 
+    public void notifySelectedWebService()
+    {
+      NotifyPropertyChanged("ActiveTextToSpeechService");
+    }
+
     public event PropertyChangedEventHandler PropertyChanged;
 
     private void NotifyPropertyChanged(string prop)

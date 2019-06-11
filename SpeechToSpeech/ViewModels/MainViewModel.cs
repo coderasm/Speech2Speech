@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -62,7 +63,6 @@ namespace SpeechToSpeech.ViewModels
       {
         _textToSpeeches.Clear();
         _textToSpeeches.AddRange(value);
-        //NotifyPropertyChanged("TextToSpeeches");
       }
     }
 
@@ -146,7 +146,11 @@ namespace SpeechToSpeech.ViewModels
 
     private async void deleteTextToSpeechEntry(TextToSpeech toRemove)
     {
-      var result = await textToSpeechRepository.Delete(toRemove.Id);
+      var result = false;
+      if (toRemove.Id != 0)
+        result = await textToSpeechRepository.Delete(toRemove.Id);
+      else
+        result = await textToSpeechRepository.DeleteByAudioFile(toRemove.AudioFile);
       if (result) {
         var remaining = TextToSpeeches.Where(textToSpeech => textToSpeech.Id != toRemove.Id);
         TextToSpeeches.Clear();
