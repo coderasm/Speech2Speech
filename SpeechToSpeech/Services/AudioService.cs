@@ -12,6 +12,7 @@ namespace SpeechToSpeech.Services
     private Action onPlayStopped = () => { };
     private Action onPlay = () => { };
     private float INITIAL_OUTPUT_VOLUME = .5F;
+    private float INITIAL_POSITION = 0;
 
     public int OutputDevice
     {
@@ -36,8 +37,25 @@ namespace SpeechToSpeech.Services
       }
       set
       {
-        if(outputDevice != null)
-        outputDevice.Volume = (float)value;
+        if (outputDevice != null)
+          outputDevice.Volume = (float)value;
+        else
+          INITIAL_OUTPUT_VOLUME = (float)value;
+      }
+    }
+
+    public double Position
+    {
+      get
+      {
+        return audioFile != null ? audioFile.Position : INITIAL_POSITION;
+      }
+      set
+      {
+        if (audioFile != null)
+          audioFile.Position = (long)value;
+        else
+          INITIAL_POSITION = (long)value;
       }
     }
 
@@ -72,12 +90,12 @@ namespace SpeechToSpeech.Services
     private void Dispose(object sender, StoppedEventArgs args)
     {
       onPlayStopped();
-      if (outputDevice != null)
-        outputDevice.Dispose();
-      outputDevice = null;
       if (audioFile != null)
         audioFile.Dispose();
       audioFile = null;
+      if (outputDevice != null)
+        outputDevice.Dispose();
+      outputDevice = null;
     }
 
     public IAudioService Play(string fileName)
