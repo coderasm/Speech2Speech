@@ -12,7 +12,8 @@ namespace SpeechToSpeech.Services
     private Action onPlayStopped = () => { };
     private Action onPlay = () => { };
     private float INITIAL_OUTPUT_VOLUME = .5F;
-    private float INITIAL_POSITION = 0;
+    private long INITIAL_POSITION = 0;
+    private long INITIAL_LENGTH = 0;
 
     public int OutputDevice
     {
@@ -56,6 +57,21 @@ namespace SpeechToSpeech.Services
           audioFile.Position = (long)value;
         else
           INITIAL_POSITION = (long)value;
+      }
+    }
+
+    private double _length;
+    public double Length
+    {
+      get
+      {
+        if (_length == 0)
+          _length = INITIAL_LENGTH;
+        return audioFile != null ? audioFile.Length : _length;
+      }
+      set
+      {
+        _length = value;
       }
     }
 

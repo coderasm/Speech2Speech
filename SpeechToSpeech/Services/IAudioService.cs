@@ -12,6 +12,8 @@ namespace SpeechToSpeech.Services
     int OutputDevice { set; }
     int InputDevice { set; }
     double Volume { get; set; }
+    double Position { get; set; }
+    double Length { get;}
     IAudioService OnPlayStopped(Action handler);
     IAudioService OnPlay(Action handler);
     IAudioService Play(string fileName);
