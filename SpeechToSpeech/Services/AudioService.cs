@@ -11,7 +11,7 @@ namespace SpeechToSpeech.Services
     private AudioFileReader audioFile;
     private Action onPlayStopped = () => { };
     private Action onPlay = () => { };
-    private float INITIAL_OUTPUT_VOLUME = .5F;
+    private float INITIAL_OUTPUT_VOLUME = 1F;
     private long INITIAL_POSITION = 0;
     private long INITIAL_LENGTH = 0;
 

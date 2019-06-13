@@ -274,6 +274,7 @@
     <Compile Include="AmazonSettings.cs" />
     <Compile Include="GoogleSettings.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="ViewModels\VocalizedViewModel.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
