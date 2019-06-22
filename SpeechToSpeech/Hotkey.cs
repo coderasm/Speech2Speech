@@ -46,8 +46,13 @@ namespace SpeechToSpeech
     {
       HotKeys.ForEach(key =>
       {
-        var virtualKeyCode = KeyInterop.VirtualKeyFromKey(key);
-        simulator.Keyboard.KeyDown((VirtualKeyCode)virtualKeyCode);
+        if (key == Key.System)
+          simulator.Keyboard.KeyDown(VirtualKeyCode.LMENU);
+        else
+        {
+          var virtualKeyCode = KeyInterop.VirtualKeyFromKey(key);
+          simulator.Keyboard.KeyDown((VirtualKeyCode)virtualKeyCode);
+        }
       });
     }
 
@@ -55,9 +60,13 @@ namespace SpeechToSpeech
     {
       HotKeys.ForEach(key =>
       {
-
-        var virtualKeyCode = KeyInterop.VirtualKeyFromKey(key);
-        simulator.Keyboard.KeyUp((VirtualKeyCode)virtualKeyCode);
+        if (key == Key.System)
+          simulator.Keyboard.KeyUp(VirtualKeyCode.LMENU);
+        else
+        {
+          var virtualKeyCode = KeyInterop.VirtualKeyFromKey(key);
+          simulator.Keyboard.KeyUp((VirtualKeyCode)virtualKeyCode);
+        }
       });
     }
 

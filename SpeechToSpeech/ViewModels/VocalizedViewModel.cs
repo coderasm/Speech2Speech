@@ -8,6 +8,6 @@ namespace SpeechToSpeech.ViewModels
 {
   public class VocalizedViewModel
   {
-
+    
   }
 }

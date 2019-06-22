@@ -29,7 +29,7 @@ namespace SpeechToSpeech.ViewModels
     [Dependency]
     public IBMWebService ibmWebService { get; set; }
     [Dependency]
-    public IAudioService audioService { get; set; }
+    public IAudioPlayer audioService { get; set; }
     [Dependency]
     public IFileManagementService fileManagementService { get; set; }
     private Hotkey hotkeys;

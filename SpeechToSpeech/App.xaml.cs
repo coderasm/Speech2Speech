@@ -37,7 +37,7 @@ namespace SpeechToSpeech
       containerRegistry.RegisterSingleton<IBMWebService>();
       containerRegistry.Register<SettingsDialog>();
       containerRegistry.RegisterSingleton<IDialogService, DialogService>();
-      containerRegistry.RegisterInstance<IAudioService>(new AudioService());
+      containerRegistry.RegisterInstance<IAudioPlayer>(new AudioPlayer());
     }
   }
 }

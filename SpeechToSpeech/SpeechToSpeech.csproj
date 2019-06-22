@@ -26,6 +26,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -241,13 +242,13 @@
     <Compile Include="Repositories\VoiceRepository.cs" />
     <Compile Include="Repositories\WebServiceRepository.cs" />
     <Compile Include="Services\AmazonWebService.cs" />
-    <Compile Include="Services\AudioService.cs" />
+    <Compile Include="Services\AudioPlayer.cs" />
     <Compile Include="Services\DatabaseService.cs" />
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Services\FileMangementService.cs" />
     <Compile Include="Services\GoogleWebService.cs" />
     <Compile Include="Hotkey.cs" />
-    <Compile Include="Services\IAudioService.cs" />
+    <Compile Include="Services\IAudioPlayer.cs" />
     <Compile Include="Services\IBMWebService.cs" />
     <Compile Include="Services\IDataBaseService.cs" />
     <Compile Include="Services\IDialogService.cs" />

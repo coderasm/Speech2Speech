@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SpeechToSpeech.Services
 {
-  public class AudioService : IAudioService
+  public class AudioPlayer : IAudioPlayer
   {
     private WaveOutEvent outputDevice;
     private WaveInEvent inputDevice;
@@ -28,6 +28,14 @@ namespace SpeechToSpeech.Services
       set
       {
         inputDevice = new WaveInEvent() { DeviceNumber = value };
+      }
+    }
+
+    public string AudioFileReader
+    {
+      set
+      {
+        audioFile = new AudioFileReader(value);
       }
     }
 
@@ -75,10 +83,10 @@ namespace SpeechToSpeech.Services
       }
     }
 
-    public AudioService() { }
+    public AudioPlayer() { }
 
 
-    public AudioService(int inputDevice, int outputDevice)
+    public AudioPlayer(int inputDevice, int outputDevice)
     {
       this.inputDevice = new WaveInEvent() { DeviceNumber = inputDevice };
       this.outputDevice = new WaveOutEvent() { DeviceNumber = outputDevice, Volume = INITIAL_OUTPUT_VOLUME};
@@ -114,7 +122,7 @@ namespace SpeechToSpeech.Services
       outputDevice = null;
     }
 
-    public IAudioService Play(string fileName)
+    public IAudioPlayer Play(string fileName)
     {
       try
       {
@@ -137,7 +145,7 @@ namespace SpeechToSpeech.Services
       return this;
     }
 
-    public IAudioService Play(string fileName, int deviceNumber)
+    public IAudioPlayer Play(string fileName, int deviceNumber)
     {
       outputDevice = new WaveOutEvent() { DeviceNumber = deviceNumber, Volume = INITIAL_OUTPUT_VOLUME };
       outputDevice.PlaybackStopped += Dispose;
@@ -148,25 +156,25 @@ namespace SpeechToSpeech.Services
       return this;
     }
 
-    public IAudioService Pause()
+    public IAudioPlayer Pause()
     {
       outputDevice?.Pause();
       return this;
     }
 
-    public IAudioService Stop()
+    public IAudioPlayer Stop()
     {
       outputDevice?.Stop();
       return this;
     }
 
-    public IAudioService OnPlayStopped(Action handler)
+    public IAudioPlayer OnPlayStopped(Action handler)
     {
       onPlayStopped = handler;
       return this;
     }
 
-    public IAudioService OnPlay(Action handler)
+    public IAudioPlayer OnPlay(Action handler)
     {
       onPlay = handler;
       return this;

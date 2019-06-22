@@ -17,7 +17,7 @@ namespace SpeechToSpeech.ViewModels
   {
     public event PropertyChangedEventHandler PropertyChanged;
     private ISettingsService settingsService;
-    private IAudioService audioService;
+    private IAudioPlayer audioService;
     [Dependency]
     public GoogleWebService googleWebService { get; set; }
     [Dependency]
@@ -62,7 +62,7 @@ namespace SpeechToSpeech.ViewModels
     public Hotkey Push2TalkKeys { get; set; }
 
     public SettingsViewModel(
-      IAudioService audioService,
+      IAudioPlayer audioService,
       ISettingsService settingsService
       )
     {
@@ -146,14 +146,12 @@ namespace SpeechToSpeech.ViewModels
 
     private void removeDownKey(object sender, KeyEventArgs e)
     {
-      var keyUp = e.Key == Key.System ? e.SystemKey : e.Key;
-      KeysDown = KeysDown.Where(key => key != keyUp).ToList();
+      KeysDown = KeysDown.Where(key => key != e.Key).ToList();
     }
 
     private void handlePush2TalkKeyDown(object sender, KeyEventArgs e)
     {
-      var key = e.Key == Key.System ? e.SystemKey : e.Key;
-      UpdatePush2TalkKeys(key);
+      UpdatePush2TalkKeys(e.Key);
     }
 
     public void StartRecordingAppPush2TalkKeys(Action<KeyEventHandler> keyDownLamda, Action<KeyEventHandler> keyUpLamda)
@@ -171,8 +169,7 @@ namespace SpeechToSpeech.ViewModels
 
     private void handleAppPush2TalkKeyDown(object sender, KeyEventArgs e)
     {
-      var key = e.Key == Key.System ? e.SystemKey : e.Key;
-      UpdateAppPush2TalkKeys(key);
+      UpdateAppPush2TalkKeys(e.Key);
     }
 
     public void UpdatePush2TalkKeys(Key keyDown)
