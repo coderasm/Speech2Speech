@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace SpeechToSpeech.ViewModels
 {
-  public interface IMainViewModel
+  public interface IVocalizedViewModel
   {
-    void DeleteHandler(object parameter);
+    void PlayHandler(object parameter);
+    void PauseHandler();
+    void StopHandler();
   }
 }

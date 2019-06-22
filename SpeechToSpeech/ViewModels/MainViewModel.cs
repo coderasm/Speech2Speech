@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Unity;
 using Unity.Attributes;
 
 namespace SpeechToSpeech.ViewModels
@@ -32,47 +33,44 @@ namespace SpeechToSpeech.ViewModels
     public IAudioPlayer audioService { get; set; }
     [Dependency]
     public IFileManagementService fileManagementService { get; set; }
-    private Hotkey hotkeys;
     private Settings settings;
-    public ICommand PlayCmd { get; set; }
-    public ICommand StopCmd { get; set; }
+    private IUnityContainer container;
     public ICommand DeleteCmd { get; set; }
-    public ICommand PauseCmd { get; set; }
-    public RoutedCommand MuteCmd { get; set; } = new RoutedCommand();
-    public RoutedCommand VolumeCmd { get; set; } = new RoutedCommand();
-    public RoutedCommand BalanceCmd { get; set; } = new RoutedCommand();
 
 
     public event PropertyChangedEventHandler PropertyChanged;
-    private ObservableCollection<TextToSpeech> _textToSpeeches = new ObservableCollection<TextToSpeech>();
-    public ObservableCollection<TextToSpeech> TextToSpeeches
+    private ObservableCollection<VocalizedViewModel> _vocalizedViewModels = new ObservableCollection<VocalizedViewModel>();
+    public ObservableCollection<VocalizedViewModel> VocalizedViewModels
     {
       get
       {
-        if (_textToSpeeches.Count == 0)
+        if (_vocalizedViewModels.Count == 0)
           Dispatcher.CurrentDispatcher.InvokeAsync(async () =>
           {
-            var collection = new ObservableCollection<TextToSpeech>();
+            var collection = new ObservableCollection<VocalizedViewModel>();
             var results = await textToSpeechRepository.GetAll();
-            results.ForEach(service => collection.Add(service));
-            TextToSpeeches = collection;
+            var viewModels = results.Select(textToSpeech =>
+            {
+              return new VocalizedViewModel(textToSpeech, container.Resolve<IAudioPlayer>(), container.Resolve<ISettingsService>());
+            });
+            collection.AddRange(viewModels);
+            VocalizedViewModels = collection;
           });
-        return _textToSpeeches;
+        return _vocalizedViewModels;
       }
       set
       {
-        _textToSpeeches.Clear();
-        _textToSpeeches.AddRange(value);
+        _vocalizedViewModels.Clear();
+        _vocalizedViewModels.AddRange(value);
       }
     }
 
-    public MainViewModel(ISettingsService settingsService, ITextToSpeechRepository textToSpeechRepository)
+    public MainViewModel(ISettingsService settingsService, ITextToSpeechRepository textToSpeechRepository, IUnityContainer container)
     {
+      this.container = container;
       this.settingsService = settingsService;
       settings = settingsService.settings;
       this.textToSpeechRepository = textToSpeechRepository;
-      PlayCmd = new PlayCommand(this);
-      StopCmd = new StopCommand(this);
       DeleteCmd = new DeleteCommand(this);
       createFolders();
     }
@@ -102,46 +100,12 @@ namespace SpeechToSpeech.ViewModels
       };
       var activeService = webServices[settings.generalSettings.ActiveTextToSpeechService - 1];
       audioFile = await activeService.ToAudio(text);
-      var textTospeech = new TextToSpeech { Text = text, AudioFile = audioFile };
-      textTospeech.Id = await textToSpeechRepository.Insert(textTospeech);
-      TextToSpeeches.Add(textTospeech);
+      var textToSpeech = new TextToSpeech { Text = text, AudioFile = audioFile };
+      textToSpeech.Id = await textToSpeechRepository.Insert(textToSpeech);
+      var viewModel = new VocalizedViewModel(textToSpeech, container.Resolve<IAudioPlayer>(), container.Resolve<ISettingsService>());
+      VocalizedViewModels.Add(viewModel);
       if (audioFile != "" && settings.generalSettings.IsAutoPlayVocalized)
-        playFile(audioFile);
-    }
-
-    public void PlayHandler(object parameter)
-    {
-      playFile(parameter as string);
-    }
-
-    public void VolumeHandler(object parameter)
-    {
-      audioService.Volume = (double)parameter;
-    }
-
-    public void PauseHandler()
-    {
-      audioService.Pause();
-    }
-
-    private void playFile(string audioFileName)
-    {
-      hotkeys = Hotkey.Create(settings.generalSettings.AppPush2TalkKey);
-      audioService
-        .OnPlay(() => { hotkeys.BroadcastDown(); })
-        .OnPlayStopped(() => {
-          if (settings.generalSettings.IsAppPush2Talk)
-            Task.Run(async () => {
-              await Task.Delay(settings.generalSettings.KeyUpDelay);
-              hotkeys.BroadcastUp();
-            });
-        })
-        .Play(audioFileName, settings.generalSettings.AudioOutDevice);
-    }
-
-    public void StopHandler()
-    {
-      audioService.Stop();
+        viewModel.PlayHandler(audioFile);
     }
 
     public void DeleteHandler(object parameter)
@@ -156,10 +120,11 @@ namespace SpeechToSpeech.ViewModels
         result = await textToSpeechRepository.Delete(toRemove.Id);
       else
         result = await textToSpeechRepository.DeleteByAudioFile(toRemove.AudioFile);
-      if (result) {
-        var remaining = TextToSpeeches.Where(textToSpeech => textToSpeech.Id != toRemove.Id);
-        TextToSpeeches.Clear();
-        TextToSpeeches.AddRange(remaining);
+      if (result)
+      {
+        var remaining = VocalizedViewModels.Where(viewModel => viewModel.TextToSpeech.Id != toRemove.Id);
+        VocalizedViewModels.Clear();
+        VocalizedViewModels.AddRange(remaining);
         fileManagementService.Delete(toRemove.AudioFile);
       }
     }

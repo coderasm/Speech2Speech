@@ -230,7 +230,6 @@
     </ApplicationDefinition>
     <Compile Include="Commands\DeleteCommand.cs" />
     <Compile Include="Commands\PauseCommand.cs" />
-    <Compile Include="Commands\VolumeCommand.cs" />
     <Compile Include="Commands\StopCommand.cs" />
     <Compile Include="Commands\PlayCommand.cs" />
     <Compile Include="DatabaseSettings.cs" />
@@ -259,9 +258,10 @@
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Models\TextToSpeech.cs" />
     <Compile Include="Services\StringValidationService.cs" />
+    <Compile Include="ViewModels\IMainViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
-    <Compile Include="ViewModels\IMainViewModel.cs" />
+    <Compile Include="ViewModels\IVocalizedViewModel.cs" />
     <Compile Include="Models\Voice.cs" />
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

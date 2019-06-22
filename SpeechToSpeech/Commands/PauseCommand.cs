@@ -10,10 +10,10 @@ namespace SpeechToSpeech.Commands
 {
   public class PauseCommand : ICommand
   {
-    private IMainViewModel ViewModel;
+    private IVocalizedViewModel ViewModel;
     public event EventHandler CanExecuteChanged;
 
-    public PauseCommand(IMainViewModel viewModel)
+    public PauseCommand(IVocalizedViewModel viewModel)
     {
       ViewModel = viewModel;
     }

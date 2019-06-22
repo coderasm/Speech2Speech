@@ -1,14 +1,23 @@
 ﻿using NAudio.Wave;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace SpeechToSpeech.Services
 {
-  public class AudioPlayer : IAudioPlayer
+  public class AudioPlayer : IAudioPlayer, INotifyPropertyChanged
   {
+    public event PropertyChangedEventHandler PropertyChanged;
     private WaveOutEvent outputDevice;
     private WaveInEvent inputDevice;
-    private AudioFileReader audioFile;
+    private AudioFileReader _audioFileReader;
+    public AudioFileReader AudioFileReader {
+      get
+      {
+        return _audioFileReader;
+      }
+    }
     private Action onPlayStopped = () => { };
     private Action onPlay = () => { };
     private float INITIAL_OUTPUT_VOLUME = 1F;
@@ -19,7 +28,8 @@ namespace SpeechToSpeech.Services
     {
       set
       {
-        outputDevice = new WaveOutEvent() { DeviceNumber = value };
+        outputDevice = new WaveOutEvent() { DeviceNumber = value, Volume = INITIAL_OUTPUT_VOLUME };
+        NotifyPropertyChanged("Volume");
       }
     }
 
@@ -31,11 +41,13 @@ namespace SpeechToSpeech.Services
       }
     }
 
-    public string AudioFileReader
+    public string AudioFile
     {
       set
       {
-        audioFile = new AudioFileReader(value);
+        _audioFileReader = new AudioFileReader(value);
+        NotifyPropertyChanged("Position");
+        NotifyPropertyChanged("Length");
       }
     }
 
@@ -57,12 +69,12 @@ namespace SpeechToSpeech.Services
     {
       get
       {
-        return audioFile != null ? audioFile.Position : INITIAL_POSITION;
+        return AudioFileReader != null ? AudioFileReader.Position : INITIAL_POSITION;
       }
       set
       {
-        if (audioFile != null)
-          audioFile.Position = (long)value;
+        if (AudioFileReader != null)
+          AudioFileReader.Position = (long)value;
         else
           INITIAL_POSITION = (long)value;
       }
@@ -75,7 +87,7 @@ namespace SpeechToSpeech.Services
       {
         if (_length == 0)
           _length = INITIAL_LENGTH;
-        return audioFile != null ? audioFile.Length : _length;
+        return AudioFileReader != null ? AudioFileReader.Length : _length;
       }
       set
       {
@@ -86,11 +98,11 @@ namespace SpeechToSpeech.Services
     public AudioPlayer() { }
 
 
-    public AudioPlayer(int inputDevice, int outputDevice)
-    {
-      this.inputDevice = new WaveInEvent() { DeviceNumber = inputDevice };
-      this.outputDevice = new WaveOutEvent() { DeviceNumber = outputDevice, Volume = INITIAL_OUTPUT_VOLUME};
-    }
+    //public AudioPlayer(int inputDevice, int outputDevice)
+    //{
+    //  this.inputDevice = new WaveInEvent() { DeviceNumber = inputDevice };
+    //  this.outputDevice = new WaveOutEvent() { DeviceNumber = outputDevice, Volume = INITIAL_OUTPUT_VOLUME};
+    //}
 
     public List<KeyValuePair<int, string>> Devices
     {
@@ -114,9 +126,9 @@ namespace SpeechToSpeech.Services
     private void Dispose(object sender, StoppedEventArgs args)
     {
       onPlayStopped();
-      if (audioFile != null)
-        audioFile.Dispose();
-      audioFile = null;
+      if (AudioFileReader != null)
+        AudioFileReader.Dispose();
+      _audioFileReader = null;
       if (outputDevice != null)
         outputDevice.Dispose();
       outputDevice = null;
@@ -128,32 +140,45 @@ namespace SpeechToSpeech.Services
       {
         if (outputDevice == null)
           throw new Exception("Output device not set");
-        outputDevice.PlaybackStopped += Dispose;
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
         throw e;
       }
-      if (audioFile == null)
-      {
-        audioFile = new AudioFileReader(fileName);
-        outputDevice.Init(audioFile);
-      }
-      onPlay();
-      outputDevice.Play();
+      play(fileName);
       return this;
     }
 
     public IAudioPlayer Play(string fileName, int deviceNumber)
     {
-      outputDevice = new WaveOutEvent() { DeviceNumber = deviceNumber, Volume = INITIAL_OUTPUT_VOLUME };
+      OutputDevice = deviceNumber;
+      play(fileName);
+      return this;
+    }
+
+    private void play(string fileName)
+    {
       outputDevice.PlaybackStopped += Dispose;
-      audioFile = new AudioFileReader(fileName);
-      outputDevice.Init(audioFile);
+      if (AudioFileReader == null)
+      {
+        AudioFile = fileName;
+      }
+      outputDevice.Init(AudioFileReader);
       onPlay();
       outputDevice.Play();
-      return this;
+      updatePosition();
+    }
+
+    private void updatePosition()
+    {
+      Task.Run(() =>
+      {
+        while (outputDevice.PlaybackState == PlaybackState.Playing)
+        {
+          NotifyPropertyChanged("Position");
+        }
+      });
     }
 
     public IAudioPlayer Pause()
@@ -178,6 +203,11 @@ namespace SpeechToSpeech.Services
     {
       onPlay = handler;
       return this;
+    }
+
+    private void NotifyPropertyChanged(string prop)
+    {
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
   }
 }

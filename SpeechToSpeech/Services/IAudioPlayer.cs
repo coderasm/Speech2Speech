@@ -11,7 +11,7 @@ namespace SpeechToSpeech.Services
     List<KeyValuePair<int, string>> Devices { get; }
     int OutputDevice { set; }
     int InputDevice { set; }
-    string AudioFileReader { set; }
+    string AudioFile { set; }
     double Volume { get; set; }
     double Position { get; set; }
     double Length { get;}
