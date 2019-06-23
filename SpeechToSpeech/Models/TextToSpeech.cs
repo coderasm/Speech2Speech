@@ -14,6 +14,9 @@ namespace SpeechToSpeech.Models
     public int Id { get; set; }
     public string Text { get; set; }
     public string AudioFile { get; set; }
+    public int VoiceId { get; set; }
+    [Computed]
+    public Voice Voice { get; set; }
 
 
 
