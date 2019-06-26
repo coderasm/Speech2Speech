@@ -100,7 +100,7 @@ namespace SpeechToSpeech.ViewModels
       };
       var activeService = webServices[settings.generalSettings.ActiveTextToSpeechService - 1];
       audioFile = await activeService.ToAudio(text);
-      var textToSpeech = new TextToSpeech { Text = text, AudioFile = audioFile };
+      var textToSpeech = new TextToSpeech { Text = text, AudioFile = audioFile};
       textToSpeech.Id = await textToSpeechRepository.Insert(textToSpeech);
       var viewModel = new VocalizedViewModel(textToSpeech, container.Resolve<IAudioPlayer>(), container.Resolve<ISettingsService>());
       VocalizedViewModels.Add(viewModel);

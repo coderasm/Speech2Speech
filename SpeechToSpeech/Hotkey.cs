@@ -55,7 +55,6 @@ namespace SpeechToSpeech
         }
       });
     }
-
     public void BroadcastUp()
     {
       HotKeys.ForEach(key =>

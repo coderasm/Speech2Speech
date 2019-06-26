@@ -69,7 +69,7 @@ namespace SpeechToSpeech.Services
           comm.ExecuteNonQuery();
           comm.CommandText = "CREATE TABLE service ([Id] [int] identity(1,1) primary key, [Name] [nvarchar](100) not null)";
           comm.ExecuteNonQuery();
-          comm.CommandText = "CREATE TABLE texttospeech ([Id] [int] identity(1,1) primary key, [Text] [ntext] not null, [AudioFile] [nvarchar](200) not null)";
+          comm.CommandText = "CREATE TABLE texttospeech ([Id] [int] identity(1,1) primary key, [Text] [ntext] not null, [AudioFile] [nvarchar](200) not null, [VoiceId] [int] not null)";
           comm.ExecuteNonQuery();
         }
         conn.Close();
