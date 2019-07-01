@@ -34,7 +34,7 @@
           <Button Grid.Row="0" Grid.Column="0" Margin="0 0 5 0" Padding="3" Command="{Binding PlayCmd}" CommandParameter="{Binding TextToSpeech.AudioFile}" Content="Play"/>
           <Button Grid.Row="0" Grid.Column="1" Margin="0 0 5 0" Padding="3" Command="{Binding PauseCmd}" Content="Pause"/>
           <Button Grid.Row="0" Grid.Column="2" Margin="0 0 5 0" Padding="3" Command="{Binding StopCmd}" Content="Stop"/>
-          <Button Grid.Row="0" Grid.Column="3" Margin="0 0 5 0" Padding="3" Command="{Binding ElementName=windowMain, Path=DataContext.DeleteCmd}" CommandParameter="{Binding TextToSpeech}" Content="Delete"/>
+          <Button Grid.Row="0" Grid.Column="3" Margin="0 0 5 0" Padding="3" Command="{Binding ElementName=windowMain, Path=DataContext.DeleteCmd}" CommandParameter="{Binding}" Content="Delete"/>
           <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="5">Volume</TextBlock>
           <Slider Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Name="volumeSlider" VerticalAlignment="Center" Minimum="0" Maximum="1" Value="{Binding AudioPlayer.Volume, Mode=TwoWay}"/>
           <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="5">Position</TextBlock>

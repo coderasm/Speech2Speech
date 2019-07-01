@@ -110,22 +110,23 @@ namespace SpeechToSpeech.ViewModels
 
     public void DeleteHandler(object parameter)
     {
-      deleteTextToSpeechEntry(parameter as TextToSpeech);
+      deleteTextToSpeechEntry(parameter as VocalizedViewModel);
     }
 
-    private async void deleteTextToSpeechEntry(TextToSpeech toRemove)
+    private async void deleteTextToSpeechEntry(VocalizedViewModel vmToRemove)
     {
       var result = false;
-      if (toRemove.Id != 0)
-        result = await textToSpeechRepository.Delete(toRemove.Id);
+      if (vmToRemove.TextToSpeech.Id != 0)
+        result = await textToSpeechRepository.Delete(vmToRemove.TextToSpeech.Id);
       else
-        result = await textToSpeechRepository.DeleteByAudioFile(toRemove.AudioFile);
+        result = await textToSpeechRepository.DeleteByAudioFile(vmToRemove.TextToSpeech.AudioFile);
       if (result)
       {
-        var remaining = VocalizedViewModels.Where(viewModel => viewModel.TextToSpeech.Id != toRemove.Id);
+        var remaining = VocalizedViewModels.Where(viewModel => viewModel != vmToRemove);
         VocalizedViewModels.Clear();
         VocalizedViewModels.AddRange(remaining);
-        fileManagementService.Delete(toRemove.AudioFile);
+        vmToRemove.Dispose();
+        fileManagementService.Delete(vmToRemove.TextToSpeech.AudioFile);
       }
     }
 

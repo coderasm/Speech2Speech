@@ -21,5 +21,6 @@ namespace SpeechToSpeech.Services
     IAudioPlayer Play(string fileName, int deviceNumber);
     IAudioPlayer Stop();
     IAudioPlayer Pause();
+    void Dispose();
   }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SpeechToSpeech.Services
 {
-  public class AudioPlayer : IAudioPlayer, INotifyPropertyChanged
+  public class AudioPlayer : IAudioPlayer, INotifyPropertyChanged, IDisposable
   {
     public event PropertyChangedEventHandler PropertyChanged;
     private WaveOutEvent outputDevice;
@@ -124,6 +124,11 @@ namespace SpeechToSpeech.Services
     }
 
     private void Dispose(object sender, StoppedEventArgs args)
+    {
+      Dispose();
+    }
+
+    public void Dispose()
     {
       onPlayStopped();
       if (AudioFileReader != null)

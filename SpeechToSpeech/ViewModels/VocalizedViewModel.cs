@@ -1,13 +1,14 @@
 ﻿using SpeechToSpeech.Commands;
 using SpeechToSpeech.Models;
 using SpeechToSpeech.Services;
+using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace SpeechToSpeech.ViewModels
 {
-  public class VocalizedViewModel: IVocalizedViewModel, INotifyPropertyChanged
+  public class VocalizedViewModel: IVocalizedViewModel, INotifyPropertyChanged, IDisposable
   {
     public event PropertyChangedEventHandler PropertyChanged;
     public TextToSpeech TextToSpeech { get; }
@@ -69,6 +70,11 @@ namespace SpeechToSpeech.ViewModels
     private void NotifyPropertyChanged(string prop)
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+    }
+
+    public void Dispose()
+    {
+      AudioPlayer.Dispose();
     }
   }
 }
