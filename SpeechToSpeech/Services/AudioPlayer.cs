@@ -1,4 +1,5 @@
 ﻿using NAudio.Wave;
+using SpeechToSpeech.SoundTouch;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,6 +11,7 @@ namespace SpeechToSpeech.Services
   {
     public event PropertyChangedEventHandler PropertyChanged;
     private WaveOutEvent outputDevice;
+    private VarispeedSampleProvider speedControl;
     private WaveInEvent inputDevice;
     private AudioFileReader _audioFileReader;
     public AudioFileReader AudioFileReader {
@@ -131,12 +133,12 @@ namespace SpeechToSpeech.Services
     public void Dispose()
     {
       onPlayStopped();
-      if (AudioFileReader != null)
-        AudioFileReader.Dispose();
+      AudioFileReader?.Dispose();
       _audioFileReader = null;
-      if (outputDevice != null)
-        outputDevice.Dispose();
+      outputDevice?.Dispose();
       outputDevice = null;
+      speedControl?.Dispose();
+      speedControl = null;
     }
 
     public IAudioPlayer Play(string fileName)
@@ -168,6 +170,11 @@ namespace SpeechToSpeech.Services
       if (AudioFileReader == null)
       {
         AudioFile = fileName;
+      }
+      if (speedControl == null)
+      {
+        var useTempo = true;
+        speedControl = new VarispeedSampleProvider(AudioFileReader, 100, new SoundTouchProfile(useTempo, false));
       }
       outputDevice.Init(AudioFileReader);
       onPlay();

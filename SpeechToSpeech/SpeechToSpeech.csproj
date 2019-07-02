@@ -128,6 +128,9 @@
     <Reference Include="Prism.Wpf, Version=7.1.0.431, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Wpf.7.1.0.431\lib\net45\Prism.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="SoundTouch.Net, Version=1.9.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SoundTouch.Net.1.9.2.2\lib\net40\SoundTouch.Net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.AppContext, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.AppContext.4.1.0\lib\net46\System.AppContext.dll</HintPath>
@@ -258,6 +261,12 @@
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Models\TextToSpeech.cs" />
     <Compile Include="Services\StringValidationService.cs" />
+    <Compile Include="SoundTouch\SoundTouch.cs" />
+    <Compile Include="SoundTouch\SoundTouchInterop32.cs" />
+    <Compile Include="SoundTouch\SoundTouchInterop64.cs" />
+    <Compile Include="SoundTouch\SoundTouchProfile.cs" />
+    <Compile Include="SoundTouch\SoundTouchSettings.cs" />
+    <Compile Include="SoundTouch\VarispeedSampleProvider.cs" />
     <Compile Include="ViewModels\IMainViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
