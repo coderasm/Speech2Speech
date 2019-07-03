@@ -12,7 +12,6 @@ namespace SpeechToSpeech.SoundTouch
         public SoundTouch()
         {
             is64Bit = Marshal.SizeOf<IntPtr>() == 8;
-
             handle = is64Bit ? SoundTouchInterop64.soundtouch_createInstance() :
                 SoundTouchInterop32.soundtouch_createInstance();
         }

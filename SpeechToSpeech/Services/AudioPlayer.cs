@@ -23,6 +23,7 @@ namespace SpeechToSpeech.Services
     private Action onPlayStopped = () => { };
     private Action onPlay = () => { };
     private float INITIAL_OUTPUT_VOLUME = 1F;
+    private float INITIAL_SPEED = 1F;
     private long INITIAL_POSITION = 0;
     private long INITIAL_LENGTH = 0;
 
@@ -64,6 +65,21 @@ namespace SpeechToSpeech.Services
           outputDevice.Volume = (float)value;
         else
           INITIAL_OUTPUT_VOLUME = (float)value;
+      }
+    }
+
+    public double Speed
+    {
+      get
+      {
+        return speedControl != null ? speedControl.PlaybackRate : INITIAL_SPEED;
+      }
+      set
+      {
+        if (speedControl != null)
+          speedControl.PlaybackRate = 0.5f + (float)value * 0.1f;
+        else
+          INITIAL_SPEED = (float)value;
       }
     }
 
@@ -125,14 +141,14 @@ namespace SpeechToSpeech.Services
       return audioDevices;
     }
 
-    private void Dispose(object sender, StoppedEventArgs args)
+    private void OnStopped(object sender, StoppedEventArgs args)
     {
+      onPlayStopped();
       Dispose();
     }
 
     public void Dispose()
     {
-      onPlayStopped();
       AudioFileReader?.Dispose();
       _audioFileReader = null;
       outputDevice?.Dispose();
@@ -143,6 +159,7 @@ namespace SpeechToSpeech.Services
 
     public IAudioPlayer Play(string fileName)
     {
+      Dispose();
       try
       {
         if (outputDevice == null)
@@ -159,6 +176,7 @@ namespace SpeechToSpeech.Services
 
     public IAudioPlayer Play(string fileName, int deviceNumber)
     {
+      Dispose();
       OutputDevice = deviceNumber;
       play(fileName);
       return this;
@@ -166,17 +184,18 @@ namespace SpeechToSpeech.Services
 
     private void play(string fileName)
     {
-      outputDevice.PlaybackStopped += Dispose;
+      outputDevice.PlaybackStopped += OnStopped;
       if (AudioFileReader == null)
       {
         AudioFile = fileName;
       }
       if (speedControl == null)
       {
-        var useTempo = true;
+        var useTempo = false;
         speedControl = new VarispeedSampleProvider(AudioFileReader, 100, new SoundTouchProfile(useTempo, false));
+        Speed = INITIAL_SPEED;
       }
-      outputDevice.Init(AudioFileReader);
+      outputDevice.Init(speedControl);
       onPlay();
       outputDevice.Play();
       updatePosition();

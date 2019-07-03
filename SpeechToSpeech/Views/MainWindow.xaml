@@ -24,6 +24,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
           </Grid.RowDefinitions>
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -39,6 +40,8 @@
           <Slider Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Name="volumeSlider" VerticalAlignment="Center" Minimum="0" Maximum="1" Value="{Binding AudioPlayer.Volume, Mode=TwoWay}"/>
           <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="5">Position</TextBlock>
           <Slider Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Name="positionSlider" VerticalAlignment="Center" Minimum="0" Maximum="{Binding AudioPlayer.Length, Mode=TwoWay}" Value="{Binding AudioPlayer.Position, Mode=TwoWay}"/>
+          <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="5">Speed</TextBlock>
+          <Slider Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Name="speedSlider" VerticalAlignment="Center" Minimum=".0625" Maximum="16" Value="{Binding AudioPlayer.Speed, Mode=TwoWay}"/>
         </Grid>
       </Grid>
     </DataTemplate>

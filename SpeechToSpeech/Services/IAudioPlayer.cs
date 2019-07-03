@@ -14,6 +14,7 @@ namespace SpeechToSpeech.Services
     string AudioFile { set; }
     double Volume { get; set; }
     double Position { get; set; }
+    double Speed { get; set; }
     double Length { get;}
     IAudioPlayer OnPlayStopped(Action handler);
     IAudioPlayer OnPlay(Action handler);
