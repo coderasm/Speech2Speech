@@ -72,7 +72,7 @@ namespace SpeechToSpeech.Services
     {
       get
       {
-        return speedControl != null ? speedControl.PlaybackRate : INITIAL_SPEED;
+        return speedControl != null ? (speedControl.PlaybackRate - 0.5f) / 0.1f : INITIAL_SPEED;
       }
       set
       {
@@ -149,12 +149,12 @@ namespace SpeechToSpeech.Services
 
     public void Dispose()
     {
+      speedControl?.Dispose();
+      speedControl = null;
       AudioFileReader?.Dispose();
       _audioFileReader = null;
       outputDevice?.Dispose();
       outputDevice = null;
-      speedControl?.Dispose();
-      speedControl = null;
     }
 
     public IAudioPlayer Play(string fileName)
@@ -195,7 +195,7 @@ namespace SpeechToSpeech.Services
         speedControl = new VarispeedSampleProvider(AudioFileReader, 100, new SoundTouchProfile(useTempo, false));
         Speed = INITIAL_SPEED;
       }
-      outputDevice.Init(speedControl);
+      outputDevice.Init(AudioFileReader);
       onPlay();
       outputDevice.Play();
       updatePosition();
