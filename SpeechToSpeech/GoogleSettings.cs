@@ -11,7 +11,22 @@ namespace SpeechToSpeech
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-    public string ServiceAccountKey { get; set; } = "";
+    private string serviceAccountKey = "";
+    public string ServiceAccountKey
+    {
+      get
+      {
+        return serviceAccountKey;
+      }
+      set
+      {
+        if (value != null)
+        {
+          serviceAccountKey = value;
+          NotifyPropertyChanged();
+        }
+      }
+    }
     private Voice _voice;
     public Voice Voice
     {
