@@ -1,10 +1,16 @@
 ﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using SpeechToSpeech.Models;
 
 namespace SpeechToSpeech
 {
   public class GoogleSettings: INotifyPropertyChanged
   {
+    public event PropertyChangedEventHandler PropertyChanged;
+    private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+    {
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
     public string ServiceAccountKey { get; set; } = "";
     private Voice _voice;
     public Voice Voice
@@ -18,16 +24,9 @@ namespace SpeechToSpeech
         if (value != null)
         {
           _voice = value;
-          NotifyPropertyChanged("Voice");
+          NotifyPropertyChanged();
         }
       }
-    }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    private void NotifyPropertyChanged(string prop)
-    {
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
   }
 }

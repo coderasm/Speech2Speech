@@ -1,14 +1,20 @@
-﻿using Amazon.Polly;
-using Dapper.Contrib.Extensions;
+﻿using Dapper.Contrib.Extensions;
 using Google.Cloud.TextToSpeech.V1;
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace SpeechToSpeech.Models
 {
   [Table("voice")]
   public class Voice: IEquatable<Voice>, INotifyPropertyChanged
   {
+    public event PropertyChangedEventHandler PropertyChanged;
+    private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+    {
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
     [Write(false)]
     public int Id { get; set; }
     public string VoiceId { get; set; }
@@ -31,12 +37,10 @@ namespace SpeechToSpeech.Models
         if(_name != value)
         {
           _name = value;
-          NotifyPropertyChanged("Name");
+          NotifyPropertyChanged();
         }
       }
     }
-
-    public event PropertyChangedEventHandler PropertyChanged;
 
     public bool Equals(Voice other)
     {
@@ -71,11 +75,6 @@ namespace SpeechToSpeech.Models
         //hashCode = (hashCode * 397) ^ ssmlGenderHashCode;
         return hashCode;
       }
-    }
-
-    private void NotifyPropertyChanged(string prop)
-    {
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
   }
 }

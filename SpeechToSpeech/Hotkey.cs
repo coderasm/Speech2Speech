@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using WindowsInput;
 using WindowsInput.Native;
@@ -8,6 +9,14 @@ namespace SpeechToSpeech
 {
   public class Hotkey: INotifyPropertyChanged
   {
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+    {
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
     private List<Key> _hotkeys = new List<Key>();
     public List<Key> HotKeys {
       get
@@ -17,12 +26,10 @@ namespace SpeechToSpeech
       set
       {
         _hotkeys = value;
-        NotifyPropertyChanged("Printed");
+        NotifyPropertyChanged();
       }
     }
     private InputSimulator simulator = new InputSimulator();
-
-    public event PropertyChangedEventHandler PropertyChanged;
     
     public string Printed
     {
@@ -95,11 +102,6 @@ namespace SpeechToSpeech
         }
       });
       return text;
-    }
-
-    private void NotifyPropertyChanged(string prop)
-    {
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
   }
 }

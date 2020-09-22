@@ -1,13 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace SpeechToSpeech
 {
   public class GeneralSettings : INotifyPropertyChanged
   {
+    public event PropertyChangedEventHandler PropertyChanged;
+    private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+    {
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
     private bool _isAutoPlayVocalized = true;
+    public List<Key> Push2TalkKey { get; set; } = new List<Key>();
+    public List<Key> AppPush2TalkKey { get; set; } = new List<Key>();
+    public string SpeechInputLanguage { get; set; } = CultureInfo.CurrentCulture.Name;
+
+    private string _textInputLanguage = CultureInfo.CurrentCulture.Name;
+
     public bool IsAutoPlayVocalized
     {
       get
@@ -19,7 +32,7 @@ namespace SpeechToSpeech
         if (_isAutoPlayVocalized != value)
         {
           _isAutoPlayVocalized = value;
-          NotifyPropertyChanged("AutoPlayVocalized");
+          NotifyPropertyChanged();
         }
       }
     }
@@ -36,7 +49,7 @@ namespace SpeechToSpeech
         if (_keyUpDelay != value)
         {
           _keyUpDelay = value;
-          NotifyPropertyChanged("KeyUpDelay");
+          NotifyPropertyChanged();
         }
       }
     }
@@ -53,7 +66,7 @@ namespace SpeechToSpeech
         if (_isPush2Talk != value)
         {
           _isPush2Talk = value;
-          NotifyPropertyChanged("IsPush2Talk");
+          NotifyPropertyChanged();
         }
       }
     }
@@ -70,15 +83,10 @@ namespace SpeechToSpeech
         if (_isAppPush2Talk != value)
         {
           _isAppPush2Talk = value;
-          NotifyPropertyChanged("IsAppPush2Talk");
+          NotifyPropertyChanged();
         }
       }
     }
-    public List<Key> Push2TalkKey { get; set; } = new List<Key>();
-    public List<Key> AppPush2TalkKey { get; set; } = new List<Key>();
-    public string SpeechInputLanguage { get; set; } = CultureInfo.CurrentCulture.Name;
-
-    private string _textInputLanguage = CultureInfo.CurrentCulture.Name;
     public string TextInputLanguage
     {
       get
@@ -90,7 +98,7 @@ namespace SpeechToSpeech
         if (_textInputLanguage != value)
         {
           _textInputLanguage = value;
-          NotifyPropertyChanged("TextInputLanguage");
+          NotifyPropertyChanged();
         }
       }
     }
@@ -106,7 +114,7 @@ namespace SpeechToSpeech
         if (_audioOutDevice != value)
         {
           _audioOutDevice = value;
-          NotifyPropertyChanged("AudioOutDevice");
+          NotifyPropertyChanged();
         }
       }
     }
@@ -122,7 +130,7 @@ namespace SpeechToSpeech
         if (_audioInDevice != value)
         {
           _audioInDevice = value;
-          NotifyPropertyChanged("AudioInDevice");
+          NotifyPropertyChanged();
         }
       }
     }
@@ -138,7 +146,7 @@ namespace SpeechToSpeech
         if (_activeTextToSpeechService != value)
         {
           _activeTextToSpeechService = value;
-          NotifyPropertyChanged("ActiveTextToSpeechService");
+          NotifyPropertyChanged();
         }
       }
     }
@@ -146,14 +154,7 @@ namespace SpeechToSpeech
 
     public void notifySelectedWebService()
     {
-      NotifyPropertyChanged("ActiveTextToSpeechService");
-    }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    private void NotifyPropertyChanged(string prop)
-    {
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+      NotifyPropertyChanged();
     }
   }
 }

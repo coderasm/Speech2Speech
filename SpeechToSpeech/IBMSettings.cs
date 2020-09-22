@@ -1,10 +1,16 @@
 ﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using SpeechToSpeech.Models;
 
 namespace SpeechToSpeech
 {
   public class IBMSettings: INotifyPropertyChanged
   {
+    public event PropertyChangedEventHandler PropertyChanged;
+    private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+    {
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
     public string textToSpeechAPIKey { get; set; } = "";
     public string speechToTextAPIKey { get; set; } = "";
     public string textToSpeechURL { get; set; } = $"https://stream.watsonplatform.net/text-to-speech/api";
@@ -21,16 +27,9 @@ namespace SpeechToSpeech
         if (value != null)
         {
           _voice = value;
-          NotifyPropertyChanged("Voice");
+          NotifyPropertyChanged();
         }
       }
-    }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    private void NotifyPropertyChanged(string prop)
-    {
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
   }
 }
