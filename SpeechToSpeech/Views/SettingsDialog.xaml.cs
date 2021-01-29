@@ -12,7 +12,7 @@ namespace SpeechToSpeech.Views
   /// <summary>
   /// Interaction logic for Options.xaml
   /// </summary>
-  public partial class SettingsDialog : Window, IDisposable
+  public partial class SettingsDialog : IDisposable
   {
     private OpenFileDialog openFileDialog = new OpenFileDialog();
     private IStringValidationService stringValidationService;

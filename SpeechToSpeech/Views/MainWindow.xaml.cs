@@ -1,9 +1,6 @@
-﻿using NAudio.Wave;
-using SpeechToSpeech.Services;
+﻿using MahApps.Metro.Controls;
 using SpeechToSpeech.ViewModels;
-using System.IO;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Unity.Attributes;
 
@@ -12,7 +9,7 @@ namespace SpeechToSpeech.Views
   /// <summary>
   /// Interaction logic for MainWindow.xaml
   /// </summary>
-  public partial class MainWindow : Window
+  public partial class MainWindow
   {
     [Dependency]
     public MainViewModel ViewModel

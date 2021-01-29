@@ -1,6 +1,8 @@
-﻿<Window x:Name="windowMain" x:Class="SpeechToSpeech.Views.MainWindow"
+﻿<mah:MetroWindow x:Name="windowMain" x:Class="SpeechToSpeech.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:IconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -72,4 +74,4 @@
     <Label Grid.Row="3" Grid.Column="0" Content="Text/Speech history" HorizontalAlignment="Center" VerticalAlignment="Center"/>
     <ListBox Grid.Row="4" Grid.Column="0" HorizontalAlignment="Stretch" ItemsSource="{Binding VocalizedViewModels}" Margin="10,0,10,10" VerticalAlignment="Stretch" ItemTemplate="{DynamicResource VocalizedTextDataTemplate}"/>
   </Grid>
-</Window>
+</mah:MetroWindow>
